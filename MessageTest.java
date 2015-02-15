@@ -1,6 +1,10 @@
 import java.io.IOException;
 
-public class Test
+//
+// illustrates general usage of Message class
+//
+
+public class MessageTest
 {
     public static void main ( String args[] ) 
     throws IOException, ClassNotFoundException {
