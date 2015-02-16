@@ -12,6 +12,8 @@ import java.net.DatagramSocket;
  */
 public class ClientTest
 {
+    private static ClientService cs;
+
     /**
      * runs a simple echo server
      * also shows how to check CRC checksums on server side
@@ -32,7 +34,7 @@ public class ClientTest
                 socket.receive(req);
 
                 Message msg = null;
-                
+
                 ////
                 // deserealize the message
                 try { 
@@ -53,7 +55,7 @@ public class ClientTest
                             Message.Method.POST,
                             "ERROR",
                             "corrupted message");
-                }
+                        }
 
                 byte[] snd_data = msg.getBytes();
 
@@ -77,7 +79,7 @@ public class ClientTest
      * This way, the GUI thread would not be blocked.
      */ 
     public static void processResponse ( Message msg ) { 
-        System.out.println("\nResponse from servers: "+msg+"\n");
+        System.out.println("\nResponse from server: "+msg+"\n");
 
         if ( msg.getType().equals("ERROR") ) {
             System.out.println("an error occurred "
@@ -87,6 +89,37 @@ public class ClientTest
                     + "contact the system administrator.");
         }
     }
+
+    /**
+     * Say this is an event handler for a button in the GUI
+     */
+    public static void userPressedVoteButton() {
+        try { 
+            Message req = new Message(
+                    Message.Method.GET,
+                    "echo-request",
+                    "echo");
+
+            ////
+            // run this in a background thread
+            // as to not BLOCK the GUI thread
+            new Thread( new Runnable() {
+                @Override public void run() {
+                    try { 
+                        Message res = cs.sendReceive(req);
+                        processResponse(res);
+                    } catch ( Exception e ) {
+                        System.err.println(
+                                "error sending request");
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        } catch ( IOException e ) {
+            e.printStackTrace();
+        }
+    }
+
 
     /**
      * shows general intended usage of ClientService
@@ -102,54 +135,25 @@ public class ClientTest
         }).start();
 
         ////
-        // Pretend this is a GUI thread!
+        // Pretend main() is a GUI thread!
 
-        ClientService cs = new ClientService(8080);
+        cs = new ClientService(8080);
         cs.connect();
 
 
         // ...
 
-        try { 
+        while ( true ) { 
+            // pretend this is a running GUI update loop 
+            // or something
 
-            while ( true ) { 
-                // pretend this is a running GUI update loop 
-                // or something
+            userPressedVoteButton();
 
-                Message req = new Message (
-                        Message.Method.GET,
-                        "echo-request",
-                        "echo");
-
-                ////
-                // run this in a background thread
-                // as to not BLOCK the GUI thread
-                new Thread( new Runnable() {
-                    @Override public void run() {
-                        try { 
-                            Message res = cs.sendReceive(req);
-                            processResponse(res);
-                        } catch ( Exception e ) {
-                            System.err.println(
-                                    "error sending request");
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
-
-
-                System.out.println("sleeping..");
-                try { 
-                    Thread.sleep(3000);
-                } catch ( Exception e ) {
-                    ;;
-                }
-                System.out.println("done sleeping.");
+            try { 
+                Thread.sleep(3000);
+            } catch ( Exception e ) {
+                ;;
             }
-        } catch ( IOException e ) {
-            e.printStackTrace();
-        } finally { 
-            cs.disconnect();
         }
     }
 }
