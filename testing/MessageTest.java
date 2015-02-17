@@ -1,4 +1,8 @@
+package testing;
 import java.io.IOException;
+
+import networking.Message;
+import networking.Message.Method;
 
 //
 // illustrates general usage of Message class
