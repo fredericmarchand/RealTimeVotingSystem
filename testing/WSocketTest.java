@@ -1,7 +1,7 @@
 //
 // @author BrandonSchurman
 //
-package networking;
+package testing;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
@@ -30,27 +30,17 @@ public class WSocketTest
             Message msg = null;
             
             try {
+                
                 msg = s_socket.receive();
+                
+                s_socket.sendTo(msg, msg.getSenderPort());
+            
             } catch ( MessageCorruptException e ) {
                 ////
                 // The checksums did not match!
                 System.err.println(e);
-                msg = new Message(
-                        Message.Method.POST,
-                        "ERROR",
-                        "corrupted message");
-            }
-
-            // send until client has received
-            boolean msg_rcvd = false;
-            while ( !msg_rcvd ) {
-                try { 
-                    s_socket.sendTo(msg, msg.getSenderPort());
-                    msg_rcvd = true;
-                } catch ( SocketTimeoutException e ) {
-                    System.err.println(e);
-                    msg_rcvd = false;
-                }
+                // do nothing, 
+                // the client should resend the same message
             }
         }
     }
@@ -60,16 +50,9 @@ public class WSocketTest
      * that handles network interactions with the server.
      * This way, the GUI thread would not be blocked.
      */ 
-    public static void processResponse ( Message msg ) { 
+    public static void processResponse ( Message msg ) {
+        // display response to user
         System.out.println("\nResponse from server: "+msg+"\n");
-
-        if ( msg.getType().equals("ERROR") ) {
-            System.out.println("an error occurred "
-                    + "while processing your vote. "
-                    + "please try again.  "
-                    + "if this message persists, "
-                    + "contact the system administrator.");
-        }
     }
 
     /**

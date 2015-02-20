@@ -1,3 +1,6 @@
+//
+// @author Brandon Schurman
+//
 package networking;
 import java.io.Serializable;
 import java.io.ByteArrayOutputStream;
