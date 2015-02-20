@@ -1,3 +1,4 @@
+package networking;
 import java.io.Serializable;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
