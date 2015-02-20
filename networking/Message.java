@@ -1,3 +1,6 @@
+//
+// @author Brandon Schurman
+//
 package networking;
 import java.io.Serializable;
 import java.io.ByteArrayOutputStream;
@@ -6,6 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.util.zip.CRC32;
+import java.net.InetAddress;
 
 public class Message implements Serializable 
 {
@@ -20,36 +24,57 @@ public class Message implements Serializable
     private Object  data; // could be a String, or a Vote object 
     private Method  method;
     private long    checksum;
-    private int     senderID;
+    private int     length;
+    private int     senderPort;
     private String  type;
+    private InetAddress senderAddr; 
 
 
     public Message ( Method method, String type, Object data ) 
     throws IOException {
-        this.senderID = senderID;
+        this.senderPort = -1;
         this.method = method;
         this.type = type;
         this.data = data;
-        this.senderID = -1; // for now TODO decide if necessary
+        this.length = -1;
         this.checksum = calculateChecksum(data);
+        calculateLength();
     }
 
     /**
      * Deserialize a Message instance
      */
-    public Message ( byte[]  bytes )
-    throws IOException, ClassNotFoundException {
-        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-        ObjectInputStream ois = new ObjectInputStream(bis);
-        Message msg = (Message)ois.readObject();
-        bis.close();
-        ois.close();
-        this.senderID = msg.senderID;
-        this.method = msg.method;
-        this.type = msg.type;
-        this.data = msg.data;
-        this.senderID = msg.senderID;
-        this.checksum = msg.checksum;
+    public Message ( byte[]  bytes ) 
+    throws IOException, MessageCorruptException {
+        try { 
+            ByteArrayInputStream bis 
+                = new ByteArrayInputStream(bytes);
+            ObjectInputStream ois 
+                = new ObjectInputStream(bis);
+            Message msg = (Message)ois.readObject();
+            bis.close();
+            ois.close();
+            this.senderPort = msg.senderPort;
+            this.senderAddr = msg.senderAddr;
+            this.length = msg.length;
+            this.method = msg.method;
+            this.type = msg.type;
+            this.data = msg.data;
+            this.checksum = msg.checksum;
+            // make sure the checksums match!
+            long check = Message.calculateChecksum(msg.getData());
+            if ( check !=  msg.getChecksum() ) {
+                MessageCorruptException err 
+                    = new MessageCorruptException("error: "
+                        + "corrupted data detected. "
+                        + "checksums do not match! "
+                        + "found: "+msg.getChecksum()+". "
+                        + "calculated: "+check);
+                throw err;
+            }
+        } catch ( ClassNotFoundException e ) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -80,6 +105,15 @@ public class Message implements Serializable
         return bos.toByteArray();
     }
 
+    private void calculateLength() {
+        try { 
+            byte[] bytes = this.getBytes();
+            this.length = bytes.length;
+        } catch ( IOException e ) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * @return a byte array representation of this object
      */
@@ -90,15 +124,40 @@ public class Message implements Serializable
     @Override
     public String toString() {
         return "["
-            + senderID+", "
+            + senderPort+", "
             + method+", "
             + type+", "
             + data+", "
             + checksum+"]";
     }
 
+    public void setSender( int port, InetAddress host ) {
+        this.senderPort = port;
+        this.senderAddr = host;
+        calculateLength();
+    }
+
+    public void setSenderPort ( int senderPort ) { 
+        this.senderPort = senderPort;
+        calculateLength();
+    }
+    
+    public void setSenderHost ( InetAddress host ) { 
+        this.senderAddr = host;
+        calculateLength();
+    }
+
     public void setData ( Object data ) {
         this.data = data;
+        calculateLength();
+    }
+    
+    public int getSenderPort() { 
+        return this.senderPort;
+    }
+    
+    public InetAddress getSenderHost() { 
+        return this.senderAddr; 
     }
 
     public Object getData() {
@@ -108,11 +167,7 @@ public class Message implements Serializable
     public long getChecksum() {
         return this.checksum;
     }   
-
-    public int getSenderID() {
-        return this.senderID;
-    }
-
+    
     public Method getMethod() {
         return this.method;
     }
