@@ -1,10 +1,15 @@
 //
 // @author Brandon Schurman
 //
+package networking;
 import java.net.*;
 import java.io.*;
 
-public class ClientService
+/**
+ * A Wrapper-Socket to simulate 
+ * a TCP socket using UDP
+ */
+public class WSocket
 {
     public final int TIMEOUT = 10; 
 
@@ -18,14 +23,13 @@ public class ClientService
     /**
      * e.g. 4444
      */
-    public ClientService ( int port ) {
+    public WSocket ( int port ) {
         this("localhost", port);
     }
 
-    public ClientService ( String host, int port ) {
+    public WSocket ( String host, int port ) {
         this.host = host;
         this.port = port;
-        this.senderID = (int)(Math.random()*100000); 
         
         try {
 			addr = InetAddress.getByName(host);
@@ -34,6 +38,15 @@ public class ClientService
 			e.printStackTrace();
 			System.exit(-1);
 		}
+    }
+
+    public void listen() {
+        try { 
+            this.socket = new DatagramSocket(port, addr);
+            //this.socket.setSoTimeout(TIMEOUT);
+        } catch ( SocketException e ) {
+            e.printStackTrace();
+        }
     }
 
     public void connect() {
@@ -46,35 +59,47 @@ public class ClientService
         } 
     }
 
-    public void disconnect() { 
+    public void close() { 
         if ( socket != null ) 
             socket.close();
     }
 
-	public Message receiveResponse() 
-    throws IOException, ClassNotFoundException {
+	public Message receive() 
+    throws IOException, MessageCorruptException {
 		byte[] buffer = new byte[576];
 		DatagramPacket response 
 		    = new DatagramPacket(
 		            buffer,
 		            buffer.length);
 		socket.receive(response);
-		return new Message(response.getData());
+        Message msg = new Message(response.getData());
+        msg.setSender(response.getPort(), response.getAddress());
+		return msg;
 	}
     
-    public void sendRequest ( Message msg )
+    public void send ( Message msg )     
+    throws IOException, SocketTimeoutException {
+        this.sendTo(msg, this.port, this.addr);
+    }
+
+    public void sendTo ( Message msg, int port ) 
+    throws IOException, SocketTimeoutException {
+        this.sendTo(msg, port, this.addr);
+    }
+
+    public void sendTo ( Message msg, int port, InetAddress host ) 
     throws IOException, SocketTimeoutException {
         byte[] data = msg.getBytes();
     	DatagramPacket request = new DatagramPacket(
                 data, 
                 data.length,
-                addr,
+                host,
                 port);
-        socket.send(request);
+        socket.send(request); 
     }
 
     public Message sendReceive ( Message msg ) 
-    throws IOException, ClassNotFoundException {
+    throws IOException, MessageCorruptException {
 
         Message res = null;
         boolean msg_rcvd = false; 
@@ -82,9 +107,9 @@ public class ClientService
         while ( !msg_rcvd ) {
             try {
                 
-                sendRequest(msg);
+                this.send(msg);
 
-                res = receiveResponse();
+                res = this.receive();
 
                 msg_rcvd = true;
 
@@ -95,7 +120,6 @@ public class ClientService
                 msg_rcvd = false;
             } 
         }
-
         return res;
     }
 }

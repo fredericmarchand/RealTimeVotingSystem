@@ -1,76 +1,58 @@
 //
 // @author BrandonSchurman
 //
+package networking;
 import java.io.IOException;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
 
 /**
- * This class shows the intended use of the ClientService class
+ * This class shows the intended use of the WSocket class
  */
-public class ClientTest
+public class WSocketTest
 {
-    private static ClientService cs;
+    private static WSocket c_socket;
 
     /**
      * runs a simple echo server
      * also shows how to check CRC checksums on server side
      */
-    public static void pretendServer() { 
+    public static void echoServer() throws IOException { 
 
-        try {
+        WSocket s_socket = new WSocket(8080);
+        s_socket.listen();
 
-            DatagramSocket socket = new DatagramSocket(8080);
+        while ( true ) {
 
-            while ( true ) {
-
-                byte[] rcv_data = new byte[576];
-
-                DatagramPacket req = new DatagramPacket(
-                        rcv_data, 
-                        rcv_data.length);
-                socket.receive(req);
-
-                Message msg = null;
-
+            Message msg = null;
+            
+            try {
+                msg = s_socket.receive();
+            } catch ( MessageCorruptException e ) {
                 ////
-                // deserealize the message
-                try { 
-                    msg = new Message(req.getData());
-                } catch ( ClassNotFoundException e ) { 
-                    e.printStackTrace();
-                    System.exit(-2);
-                }
-
-                ////
-                // make sure the checksums match!
-                if ( Message.calculateChecksum(msg.getData())
-                        !=  msg.getChecksum() ) {
-                    System.err.println("error: "
-                            + "corrupted data detected. "
-                            + "checksums do not match!");
-                    msg = new Message(
-                            Message.Method.POST,
-                            "ERROR",
-                            "corrupted message");
-                        }
-
-                byte[] snd_data = msg.getBytes();
-
-                DatagramPacket res = new DatagramPacket(
-                        snd_data,
-                        snd_data.length,
-                        req.getAddress(),
-                        req.getPort());
-
-                socket.send(res);
+                // The checksums did not match!
+                System.err.println(e);
+                msg = new Message(
+                        Message.Method.POST,
+                        "ERROR",
+                        "corrupted message");
             }
-        } catch ( Exception e ) {
-            e.printStackTrace();
-        }
 
+            // send until client has received
+            boolean msg_rcvd = false;
+            while ( !msg_rcvd ) {
+                try { 
+                    s_socket.sendTo(msg, msg.getSenderPort());
+                    msg_rcvd = true;
+                } catch ( SocketTimeoutException e ) {
+                    System.err.println(e);
+                    msg_rcvd = false;
+                }
+            }
+        }
     }
 
     /**
@@ -106,7 +88,7 @@ public class ClientTest
             new Thread( new Runnable() {
                 @Override public void run() {
                     try { 
-                        Message res = cs.sendReceive(req);
+                        Message res = c_socket.sendReceive(req);
                         processResponse(res);
                     } catch ( Exception e ) {
                         System.err.println(
@@ -122,23 +104,27 @@ public class ClientTest
 
 
     /**
-     * shows general intended usage of ClientService
+     * shows general intended usage of WSocket
      */
     public static void main ( String args[] ) {
 
         ////
-        // run a pretend echo server in the background
+        // run a simple echo server in the background
         new Thread(new Runnable() {
-            @Override public void run() { 
-                pretendServer();
+            @Override public void run() {
+                try { 
+                    echoServer();
+                } catch ( IOException e ) {
+                    e.printStackTrace(); 
+                }
             }
         }).start();
 
         ////
         // Pretend main() is a GUI thread!
 
-        cs = new ClientService(8080);
-        cs.connect();
+        c_socket = new WSocket(8080);
+        c_socket.connect();
 
 
         // ...
