@@ -61,17 +61,6 @@ public class Message implements Serializable
             this.type = msg.type;
             this.data = msg.data;
             this.checksum = msg.checksum;
-            // make sure the checksums match!
-            long check = Message.calculateChecksum(msg.getData());
-            if ( check !=  msg.getChecksum() ) {
-                MessageCorruptException err 
-                    = new MessageCorruptException("error: "
-                        + "corrupted data detected. "
-                        + "checksums do not match! "
-                        + "found: "+msg.getChecksum()+". "
-                        + "calculated: "+check);
-                throw err;
-            }
         } catch ( ClassNotFoundException e ) {
             e.printStackTrace();
         }
