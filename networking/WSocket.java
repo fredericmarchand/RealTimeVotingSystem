@@ -66,7 +66,7 @@ public class WSocket
 
 	public Message receive() 
     throws IOException, MessageCorruptException {
-		byte[] buffer = new byte[576];
+	byte[] buffer = new byte[576];
 		DatagramPacket response 
 		    = new DatagramPacket(
 		            buffer,
@@ -99,7 +99,7 @@ public class WSocket
     }
 
     public Message sendReceive ( Message msg ) 
-    throws IOException, MessageCorruptException {
+    throws IOException {
 
         Message res = null;
         boolean msg_rcvd = false; 
@@ -108,7 +108,7 @@ public class WSocket
             try {
                 
                 this.send(msg);
-
+                // TODO what if MessageCorruptException ?
                 res = this.receive();
 
                 msg_rcvd = true;
@@ -118,7 +118,9 @@ public class WSocket
                         + "server did not receive request."
                         + "resending..");
                 msg_rcvd = false;
-            } 
+            } catch ( MessageCorruptException e ) {
+                msg_rcvd = false;
+            }
         }
         return res;
     }

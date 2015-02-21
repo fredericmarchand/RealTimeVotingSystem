@@ -2,6 +2,9 @@
 // @author BrandonSchurman
 //
 package testing;
+
+import networking.*;
+
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
