@@ -10,6 +10,13 @@ public class District {
     private static int staticID = 0;
     private int id;
 
+    public District(String name) {
+        this.name = name;
+        this.province = Province.Alberta;
+        candidates = new HashMap<String, Candidate>();
+        this.id = ++staticID;
+    }
+    
     public District(String name, Province province) {
         this.name = name;
         this.province = province;
