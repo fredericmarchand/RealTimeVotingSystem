@@ -5,22 +5,18 @@ public class Person {
     protected String firstName;
     protected String lastName;
     protected Address address;
-    protected static int staticID = 1000;
-    protected int id;
+    protected int SIN;
 
-    public Person(String firstName, String lastName, Address address) {
+
+    public Person(String firstName, String lastName, Address address, int SIN) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
-        this.id = ++staticID;
+        this.SIN = SIN;
     }
 
     public String getName() {
         return firstName + " " + lastName;
-    }
-
-    public int getID() {
-        return id;
     }
 
     @Override
@@ -32,7 +28,7 @@ public class Person {
             return true;
 
         Person rhs = (Person) obj;
-        return rhs.id == id;
+        return rhs.SIN == SIN;
     }
 
 }
