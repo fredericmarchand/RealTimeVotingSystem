@@ -2,7 +2,6 @@ package testing;
 import java.io.IOException;
 
 import networking.Message;
-import networking.Message.Method;
 import networking.MessageCorruptException;
 
 //

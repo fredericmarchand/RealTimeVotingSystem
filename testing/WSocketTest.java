@@ -3,10 +3,6 @@
 //
 package testing;
 import java.io.IOException;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 
 import networking.Message;
 import networking.MessageCorruptException;

@@ -6,7 +6,9 @@ package networking;
  */
 public class MessageCorruptException extends Exception 
 {
-    public MessageCorruptException( String descrip ) {
+	private static final long serialVersionUID = 1L;
+
+	public MessageCorruptException( String descrip ) {
         super(descrip);
     }
 }
