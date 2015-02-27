@@ -3,6 +3,7 @@ import java.io.IOException;
 
 import networking.Message;
 import networking.Message.Method;
+import networking.MessageCorruptException;
 
 //
 // illustrates general usage of Message class
@@ -11,7 +12,7 @@ import networking.Message.Method;
 public class MessageTest
 {
     public static void main ( String args[] ) 
-    throws IOException, ClassNotFoundException {
+    throws IOException, ClassNotFoundException, MessageCorruptException {
         Message req = new Message(
                 Message.Method.POST,
                 "client-vote",

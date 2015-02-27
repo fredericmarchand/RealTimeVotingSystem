@@ -8,6 +8,10 @@ import java.net.SocketTimeoutException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
+import networking.Message;
+import networking.MessageCorruptException;
+import networking.WSocket;
+
 
 /**
  * This class shows the intended use of the WSocket class
