@@ -7,14 +7,18 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import networking.WSocket;
 import model.District;
+import model.Province;
 
 public class DistrictServer {
 	
 	private District district;
+	final WSocket server;
 	
-	public DistrictServer(String name) {
-		district = new District (name);
+	public DistrictServer(String name, Province province, int port) {
+		district = new District (name, province);
+		server = new WSocket(port);
 	}
 	
 	public District getDistrict() {
@@ -22,8 +26,10 @@ public class DistrictServer {
 	}
 	
 	public static void main(String[] args) {
-
-		DistrictServer server = new DistrictServer("Ottawa South");
+		String districtName = args[0];
+		int port = Integer.parseInt(args[1]);
+		
+		DistrictServer server = new DistrictServer(districtName, Province.Ontario, port);
 		
 		// Connect to database
 		try {
