@@ -15,7 +15,7 @@ public class District {
     public District(String name) {
         this.name = name;
         this.province = Province.Alberta;
-        candidates = new HashMap<String, Candidate>();
+        candidates = new HashMap<Party, Candidate>();
         this.id = ++staticID;
     }
     
