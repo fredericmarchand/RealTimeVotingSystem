@@ -1,6 +1,5 @@
 package model;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -14,14 +13,14 @@ public class District {
 
     public District(String name) {
         this.name = name;
-        this.province = Province.Alberta;
+        this.setProvince(Province.Alberta);
         candidates = new HashMap<Party, Candidate>();
         this.id = ++staticID;
     }
     
     public District(String name, Province province) {
         this.name = name;
-        this.province = province;
+        this.setProvince(province);
         candidates = new HashMap<Party, Candidate>();
         this.id = ++staticID;
     }
@@ -50,4 +49,12 @@ public class District {
     public String toString() {
         return "District: " + id + ", " + name;
     }
+
+	public Province getProvince() {
+		return province;
+	}
+
+	public void setProvince(Province province) {
+		this.province = province;
+	}
 }
