@@ -45,3 +45,7 @@ CREATE TABLE if not exists addresses(
   postalCode text NOT NULL,
 );
 
+--======================================
+
+insert into districts(id, name) values (60002,'SPC3');
+insert into districts(id, name) values (60003,'SPC3');
