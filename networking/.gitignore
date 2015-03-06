@@ -3,3 +3,5 @@
 /MessageTest.class
 /Server.class
 /Client.class
+/MessageCorruptException.class
+/WSocket.class

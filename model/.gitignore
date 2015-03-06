@@ -1,3 +1,10 @@
 /Voter.class
 /Candidate.class
 /District.class
+/Province.class
+/Address.class
+/Province$provinces.class
+/Province$province.class
+/Province$provinceNames.class
+/Person.class
+/Party.class

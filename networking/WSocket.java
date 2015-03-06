@@ -16,9 +16,11 @@ public class WSocket
 
     private DatagramSocket socket;
     private InetAddress addr;
-    private String host;
+    @SuppressWarnings("unused")
+	private String host;
     private int port;
-    private int senderID;
+    @SuppressWarnings("unused")
+	private int senderID;
 
 
     /**
