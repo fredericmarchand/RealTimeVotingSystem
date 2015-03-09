@@ -60,9 +60,9 @@ public class WSocketTest
      */
     public static void userPressedVoteButton() {
         try { 
-            Message req = new Message(
+            final Message req = new Message(
                     Message.Method.GET,
-                    "echo-request",
+                    Message.Type.RESULTS,
                     "echo");
 
             ////

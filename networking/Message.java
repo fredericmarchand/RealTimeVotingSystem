@@ -18,6 +18,10 @@ public class Message implements Serializable
         GET, POST, PUT, DELETE, CONNECT
     }
 
+    public static enum Type {
+    	REGISTER, VOTE, CANDIDATES, RESULTS
+    }
+    
     private static final long serialVersionUID 
         = -4507489610617393544L;
 
@@ -26,11 +30,11 @@ public class Message implements Serializable
     private long    checksum;
     private int     length;
     private int     senderPort;
-    private String  type;
+    private Type  	type;
     private InetAddress senderAddr; 
 
 
-    public Message ( Method method, String type, Object data ) 
+    public Message (Method method, Type type, Object data) 
     throws IOException {
         this.senderPort = -1;
         this.method = method;
@@ -172,7 +176,7 @@ public class Message implements Serializable
         return this.method;
     }
 
-    public String getType() { 
+    public Type getType() { 
         return this.type;
     }
 }

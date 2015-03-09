@@ -14,7 +14,7 @@ public class MessageTest
     throws IOException, ClassNotFoundException, MessageCorruptException {
         Message req = new Message(
                 Message.Method.POST,
-                "client-vote",
+                Message.Type.VOTE,
                 "Justin Trudeau");
 
         byte[] send_this_over_UDP = req.getBytes();

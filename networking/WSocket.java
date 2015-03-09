@@ -21,10 +21,10 @@ public class WSocket
     @SuppressWarnings("unused")
 	private int senderID;
 
-
-    /**
-     * e.g. 4444
-     */
+    public WSocket () {
+    	
+    }
+    
     public WSocket ( int port ) {
         this("localhost", port);
     }
@@ -54,6 +54,9 @@ public class WSocket
     public void connect() {
         try {
             this.socket = new DatagramSocket(); 
+            this.port = socket.getPort();
+            this.addr = socket.getInetAddress();
+            this.host = socket.getInetAddress().toString();
             // set a timeout on the socket
             this.socket.setSoTimeout(TIMEOUT); 
         } catch ( SocketException e ) {
