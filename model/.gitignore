@@ -8,3 +8,5 @@
 /Province$provinceNames.class
 /Person.class
 /Party.class
+/Vote.class
+/ResultSet.class
