@@ -3,14 +3,14 @@
 //
 package testing;
 
-import networking.*;
-
 import java.io.IOException;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import networking.Message;
-import networking.MessageCorruptException;
 import networking.WSocket;
+import model.*;
 
 
 /**
@@ -26,8 +26,7 @@ public class WSocketTest
      */
     public static void echoServer() throws IOException { 
 
-        WSocket s_socket = new WSocket(8080);
-        s_socket.listen();
+        WSocket s_socket = new WSocket().listen(8080);
 
         while ( true ) {
 
@@ -54,13 +53,18 @@ public class WSocketTest
      */
     public static void userPressedVoteButton() {
         try { 
-        	ArrayList<Integer> big_data = new ArrayList<Integer>(10000);
-        	for ( int i=0; i<10000; i++ ) 
-        		big_data.add(i);
+
+        	// TODO going from 1000 to 10000 causes bugs, need to get this figured out
+        	ArrayList<Vote> big_data = new ArrayList<Vote>(1000);
         	
-            Message req = new Message(
+        	for ( int i=0; i<1000; i++ ) 
+        		big_data.add(new Vote(
+        				new Voter("Ronald", "McDonald", new Address(), 199299399), 
+        				new Candidate("George", "Bush", new Address(), new District("Narnia"), 616717818)));
+        	
+            final Message req = new Message(
                     Message.Method.GET,
-                    "echo-request",
+                    "test",
                     big_data);
 
             ////
@@ -104,8 +108,12 @@ public class WSocketTest
         ////
         // Pretend main() is a GUI thread!
 
-        c_socket = new WSocket(8080);
-        c_socket.connect();
+        try {
+			c_socket = new WSocket().connect(8080);
+		} catch (UnknownHostException | SocketException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 
         // ...

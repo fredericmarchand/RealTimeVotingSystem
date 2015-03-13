@@ -12,51 +12,41 @@ import java.io.*;
  */
 public class WSocket
 {
-    public final int TIMEOUT = 10000; 
-    public final int PACKET_LEN = 500; 
-    public final int FRAG_LEN = 80;
+    public static final int TIMEOUT = 1000000; 
+    public static final int PACKET_LEN = 500; 
+    public static final int FRAG_LEN = 80;
 
     private DatagramSocket socket;
     private InetAddress addr;
     private int port;
-
-
-    /**
-     * e.g. 4444
-     */
-    public WSocket ( int port ) {
-        this("localhost", port);
+    
+    
+    public WSocket listen ( int port, String host ) 
+	throws UnknownHostException, SocketException {
+        this.socket = new DatagramSocket(port, addr);
+    	this.port = port;
+    	this.addr = InetAddress.getByName(host);
+    	return this;
     }
 
-    public WSocket ( String host, int port ) {
-        this.port = port;
-
-        try {
-            addr = InetAddress.getByName(host);
-        } catch ( UnknownHostException e ) {
-            System.err.println("\nerror resolving host\n");
-            e.printStackTrace();
-            System.exit(-1);
-        }
+    public WSocket listen ( int port ) 
+    throws UnknownHostException, SocketException {
+    	return this.listen(port, "localhost");
+    }
+    
+    public WSocket connect ( int port, String host )
+    throws UnknownHostException, SocketException { 
+         this.socket = new DatagramSocket(); 
+         this.port = port;
+         this.addr = InetAddress.getByName(host);
+         // set a timeout on the socket
+         this.socket.setSoTimeout(TIMEOUT);
+         return this;
     }
 
-    public void listen() {
-        try { 
-            this.socket = new DatagramSocket(port, addr);
-            //this.socket.setSoTimeout(TIMEOUT);
-        } catch ( SocketException e ) {
-            e.printStackTrace();
-        }
-    }
-
-    public void connect() {
-        try {
-            this.socket = new DatagramSocket(); 
-            // set a timeout on the socket
-            this.socket.setSoTimeout(TIMEOUT); 
-        } catch ( SocketException e ) {
-            e.printStackTrace();
-        } 
+    public WSocket connect ( int port )
+	throws UnknownHostException, SocketException {
+       return this.connect(port, "localhost");
     }
 
     public void close() { 
@@ -123,7 +113,7 @@ public class WSocket
         final byte[] data = msg.getBytes();
 
         if ( !msg.getType().equals("%%fragment%%") && data.length > PACKET_LEN ) {
-        	System.out.println("fragments...");
+        	//System.out.println("fragments...");
             this.sendFragments(msg, port, host);
             return;
         }
@@ -185,7 +175,7 @@ public class WSocket
     }
     
     public Message sendReceive ( Message msg ) throws IOException {
-    	return this.sendReceive(msg, this.port, this.addr);
+    	return this.sendReceive(msg, port, addr);
     }
     
     private Message receiveFragments() 
@@ -203,7 +193,7 @@ public class WSocket
         		 port = msg.getSenderPort();
         		 host = msg.getSenderHost();
         	 }
-        	 System.out.println("receive fragment: "+msg);
+        	 //System.out.println("receive fragment: "+msg);
         	 
         	 if ( msg.getType().equals("%%fragment%%") ) {
 	        	 byte[] frag = (byte[])msg.getData();
@@ -212,7 +202,7 @@ public class WSocket
         	 } else if ( msg.getType().equals("%%done%%") ) {
         		 done_receiving = true;
         	 } else { 
-        		 System.out.println("error, should be of type %%done%% or %%fragment%% " + msg);
+        		 System.err.println("error, should be of type %%done%% or %%fragment%% " + msg);
         	 }
          }
          byte[] bytes = new byte[total_data.size()];
@@ -263,7 +253,6 @@ public class WSocket
                     "%%fragment%%",
                     frag);
             this.sendTo(msg_frag, port, host);
-            boolean msg_rcvd = false;
 
 	        if ( done_sending ) {
 	            Message done = new Message(

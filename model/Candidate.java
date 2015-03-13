@@ -1,6 +1,8 @@
 package model;
 
 public class Candidate extends Voter {
+	private static final long serialVersionUID = -4516489610617345544L;
+	
     private Party party;
 
     public Candidate(String firstName, String lastName, Address address, District district, int SIN) {

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import networking.Message;
 import networking.MessageCorruptException;
+import controller.RtvsType;
 
 //
 // illustrates general usage of Message class
@@ -15,7 +16,7 @@ public class MessageTest
     throws IOException, ClassNotFoundException, MessageCorruptException {
         Message req = new Message(
                 Message.Method.POST,
-                "client-vote",
+                RtvsType.VOTE,
                 "Justin Trudeau");
 
         byte[] send_this_over_UDP = req.getBytes();
