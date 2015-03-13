@@ -6,6 +6,7 @@ package testing;
 import networking.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import networking.Message;
 import networking.MessageCorruptException;
@@ -31,20 +32,10 @@ public class WSocketTest
         while ( true ) {
 
             Message msg = null;
-            
-            try {
-                
-                msg = s_socket.receive();
-                
-                s_socket.sendTo(msg, msg.getSenderPort());
-            
-            } catch ( MessageCorruptException e ) {
-                ////
-                // The checksums did not match!
-                System.err.println(e);
-                // do nothing, 
-                // the client should resend the same message
-            }
+        
+            msg = s_socket.receive();
+
+            s_socket.sendTo(msg, msg.getSenderPort());
         }
     }
 
@@ -55,7 +46,7 @@ public class WSocketTest
      */ 
     public static void processResponse ( Message msg ) {
         // display response to user
-        System.out.println("\nResponse from server: "+msg+"\n");
+        System.out.println("Response from server: "+msg+"\n");
     }
 
     /**
@@ -63,10 +54,14 @@ public class WSocketTest
      */
     public static void userPressedVoteButton() {
         try { 
+        	ArrayList<Integer> big_data = new ArrayList<Integer>(10000);
+        	for ( int i=0; i<10000; i++ ) 
+        		big_data.add(i);
+        	
             Message req = new Message(
                     Message.Method.GET,
                     "echo-request",
-                    "echo");
+                    big_data);
 
             ////
             // run this in a background thread

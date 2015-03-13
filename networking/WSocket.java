@@ -3,6 +3,7 @@
 //
 package networking;
 import java.net.*;
+import java.util.ArrayList;
 import java.io.*;
 
 /**
@@ -11,16 +12,13 @@ import java.io.*;
  */
 public class WSocket
 {
-    public final int TIMEOUT = 10; 
-    public final int PACKET_LEN = 256; 
+    public final int TIMEOUT = 10000; 
+    public final int PACKET_LEN = 500; 
+    public final int FRAG_LEN = 80;
 
     private DatagramSocket socket;
     private InetAddress addr;
-    @SuppressWarnings("unused")
-	private String host;
     private int port;
-    @SuppressWarnings("unused")
-	private int senderID;
 
 
     /**
@@ -31,7 +29,6 @@ public class WSocket
     }
 
     public WSocket ( String host, int port ) {
-        this.host = host;
         this.port = port;
 
         try {
@@ -66,17 +63,42 @@ public class WSocket
         if ( socket != null ) 
             socket.close();
     }
+    
+    private void sendConfirmation ( int port, InetAddress host ) throws IOException {
+    	 Message confirm = new Message(
+         		Message.Method.POST, 
+         		"%%received%%", 
+         		"%%received%%");
+         confirm.setSender(this.port, this.addr);
+         byte[] buffer = confirm.getBytes();
+         DatagramPacket packet = new DatagramPacket(
+                 buffer,
+                 buffer.length,
+                 host,
+                 port);
+         socket.send(packet);
+    }
 
     public Message receive() 
-    throws IOException, MessageCorruptException {
+    throws IOException {
         byte[] buffer = new byte[576];
-        DatagramPacket response 
-            = new DatagramPacket(
-                    buffer,
-                    buffer.length);
-        socket.receive(response);
-        Message msg = new Message(response.getData());
-        msg.setSender(response.getPort(), response.getAddress());
+        Message msg = null;
+        while ( msg == null ) {
+        	try { 	
+        		DatagramPacket response = new DatagramPacket(
+		                    buffer,
+		                    buffer.length,
+		                    this.socket.getInetAddress(),
+		                    this.socket.getLocalPort());
+		        socket.receive(response);
+		        msg = new Message(response.getData());
+		        msg.setSender(response.getPort(), response.getAddress());
+	        } catch ( MessageCorruptException e ) { 
+	        	System.out.println(e);
+	        }
+        }
+        
+        this.sendConfirmation(msg.getSenderPort(), msg.getSenderHost());
 
         if ( msg.getType().equals("%%start-fragments%%") )
             msg = receiveFragments();
@@ -84,118 +106,61 @@ public class WSocket
         return msg;
     }
 
-    private Message receiveFragments() 
-    throws IOException, MessageCorruptException { 
-         
-    }
-
     public void send ( Message msg )     
-    throws IOException, SocketTimeoutException {
+    throws IOException {
         this.sendTo(msg, this.port, this.addr);
     }
 
     public void sendTo ( Message msg, int port ) 
-    throws IOException, SocketTimeoutException {
+    throws IOException {
         this.sendTo(msg, port, this.addr);
-    }
-
-    private void sendFragments ( 
-            Message msg, int port, InetAdress host ) 
-    throws IOException, SocketTimeoutException { 
-        byte[] data = msg.getBytes();
-        boolean done_sending = false;
-        int pos = 0; 
-
-        Message note = new Message(
-                Message.Method.POST,
-                "%%start-fragments%%",
-                "%%start-fragments%%");
-        byte[] bytes = note.getBytes();
-        DatagramPacket packet = new DatagramPacket(
-                bytes,
-                bytes.length,
-                host,
-                port);
-        socket.send(packet);
-
-        //Message msg = this.receive(); // TODO handle confirmation
-
-        while ( !done_sending ) {
-            byte[] frag 
-                = (pos > data.length - PACKET_LEN) 
-                ?   new byte[data.length-pos]
-                :   new byte[PACKET_LEN];
-
-            for ( int i=0; i<PACKET_LEN; i++ ) { 
-                if ( i+pos < bytes.length ) 
-                    frag[i] = bytes[pos+i];
-                else  
-                    done_sending = true;
-            }
-
-            pos += PACKET_LEN;
-
-            Message msg_frag = new Message(
-                    msg.getMethod(),
-                    "%%fragment%%",
-                    frag);
-            byte[] msg_frag_bytes = msg_frag.getBytes();
-
-            boolean msg_rcvd = false;
-
-            while ( !msg_rcvd ) {
-                DatagramPacket packet = new DatagramPacket(
-                        msg_frag_bytes,
-                        msg_frag_bytes.length,
-                        host,
-                        port);
-                socket.send(packet);
-
-                try {
-                    Message confrim = this.receive();
-                    if ( confirm.getType().equals("%%received%%") )
-                        msg_rcvd = true;
-                    if ( done_sending ) {
-                        Message done = new Message(
-                                Message.Method.POST,
-                                "%%done%%",
-                                "%%done%%");
-                        msg_frag_bytes = done.getBytes();
-                        packet = new DatagramPacket(
-                                msg_frag_bytes,
-                                msg_frag_bytes.length,
-                                host,
-                                post);
-                        socket.send(packet);
-                    }
-                } catch ( SocketTimeoutException e ) { 
-                    msg_rcvd = false;
-                } catch ( MessageCorruptException e ) {
-                    msg_rcvd = false;
-                }
-            }
-        }
     }
             
     public void sendTo ( Message msg, int port, InetAddress host ) 
-    throws IOException, SocketTimeoutException {
+    throws IOException {
 
-        byte[] data = msg.getBytes();
+    	msg.setSender(this.socket.getLocalPort(), this.socket.getInetAddress());
+        final byte[] data = msg.getBytes();
 
-        if ( data.length > PACKET_LEN ) {
+        if ( !msg.getType().equals("%%fragment%%") && data.length > PACKET_LEN ) {
+        	System.out.println("fragments...");
             this.sendFragments(msg, port, host);
             return;
         }
-
-        DatagramPacket request = new DatagramPacket(
-                data, 
-                data.length,
-                host,
-                port);
-        socket.send(request); 
+        
+        boolean msg_rcvd = false;
+        
+        while ( !msg_rcvd ) { 
+        	try { 
+		        DatagramPacket request = new DatagramPacket(
+		                data, 
+		                data.length,
+		                host,
+		                port);
+		        socket.send(request); 
+		        byte[] buffer = new byte[PACKET_LEN];
+		        DatagramPacket response = new DatagramPacket(
+		                    buffer,
+		                    buffer.length,
+		                    this.socket.getLocalAddress(),
+		                    this.socket.getLocalPort());
+		        socket.receive(response);
+		        Message res = new Message(response.getData());
+		        res.setSender(response.getPort(), response.getAddress());
+		        if ( res.getData().equals("%%received%%") )
+		        	msg_rcvd = true;
+		       else 
+		        	System.out.println("huh? "+msg);
+		        msg_rcvd = true;
+        	} catch ( SocketTimeoutException e ) { 
+        		System.out.println(e);
+        	} catch ( MessageCorruptException e ) {
+        		System.out.println(e);
+        	}
+        }
     }
 
-    public Message sendReceive ( Message msg ) 
+    public Message sendReceive ( Message msg, int port, InetAddress host ) 
     throws IOException {
 
         Message res = null;
@@ -204,8 +169,7 @@ public class WSocket
         while ( !msg_rcvd ) {
             try {
 
-                this.send(msg);
-                // TODO what if MessageCorruptException ?
+                this.sendTo(msg, port, host);
                 res = this.receive();
 
                 msg_rcvd = true;
@@ -215,10 +179,100 @@ public class WSocket
                         + "server did not receive request."
                         + "resending..");
                 msg_rcvd = false;
-            } catch ( MessageCorruptException e ) {
-                msg_rcvd = false;
-            }
+            } 
         }
         return res;
+    }
+    
+    public Message sendReceive ( Message msg ) throws IOException {
+    	return this.sendReceive(msg, this.port, this.addr);
+    }
+    
+    private Message receiveFragments() 
+    throws IOException { 
+    	 int port = -10;
+    	 InetAddress host = null;
+    	 
+         ArrayList<Byte> total_data = new ArrayList<Byte>();
+         
+         boolean done_receiving = false;
+         while ( !done_receiving ) {
+        	 Message msg = this.receive();
+        	 
+        	 if ( port == -10 ) {
+        		 port = msg.getSenderPort();
+        		 host = msg.getSenderHost();
+        	 }
+        	 System.out.println("receive fragment: "+msg);
+        	 
+        	 if ( msg.getType().equals("%%fragment%%") ) {
+	        	 byte[] frag = (byte[])msg.getData();
+	        	 for ( int i=0; i<frag.length; i++ )
+	        		 total_data.add(frag[i]);
+        	 } else if ( msg.getType().equals("%%done%%") ) {
+        		 done_receiving = true;
+        	 } else { 
+        		 System.out.println("error, should be of type %%done%% or %%fragment%% " + msg);
+        	 }
+         }
+         byte[] bytes = new byte[total_data.size()];
+         for ( int i=0; i<bytes.length; i++ ) 
+        	 bytes[i] = total_data.get(i);
+         
+         Message msg = null;
+         try {
+        	 msg = new Message(bytes);
+        	 msg.setSender(port, host);
+         } catch ( Exception e ) {
+        	 e.printStackTrace();
+         }
+         return msg;
+    }
+    
+    private void sendFragments ( Message msg, int port, InetAddress host ) 
+    throws IOException { 
+    	
+        byte[] data = msg.getBytes();
+        boolean done_sending = false;
+        int pos = 0; 
+
+        Message note = new Message(
+                Message.Method.POST,
+                "%%start-fragments%%",
+                "%%start-fragments%%");
+        this.sendTo(note, port, host);
+
+        while ( !done_sending ) {
+            byte[] frag 
+                = (pos > data.length - FRAG_LEN) 
+                ?   new byte[data.length-pos]
+                :   new byte[FRAG_LEN];
+
+            for ( int i=0; i<FRAG_LEN; i++ ) { 
+                if ( i+pos < data.length ) 
+                    frag[i] = data[pos+i];
+                else  
+                    done_sending = true;
+            }
+
+            pos += FRAG_LEN;
+
+            //System.out.println("seding fragment ");
+            Message msg_frag = new Message(
+                    msg.getMethod(),
+                    "%%fragment%%",
+                    frag);
+            this.sendTo(msg_frag, port, host);
+            boolean msg_rcvd = false;
+
+	        if ( done_sending ) {
+	            Message done = new Message(
+	                    Message.Method.POST,
+	                    "%%done%%",
+	                    "%%done%%");
+	            this.sendTo(done, port, host);
+            }
+	        
+        }
     }
 }
