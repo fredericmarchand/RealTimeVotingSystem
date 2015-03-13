@@ -15,11 +15,34 @@ public class CentralServer {
 		
 		WSocket socket = new WSocket(CENTRAL_SERVER_PORT);
 		socket.listen();
-		while ( true ) {
+		
+		//Launch Periodic thread
+		
+		Thread thread = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(PERIOD);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				
+				//Query Votes from District Servers
+				//Push back to every district server
+				
+			}
+			
+		});
+		
+		thread.start();
+		
+		for (;;) {
 			Message msg = null;
 	            
 			try {
-			    msg = socket.receive();
+				msg = socket.receive();
+				int sender = msg.getSenderPort();
 			    
 			    //Handle Message
 			    //Launch Thread
@@ -31,5 +54,4 @@ public class CentralServer {
 			}
 		}
 	}
-	
 }

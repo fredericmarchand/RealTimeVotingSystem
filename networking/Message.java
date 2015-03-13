@@ -19,7 +19,7 @@ public class Message implements Serializable
     }
 
     public static enum Type {
-    	REGISTER, VOTE, CANDIDATES, RESULTS
+    	REGISTER, LOGIN, HAS_VOTED, VOTE, CANDIDATES, RESULTS
     }
     
     private static final long serialVersionUID 

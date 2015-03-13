@@ -11,13 +11,10 @@ import model.*;
 public class ClientController {
 	
 	
-	public static boolean registerUser(Person p, WSocket socket) {
-		//Push information to district server
-		//Wait for reply on registration acceptance
-		
+	public static boolean registerUser(Voter v, WSocket socket) {
 		boolean result = false;
 		try {
-			Message newMsg = new Message(Message.Method.POST, Message.Type.REGISTER, p);
+			Message newMsg = new Message(Message.Method.POST, Message.Type.REGISTER, v);
 			socket.sendTo(newMsg, 60002); //Get port from list of district servers
 			newMsg = socket.receive();
 			result = (boolean)newMsg.getData();
@@ -31,6 +28,52 @@ public class ClientController {
 		return result;
 	}
 	
+	public static boolean loginUser(Voter v, WSocket socket) {
+		boolean result = false;
+		try {
+			Message newMsg = new Message(Message.Method.POST, Message.Type.LOGIN, v);
+			socket.sendTo(newMsg, 60002); //Get port from list of district servers
+			newMsg = socket.receive();
+			result = (boolean)newMsg.getData();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (MessageCorruptException e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	public static boolean userHasVoted(Voter v, WSocket socket) {		
+		boolean result = false;
+		try {
+			Message newMsg = new Message(Message.Method.GET, Message.Type.HAS_VOTED, v);
+			socket.sendTo(newMsg, 60002); //Get port from list of district servers
+			newMsg = socket.receive();
+			result = (boolean)newMsg.getData();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (MessageCorruptException e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	public static void vote(Candidate c, Voter v, WSocket socket) {
+		Vote vote = new Vote(v, c);
+		try {
+			Message newMsg = new Message(Message.Method.POST, Message.Type.VOTE, vote);
+			socket.sendTo(newMsg, 60002); //Get port from list of district servers
+			//Dont expect response
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
 	public static ArrayList<Candidate> getDistrictCandidates(District d, WSocket socket) {
 		ArrayList<Candidate> candidates = new ArrayList<Candidate>();
 		
@@ -48,17 +91,6 @@ public class ClientController {
 		}
 		
 		return candidates;
-	}
-	
-	public static void vote(Candidate c, Voter v, WSocket socket) {
-		Vote vote = new Vote(v, c);
-		try {
-			Message newMsg = new Message(Message.Method.POST, Message.Type.REGISTER, vote);
-			socket.sendTo(newMsg, 60002); //Get port from list of district servers
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	public static HashMap<Candidate, Integer> getLocalResults(District d, WSocket socket) {

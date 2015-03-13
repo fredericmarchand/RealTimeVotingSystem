@@ -17,6 +17,10 @@ public class Voter extends Person{
     public void vote() {
         hasVoted = true;
     }
+    
+    public boolean hasVoted() {
+    	return hasVoted;
+    }
 
     @Override
     public String toString() {

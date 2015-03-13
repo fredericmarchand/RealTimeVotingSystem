@@ -6,6 +6,7 @@ public class Person {
     protected String lastName;
     protected Address address;
     protected int SIN;
+    protected String password;
 
 
     public Person(String firstName, String lastName, Address address, int SIN) {
@@ -19,6 +20,18 @@ public class Person {
         return firstName + " " + lastName;
     }
 
+    public int getSIN() {
+    	return SIN;
+    }
+    
+    public String getPassword() {
+    	return password;
+    }
+    
+    public void setPassword(String pword) {
+    	password = pword;
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Person))
