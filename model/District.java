@@ -1,10 +1,13 @@
 package model;
 
 import java.util.Collection;
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class District {
+public class District implements Serializable {
 
+	private static final long serialVersionUID = -4507489611517393544L;
+	
     private Province province;
     private String name;
     private HashMap<Party, Candidate> candidates;

@@ -2,11 +2,15 @@
 // @author BrandonSchurman
 //
 package testing;
+
 import java.io.IOException;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import networking.Message;
-import networking.MessageCorruptException;
 import networking.WSocket;
+import model.*;
 
 
 /**
@@ -22,26 +26,15 @@ public class WSocketTest
      */
     public static void echoServer() throws IOException { 
 
-        WSocket s_socket = new WSocket(8080);
-        s_socket.listen();
+        WSocket s_socket = new WSocket().listen(8080);
 
         while ( true ) {
 
             Message msg = null;
-            
-            try {
-                
-                msg = s_socket.receive();
-                
-                s_socket.sendTo(msg, msg.getSenderPort());
-            
-            } catch ( MessageCorruptException e ) {
-                ////
-                // The checksums did not match!
-                System.err.println(e);
-                // do nothing, 
-                // the client should resend the same message
-            }
+        
+            msg = s_socket.receive();
+
+            s_socket.sendTo(msg, msg.getSenderPort());
         }
     }
 
@@ -52,7 +45,7 @@ public class WSocketTest
      */ 
     public static void processResponse ( Message msg ) {
         // display response to user
-        System.out.println("\nResponse from server: "+msg+"\n");
+        System.out.println("Response from server: "+msg+"\n");
     }
 
     /**
@@ -60,10 +53,19 @@ public class WSocketTest
      */
     public static void userPressedVoteButton() {
         try { 
+
+        	// TODO going from 1000 to 10000 causes bugs, need to get this figured out
+        	ArrayList<Vote> big_data = new ArrayList<Vote>(1000);
+        	
+        	for ( int i=0; i<1000; i++ ) 
+        		big_data.add(new Vote(
+        				new Voter("Ronald", "McDonald", new Address(), 199299399), 
+        				new Candidate("George", "Bush", new Address(), new District("Narnia"), 616717818)));
+        	
             final Message req = new Message(
                     Message.Method.GET,
-                    Message.Type.RESULTS,
-                    "echo");
+                    "test",
+                    big_data);
 
             ////
             // run this in a background thread
@@ -106,8 +108,12 @@ public class WSocketTest
         ////
         // Pretend main() is a GUI thread!
 
-        c_socket = new WSocket(8080);
-        c_socket.connect();
+        try {
+			c_socket = new WSocket().connect(8080);
+		} catch (UnknownHostException | SocketException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 
         // ...

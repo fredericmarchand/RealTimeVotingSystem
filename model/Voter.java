@@ -1,6 +1,9 @@
 package model;
 
-public class Voter extends Person{
+import java.io.Serializable;
+
+public class Voter extends Person implements Serializable {
+	private static final long serialVersionUID  = -4588489610617393544L;
     protected District district;
     protected boolean hasVoted;
 
@@ -16,6 +19,10 @@ public class Voter extends Person{
 
     public void vote() {
         hasVoted = true;
+    }
+    
+    public boolean hasVoted() {
+    	return hasVoted;
     }
 
     @Override
