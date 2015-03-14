@@ -69,7 +69,7 @@ public class WSocket
          socket.send(packet);
     }
 
-    public Message receive() 
+    public synchronized Message receive() 
     throws IOException {
         byte[] buffer = new byte[576];
         Message msg = null;
@@ -106,7 +106,7 @@ public class WSocket
         this.sendTo(msg, port, this.addr);
     }
             
-    public void sendTo ( Message msg, int port, InetAddress host ) 
+    public synchronized void sendTo ( Message msg, int port, InetAddress host ) 
     throws IOException {
 
     	msg.setSender(this.socket.getLocalPort(), this.socket.getInetAddress());
@@ -150,7 +150,7 @@ public class WSocket
         }
     }
 
-    public Message sendReceive ( Message msg, int port, InetAddress host ) 
+    public synchronized Message sendReceive ( Message msg, int port, InetAddress host ) 
     throws IOException {
 
         Message res = null;
@@ -174,7 +174,7 @@ public class WSocket
         return res;
     }
     
-    public Message sendReceive ( Message msg ) throws IOException {
+    public synchronized Message sendReceive ( Message msg ) throws IOException {
     	return this.sendReceive(msg, port, addr);
     }
     

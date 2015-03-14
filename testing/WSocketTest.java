@@ -30,9 +30,7 @@ public class WSocketTest
 
         while ( true ) {
 
-            Message msg = null;
-        
-            msg = s_socket.receive();
+            Message msg = s_socket.receive();
 
             s_socket.sendTo(msg, msg.getSenderPort());
         }
@@ -54,10 +52,9 @@ public class WSocketTest
     public static void userPressedVoteButton() {
         try { 
 
-        	// TODO going from 1000 to 10000 causes bugs, need to get this figured out
-        	ArrayList<Vote> big_data = new ArrayList<Vote>(1000);
+        	ArrayList<Vote> big_data = new ArrayList<Vote>(10000);
         	
-        	for ( int i=0; i<1000; i++ ) 
+        	for ( int i=0; i<10000; i++ ) 
         		big_data.add(new Vote(
         				new Voter("Ronald", "McDonald", new Address(), 199299399), 
         				new Candidate("George", "Bush", new Address(), new District("Narnia"), 616717818)));
@@ -73,6 +70,7 @@ public class WSocketTest
             new Thread( new Runnable() {
                 @Override public void run() {
                     try { 
+                    	// will take a while to process with extremely large data sets
                         Message res = c_socket.sendReceive(req);
                         processResponse(res);
                     } catch ( Exception e ) {
@@ -125,7 +123,7 @@ public class WSocketTest
             userPressedVoteButton();
 
             try { 
-                Thread.sleep(3000);
+                Thread.sleep(1000);
             } catch ( Exception e ) {
                 ;;
             }
