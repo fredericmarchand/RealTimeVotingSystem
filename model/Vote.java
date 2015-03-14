@@ -1,6 +1,8 @@
 package model;
+import java.io.Serializable;
 
-public class Vote {
+public class Vote implements Serializable {
+	private static final long serialVersionUID = -4507489616616363544L;
 
 	private Voter voter;
 	private Candidate candidate;

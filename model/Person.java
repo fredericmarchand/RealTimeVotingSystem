@@ -1,7 +1,10 @@
 package model;
+import java.io.Serializable;
 
-public class Person {
+public class Person implements Serializable {
 
+	private static final long serialVersionUID = -5517388611617193544L;
+	
     protected String firstName;
     protected String lastName;
     protected Address address;

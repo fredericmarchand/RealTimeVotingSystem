@@ -1,6 +1,8 @@
 package model;
+import java.io.Serializable;
 
-public class Party {
+public class Party implements Serializable {
+	private static final long serialVersionUID = -4517388610617393544L;
     private String name;
     private Candidate leader;
 

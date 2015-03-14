@@ -1,5 +1,7 @@
 package controller;
 import java.io.IOException;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -14,14 +16,12 @@ public class ClientController {
 	public static boolean registerUser(Voter v, WSocket socket) {
 		boolean result = false;
 		try {
-			Message newMsg = new Message(Message.Method.POST, Message.Type.REGISTER, v);
+			Message newMsg = new Message(Message.Method.POST, RtvsType.REGISTER, v);
 			socket.sendTo(newMsg, 60002); //Get port from list of district servers
 			newMsg = socket.receive();
 			result = (boolean)newMsg.getData();
 			
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (MessageCorruptException e) {
 			e.printStackTrace();
 		}
 		
@@ -31,16 +31,14 @@ public class ClientController {
 	public static boolean loginUser(Voter v, WSocket socket) {
 		boolean result = false;
 		try {
-			Message newMsg = new Message(Message.Method.POST, Message.Type.LOGIN, v);
+			Message newMsg = new Message(Message.Method.POST, RtvsType.LOGIN, v);
 			socket.sendTo(newMsg, 60002); //Get port from list of district servers
 			newMsg = socket.receive();
 			result = (boolean)newMsg.getData();
 			
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (MessageCorruptException e) {
-			e.printStackTrace();
-		}
+		} 
 		
 		return result;
 	}
@@ -48,14 +46,12 @@ public class ClientController {
 	public static boolean userHasVoted(Voter v, WSocket socket) {		
 		boolean result = false;
 		try {
-			Message newMsg = new Message(Message.Method.GET, Message.Type.HAS_VOTED, v);
+			Message newMsg = new Message(Message.Method.GET, RtvsType.HAS_VOTED, v);
 			socket.sendTo(newMsg, 60002); //Get port from list of district servers
 			newMsg = socket.receive();
 			result = (boolean)newMsg.getData();
 			
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (MessageCorruptException e) {
 			e.printStackTrace();
 		}
 		
@@ -65,7 +61,7 @@ public class ClientController {
 	public static void vote(Candidate c, Voter v, WSocket socket) {
 		Vote vote = new Vote(v, c);
 		try {
-			Message newMsg = new Message(Message.Method.POST, Message.Type.VOTE, vote);
+			Message newMsg = new Message(Message.Method.POST, RtvsType.VOTE, vote);
 			socket.sendTo(newMsg, 60002); //Get port from list of district servers
 			//Dont expect response
 		} catch (IOException e) {
@@ -79,14 +75,12 @@ public class ClientController {
 		
 		//fetch from district server;
 		try {
-			Message newMsg = new Message(Message.Method.GET, Message.Type.CANDIDATES, "Ottawa-South");
+			Message newMsg = new Message(Message.Method.GET, RtvsType.CANDIDATES, "Ottawa-South");
 			socket.sendTo(newMsg, 60002); //Get port from list of district servers
 			newMsg = socket.receive();
 			candidates = (ArrayList<Candidate>)newMsg.getData();
 			
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (MessageCorruptException e) {
 			e.printStackTrace();
 		}
 		
@@ -97,16 +91,14 @@ public class ClientController {
 		HashMap<Candidate, Integer> results = new HashMap<Candidate, Integer>();
 		
 		try {
-			Message newMsg = new Message(Message.Method.GET, Message.Type.RESULTS, d);
+			Message newMsg = new Message(Message.Method.GET, RtvsType.RESULTS, d);
 			socket.sendTo(newMsg, 60002); //Get port from list of district servers
 			newMsg = socket.receive();
 			results = ((ResultSet)newMsg.getData()).getDistrictVotes();
 			
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (MessageCorruptException e) {
-			e.printStackTrace();
-		}
+		} 
 		
 		return results;
 	}
@@ -115,14 +107,12 @@ public class ClientController {
 		HashMap<Party, Integer> results = new HashMap<Party, Integer>();
 		
 		try {
-			Message newMsg = new Message(Message.Method.GET, Message.Type.RESULTS, null);
+			Message newMsg = new Message(Message.Method.GET, RtvsType.RESULTS, null);
 			socket.sendTo(newMsg, 60002); //Get port from list of district servers
 			newMsg = socket.receive();
 			results = ((ResultSet)newMsg.getData()).getTotalVotes();
 			
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (MessageCorruptException e) {
 			e.printStackTrace();
 		}
 		
@@ -132,8 +122,14 @@ public class ClientController {
 	public static void main(String[] args) {
 		
 		//Define global variables accessible to every thread
-		WSocket socket = new WSocket();
-		socket.connect();
+		WSocket socket = null;
+		try {
+			socket = new WSocket().connect(60002);
+		} catch (UnknownHostException | SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.exit(-2); // can't continue without a socket..
+		}
 		//Create GUI
 		
 			//Click Registration button

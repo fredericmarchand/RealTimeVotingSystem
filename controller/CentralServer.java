@@ -1,9 +1,10 @@
 package controller;
 
 import java.io.IOException;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 import networking.Message;
-import networking.MessageCorruptException;
 import networking.WSocket;
 
 public class CentralServer {
@@ -13,8 +14,13 @@ public class CentralServer {
 	
 	public static void main(String args[]) {
 		
-		WSocket socket = new WSocket(CENTRAL_SERVER_PORT);
-		socket.listen();
+		WSocket socket = null;
+		try {
+			socket = new WSocket().listen(CENTRAL_SERVER_PORT);
+		} catch (UnknownHostException | SocketException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		//Launch Periodic thread
 		
@@ -47,8 +53,6 @@ public class CentralServer {
 			    //Handle Message
 			    //Launch Thread
 			    
-			} catch (MessageCorruptException e) {
-				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

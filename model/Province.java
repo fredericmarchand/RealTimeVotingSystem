@@ -1,8 +1,9 @@
 package model;
 
 import java.util.ArrayList;
+import java.io.Serializable;
 
-public enum Province {
+public enum Province implements Serializable {
 	BritishColumbia,
 	Alberta,
 	Saskatchewan,
@@ -16,6 +17,8 @@ public enum Province {
 	Nunavut,
 	NorthwestTerritories,
 	Yukon;
+	
+	private static final long serialVersionUID = -4328388610617393544L;
 	
 	public static ArrayList<String> getProvinceList() {
 			ArrayList<String> list = new ArrayList<String>();
