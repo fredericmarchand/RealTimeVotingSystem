@@ -130,6 +130,8 @@ public class ClientController {
 			e.printStackTrace();
 			System.exit(-2); // can't continue without a socket..
 		}
+		
+		
 		//Create GUI
 		
 			//Click Registration button

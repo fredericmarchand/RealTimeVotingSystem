@@ -12,9 +12,10 @@ import java.io.*;
  */
 public class WSocket
 {
-    public static final int TIMEOUT = 1000000; 
     public static final int PACKET_LEN = 500; 
-    public static final int FRAG_LEN = 80;
+    public static final int FRAG_LEN = 200;
+    
+    private int TIMEOUT = 10000;
 
     private DatagramSocket socket;
     private InetAddress addr;
@@ -39,14 +40,16 @@ public class WSocket
          this.socket = new DatagramSocket(); 
          this.port = port;
          this.addr = InetAddress.getByName(host);
-         // set a timeout on the socket
-         this.socket.setSoTimeout(TIMEOUT);
          return this;
     }
 
     public WSocket connect ( int port )
 	throws UnknownHostException, SocketException {
        return this.connect(port, "localhost");
+    }
+    
+    public void setTimeout( int timeout ) {
+    	this.TIMEOUT = timeout;
     }
 
     public void close() { 
@@ -69,7 +72,7 @@ public class WSocket
          socket.send(packet);
     }
 
-    public Message receive() 
+    public synchronized Message receive() 
     throws IOException {
         byte[] buffer = new byte[576];
         Message msg = null;
@@ -106,7 +109,7 @@ public class WSocket
         this.sendTo(msg, port, this.addr);
     }
             
-    public void sendTo ( Message msg, int port, InetAddress host ) 
+    public synchronized void sendTo ( Message msg, int port, InetAddress host ) 
     throws IOException {
 
     	msg.setSender(this.socket.getLocalPort(), this.socket.getInetAddress());
@@ -122,6 +125,7 @@ public class WSocket
         
         while ( !msg_rcvd ) { 
         	try { 
+        		socket.setSoTimeout(TIMEOUT);
 		        DatagramPacket request = new DatagramPacket(
 		                data, 
 		                data.length,
@@ -129,6 +133,7 @@ public class WSocket
 		                port);
 		        socket.send(request); 
 		        byte[] buffer = new byte[PACKET_LEN];
+		        // receive confirmation
 		        DatagramPacket response = new DatagramPacket(
 		                    buffer,
 		                    buffer.length,
@@ -147,30 +152,16 @@ public class WSocket
         	} catch ( MessageCorruptException e ) {
         		System.out.println(e);
         	}
+        	socket.setSoTimeout(1000000);
         }
     }
 
-    public Message sendReceive ( Message msg, int port, InetAddress host ) 
+    public synchronized Message sendReceive ( Message msg, int port, InetAddress host ) 
     throws IOException {
 
-        Message res = null;
-        boolean msg_rcvd = false; 
+        this.sendTo(msg, port, host);
+        Message res = this.receive();
 
-        while ( !msg_rcvd ) {
-            try {
-
-                this.sendTo(msg, port, host);
-                res = this.receive();
-
-                msg_rcvd = true;
-
-            } catch ( SocketTimeoutException e ) {
-                System.out.println("err: "
-                        + "server did not receive request."
-                        + "resending..");
-                msg_rcvd = false;
-            } 
-        }
         return res;
     }
     
@@ -247,7 +238,7 @@ public class WSocket
 
             pos += FRAG_LEN;
 
-            //System.out.println("seding fragment ");
+            //System.out.println("sending fragment ");
             Message msg_frag = new Message(
                     msg.getMethod(),
                     "%%fragment%%",
