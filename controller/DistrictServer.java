@@ -45,6 +45,7 @@ public class DistrictServer {
 		//votes
 		
 		DistrictServer server = new DistrictServer("Ottawa-South", Province.Ontario, ServerPorts.DISTRICT_SERVER1);
+		System.out.println("DistrictServer: running on port "+ServerPorts.DISTRICT_SERVER1);
 		try {
 			server.getSocket().listen(server.getPort());
 		} catch (UnknownHostException | SocketException e1) {
