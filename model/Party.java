@@ -1,17 +1,10 @@
 package model;
-
 import java.io.Serializable;
 
 public class Party implements Serializable {
-
-    private static final long serialVersionUID = -8743695743565242934L;
-    
+	private static final long serialVersionUID = -4517388610617393544L;
     private String name;
     private Candidate leader;
-
-    public Party(String name) {
-        this(name, null);
-    }
 
     public Party(String name, Candidate leader) {
         this.name = name;
@@ -20,10 +13,6 @@ public class Party implements Serializable {
 
     public Candidate getLeader() {
         return leader;
-    }
-
-    public void setLeader(Candidate leader) {
-        this.leader = leader;
     }
 
     @Override

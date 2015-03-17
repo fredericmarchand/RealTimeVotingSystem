@@ -1,11 +1,8 @@
 package model;
 
 import java.util.HashMap;
-import java.io.Serializable;
 
-public class ResultSet implements Serializable {
-
-	private static final long serialVersionUID = 458344541008756254L;
+public class ResultSet {
 	
 	public static final int DISTRICT = 0;
 	public static final int TOTAL = 1;

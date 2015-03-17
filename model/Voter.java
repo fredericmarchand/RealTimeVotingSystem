@@ -1,16 +1,16 @@
 package model;
 
-public class Voter extends Person {
+import java.io.Serializable;
 
+public class Voter extends Person implements Serializable {
+	private static final long serialVersionUID  = -4588489610617393544L;
     protected District district;
     protected boolean hasVoted;
-    protected String password;
 
     public Voter(String firstName, String lastName, Address address, int SIN) {
         super(firstName, lastName, address, SIN);
         district = null;
         hasVoted = false;
-        password = "";
     }
 
     public void setDistrict(District district) {
@@ -20,17 +20,9 @@ public class Voter extends Person {
     public void vote() {
         hasVoted = true;
     }
-
+    
     public boolean hasVoted() {
-        return hasVoted;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String pass) {
-        password = pass;
+    	return hasVoted;
     }
 
     @Override

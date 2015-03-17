@@ -1,13 +1,13 @@
 package model;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.io.Serializable;
+import java.util.HashMap;
 
 public class District implements Serializable {
 
-    private static final long serialVersionUID = -4166628343233841359L;
-
+	private static final long serialVersionUID = -4507489611517393544L;
+	
     private Province province;
     private String name;
     private HashMap<Party, Candidate> candidates;
@@ -33,11 +33,7 @@ public class District implements Serializable {
     }
 
     public Candidate getCandidate(Party party) {
-        if (candidates.containsKey(party)) {
-            return candidates.get(party);
-        }
-        
-        return null;
+        return candidates.getOrDefault(party, null);
     }
 
     public Collection<Candidate> getAllCandidates() {
