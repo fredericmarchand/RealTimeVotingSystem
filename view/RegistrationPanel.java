@@ -2,29 +2,38 @@ package view;
 
 import java.awt.Color;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import controller.ClientController;
+import model.Address;
 import model.Province;
+import model.Voter;
+import networking.WSocket;
 
 public class RegistrationPanel extends JPanel {
+	
+	private static final long serialVersionUID = 1L;
 
+	// The socket
+	WSocket socket;
+	
 	// These are the components
-	private JTextField         firstNameText;
-	private JTextField         lastNameText;
-	private JTextField         idText;
-	private JTextField         streetNumberText;
-	private JTextField         streetText;
-	private JTextField         cityText;
-	private JTextField         postalCodeText;
-	private JComboBox<String>  provincesComboBox;
-	private JButton            submitButton;
+	private JTextField        sinText;
+	private JPasswordField    passwordText;
+	private JTextField        firstNameText;
+	private JTextField        lastNameText;
+	private JTextField        streetNumberText;
+	private JTextField        streetText;
+	private JTextField        cityText;
+	private JTextField        postalCodeText;
+	private JComboBox<String> provincesComboBox;
+	private JButton           submitButton;
+	private JButton           cancleButton;
 
 	private final Color ERROR_COLOUR = Color.RED;
 	private final Color SUCCESS_COLOUR = Color.GREEN;
@@ -35,50 +44,51 @@ public class RegistrationPanel extends JPanel {
 		GridBagLayout layout = new GridBagLayout();
 		setLayout(layout);
 
-		add(Utilities.newJLabel("First Name:",0,0,layout));
-		firstNameText = Utilities.newJTextField("",1,0,layout);
+		add(Utilities.newJLabel("SIN:",0,0,layout));
+		sinText = Utilities.newJTextField("", 1, 0, 1, 1, layout);
+		add(sinText);
+		
+		add(Utilities.newJLabel("New Password:",0,1,layout));
+		passwordText = Utilities.newJPasswordField("", 1, 1, layout);
+		add(passwordText);
+		
+		add(Utilities.newJLabel("First Name:",0,2,layout));
+		firstNameText = Utilities.newJTextField("", 1, 2, 1, 1, layout);
 		add(firstNameText);
 
-		add(Utilities.newJLabel("Last Name:",0,1,layout));
-		lastNameText = Utilities.newJTextField("",1,1,layout);
+		add(Utilities.newJLabel("Last Name:",0,3,layout));
+		lastNameText = Utilities.newJTextField("", 1, 3, 1, 1, layout);
 		add(lastNameText);
 
-		add(Utilities.newJLabel("ID:",0,2,layout));
-		idText = Utilities.newJTextField("",1,2,layout);
-		add(idText);
-
-		add(Utilities.newJLabel("Street Number:",0,3,layout));
-		streetNumberText = Utilities.newJTextField("",1,3,layout);
+		add(Utilities.newJLabel("Street Number:",0,4,layout));
+		streetNumberText = Utilities.newJTextField("", 1, 4, 1, 1, layout);
 		add(streetNumberText);
 
-		add(Utilities.newJLabel("Street:",0,4,layout));
-		streetText = Utilities.newJTextField("",1,4,layout);
+		add(Utilities.newJLabel("Street:",0,5,layout));
+		streetText = Utilities.newJTextField("", 1, 5, 1, 1, layout);
 		add(streetText);
 
-		add(Utilities.newJLabel("City:",0,5,layout));
-		cityText = Utilities.newJTextField("",1,5,layout);
+		add(Utilities.newJLabel("City:",0,6,layout));
+		cityText = Utilities.newJTextField("", 1, 6, 1, 1, layout);
 		add(cityText);
 
-		add(Utilities.newJLabel("Postal Code:",0,6,layout));
-		postalCodeText = Utilities.newJTextField("",1,6,layout);
+		add(Utilities.newJLabel("Postal Code:",0,7,layout));
+		postalCodeText = Utilities.newJTextField("", 1, 7, 1, 1, layout);
 		add(postalCodeText);
 
-		add(Utilities.newJLabel("Province:",0,7,layout));
-		provincesComboBox = Utilities.newJComboBox(Province.getProvinceList(),1,7,layout);
+		add(Utilities.newJLabel("Province:",0,8,layout));
+		provincesComboBox = Utilities.newJComboBox(Province.getProvinceList(),1,8,layout);
 		add(provincesComboBox);
 
-		submitButton = Utilities.newJButton("Submit", 1, 8, layout);
-		submitButton.addActionListener(new ActionListener() {
-		    @Override
-		    public void actionPerformed(ActionEvent evt) {
-		        if(validateFields()) {
-		        }
-		    }
-		});
+		submitButton = Utilities.newJButton("Submit", 1, 9, 1, 1, layout);
 		add(submitButton);
+		
+		cancleButton = Utilities.newJButton("Cancle", 0, 9, 1, 1, layout);
+		add(cancleButton);
 	}
 
-	private boolean validateFields() {
+	public boolean validateFields() {
+		
 		boolean bool = true;
 
 		if(!firstNameText.getText().isEmpty() && firstNameText.getText().matches("^[a-zA-Z]+$")) {
@@ -95,10 +105,10 @@ public class RegistrationPanel extends JPanel {
 			bool = false;
 		}
 
-		if(!idText.getText().isEmpty() && idText.getText().matches("^[0-9]+$")) {
-			idText.setForeground(SUCCESS_COLOUR);
+		if(!sinText.getText().isEmpty() && sinText.getText().matches("^[0-9]+$")) {
+			sinText.setForeground(SUCCESS_COLOUR);
 		} else {
-			idText.setForeground(ERROR_COLOUR);
+			sinText.setForeground(ERROR_COLOUR);
 			bool = false;
 		}
 
@@ -132,16 +142,30 @@ public class RegistrationPanel extends JPanel {
 
 		return bool;
 	}
-
-	public static void main(String[] args) {
-		//Ask for window decorations provided by the look and feel.
-		JFrame.setDefaultLookAndFeelDecorated(true);
-
-		//Create the frame.
-		JFrame frame = new JFrame("A window");
-
-		frame.add(new RegistrationPanel());
-		frame.setSize(500,500);
-		frame.setVisible(true);
+	
+	public void registerUser() {
+    	ClientController.registerUser(
+			new Voter(
+					firstNameText.getText(),
+					lastNameText.getText(),
+					new Address(
+							streetNumberText.getText(),
+							streetText.getText(),
+							cityText.getText(),
+							(Province) provincesComboBox.getSelectedItem(),
+							postalCodeText.getText()
+							),
+					Integer.parseInt(sinText.getText())
+			),
+			socket
+    	);
+	}
+	
+	public JButton getSubmitButton() {
+		return submitButton;
+	}
+	
+	public JButton getCancleButton() {
+		return cancleButton;
 	}
 }

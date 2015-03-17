@@ -1,29 +1,117 @@
 package view;
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+
+import model.Candidate;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.block.BlockBorder;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 public final class Utilities {
 	
 	private static Font UIFont = new Font("Courier New", Font.BOLD, 16);
 	private static GridBagConstraints constraints = new GridBagConstraints();
 	
-	public static JButton newJButton(String label, int gridx, int gridy, GridBagLayout layout) {
-		JButton jButton = new JButton(label);
+	public static JScrollPane newJScrollPane(JList<Candidate> jList, int gridx, int gridy, int gridwidth, int gridheight, GridBagLayout layout) {
+		JScrollPane jScrollPane = new JScrollPane(jList,
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
 		constraints.gridx = gridx;
 		constraints.gridy = gridy;
-		constraints.gridwidth = 1;
-		constraints.gridheight = 1;
+		constraints.gridwidth = gridwidth;
+		constraints.gridheight = gridheight;
+		constraints.fill = GridBagConstraints.BOTH;
+		constraints.insets = new Insets(10, 10, 10, 10);
+		constraints.anchor = GridBagConstraints.NORTHWEST;
+		constraints.weightx = 1.0;
+		constraints.weighty = 0.0;
+		layout.setConstraints(jScrollPane, constraints);
+		
+		jScrollPane.setPreferredSize(new Dimension(80,120));
+		
+		return jScrollPane;
+	}
+	
+	public static ChartPanel newResultsChartPanel(String title, int gridx, int gridy, int gridwidth, int gridheight, GridBagLayout layout) {
+		CategoryDataset dataset = getElectionResults();
+		JFreeChart chart = createChart(dataset, title);
+		ChartPanel chartPanel = new ChartPanel(chart);
+		chartPanel.setFillZoomRectangle(true);
+		chartPanel.setMouseWheelEnabled(true);
+		chartPanel.setPreferredSize(new Dimension(500, 270));
+		
+        constraints.gridx = gridx;
+		constraints.gridy = gridy;
+		constraints.gridwidth = gridwidth;
+		constraints.gridheight = gridheight;
+		constraints.fill = GridBagConstraints.BOTH;
+		constraints.insets = new Insets(10, 10, 10, 10);
+		constraints.anchor = GridBagConstraints.NORTHWEST;
+		constraints.weightx = 1.0;
+		constraints.weighty = 1.0;
+		layout.setConstraints(chartPanel, constraints);
+		
+		return chartPanel;
+	}
+	
+	private static CategoryDataset getElectionResults() {
+		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		dataset.addValue(7445, "Party1", "Party1");
+		dataset.addValue(24448, "Party2", "Party2");
+		dataset.addValue(4297, "Party3", "Party3");
+		dataset.addValue(21022, "Party4", "Party4");
+		return dataset;
+	}
+	 
+	private static JFreeChart createChart(CategoryDataset dataset, String title) {
+		JFreeChart chart = ChartFactory.createBarChart(title, "Party", "Votes", dataset);
+		chart.setBackgroundPaint(Color.white);
+		CategoryPlot plot = (CategoryPlot) chart.getPlot();
+		
+		BarRenderer renderer = (BarRenderer) plot.getRenderer();
+		renderer.setDrawBarOutline(false);
+		chart.getLegend().setFrame(BlockBorder.NONE);
+		return chart;
+	}
+	
+	public static JList<Candidate> newJList(ArrayList<Candidate> list, Font font) {
+		JList<Candidate> jList = new JList<Candidate>(list.toArray(new Candidate[list.size()]));
+		jList.setFont(font);
+		jList.setCellRenderer(new CandidateCellRenderer());
+		
+		return jList;
+	}
+	
+	public static JButton newJButton(String label, int gridx, int gridy, int gridwidth, int gridheight, GridBagLayout layout) {
+		JButton jButton = new JButton(label);
+		jButton.setFont(UIFont);
+		
+		constraints.gridx = gridx;
+		constraints.gridy = gridy;
+		constraints.gridwidth = gridwidth;
+		constraints.gridheight = gridheight;
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.insets = new Insets(10, 10, 10, 10);
 		constraints.anchor = GridBagConstraints.NORTHWEST;
@@ -34,8 +122,9 @@ public final class Utilities {
 		return jButton;
 	}
 	
-	public static JComboBox newJComboBox(ArrayList list, int gridx, int gridy, GridBagLayout layout) {
-		JComboBox<String> jComboBox = new JComboBox(list.toArray());
+	public static JComboBox<String> newJComboBox(ArrayList<String> list, int gridx, int gridy, GridBagLayout layout) {
+		JComboBox<String> jComboBox = new JComboBox<String>(list.toArray(new String[list.size()]));
+		jComboBox.setFont(UIFont);
 		
 		constraints.gridx = gridx;
 		constraints.gridy = gridy;
@@ -53,6 +142,7 @@ public final class Utilities {
 	
 	public static JLabel newJLabel(String label, int gridx, int gridy, GridBagLayout layout) {
 		JLabel jLabel = new JLabel(label);
+		jLabel.setFont(UIFont);
 		
 		constraints.gridx = gridx;
 		constraints.gridy = gridy;
@@ -68,9 +158,27 @@ public final class Utilities {
 		return jLabel;
 	}
 	
-	public static JTextField newJTextField(String text, int gridx, int gridy, GridBagLayout layout) {
-		JTextField jTextField = new JTextField(text);
-		jTextField.setFont(UIFont);
+	public static JTextField newJTextField(String text, int gridx, int gridy, int gridwidth, int gridheight, GridBagLayout layout) {
+		JTextField jValidationTextField = new JTextField(text);
+		jValidationTextField.setFont(UIFont);
+
+		constraints.gridx = gridx;
+		constraints.gridy = gridy;
+		constraints.gridwidth = gridwidth;
+		constraints.gridheight = gridheight;
+		constraints.fill = GridBagConstraints.BOTH;
+		constraints.insets = new Insets(10, 10, 10, 10);
+		constraints.anchor = GridBagConstraints.EAST;
+		constraints.weightx = 1.0;
+		constraints.weighty = 0.0;
+		layout.setConstraints(jValidationTextField, constraints);
+		
+		return jValidationTextField;
+	}
+	
+	public static JPasswordField newJPasswordField(String text, int gridx, int gridy, GridBagLayout layout) {
+		JPasswordField jPasswordField = new JPasswordField(text);
+		jPasswordField.setFont(UIFont);
 
 		constraints.gridx = gridx;
 		constraints.gridy = gridy;
@@ -81,8 +189,8 @@ public final class Utilities {
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.weightx = 1.0;
 		constraints.weighty = 0.0;
-		layout.setConstraints(jTextField, constraints);
+		layout.setConstraints(jPasswordField, constraints);
 		
-		return jTextField;
+		return jPasswordField;
 	}
 }

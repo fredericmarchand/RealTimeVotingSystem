@@ -14,6 +14,10 @@ public class Party implements Serializable {
     public Candidate getLeader() {
         return leader;
     }
+    
+    public String getName() {
+    	return name;
+    }
 
     @Override
     public String toString() {

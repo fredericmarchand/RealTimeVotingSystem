@@ -1,135 +1,116 @@
 package view;
 
 import java.awt.Font;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
 
-public class VotingPanel extends JFrame{
+import model.Address;
+import model.Candidate;
+import model.District;
+
+public class VotingPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
-// These are the components
-	private JButton searchButton;
-	private JTextField searchText;
-	@SuppressWarnings("rawtypes")
-	private JList bookList;
-	@SuppressWarnings("rawtypes")
-	private JList songList;
-
-	private Font UIFont = new Font("Courier New", Font.BOLD, 16);
-
-	// These are the get methods that are used to access the components
-	public JButton getSearchButton() {
-		return searchButton;
-	}
-
-	@SuppressWarnings("rawtypes")
-	public JList getBookList() {
-		return bookList;
-	}
-
-	@SuppressWarnings("rawtypes")
-	public JList getSongList() {
-		return songList;
-	}
-
-	public JTextField getSearchText() {
-		return searchText;
-	}
-
-	// This is the default constructor
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public VotingPanel() {
-		super();
-
-		// Use a GridBagLayout (lotsa fun)
+	// The Socket
+//	WSocket socket;
+	
+	// The District
+	District district;
+	
+	// These are the components
+	JButton          submitButton;
+	JButton          cancleButton;
+	JList<Candidate> districtCandidatesList;
+	JScrollPane      districtCandidatesScrollPane;
+	JLabel           partyLabel;
+	JTextField       partyField;
+	JLabel           candidateLabel;
+	JTextField       candidateField;
+	JLabel           districtLabel;
+	JTextField       districtField;
+	
+	public VotingPanel(District district) {
+		
+		this.district = district;
+		//this.socket = socket;
+		
+		ArrayList<Candidate> array = new ArrayList<Candidate>();
+		
+		array.add(new Candidate("Jason","Coles",new Address(),district,23487345));
+		array.add(new Candidate("Jason","Coles",new Address(),district,23487345));
+		array.add(new Candidate("Jeff","Horton",new Address(),district,23487345));
+		array.add(new Candidate("Justin","Crawford",new Address(),district,23487345));
+		
 		GridBagLayout layout = new GridBagLayout();
-		GridBagConstraints layoutConstraints = new GridBagConstraints();
 		setLayout(layout);
 
-		// Add the bookList list
-		bookList = new JList();
-		bookList.setFont(UIFont);
-		bookList.setPrototypeCellValue("xxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-		JScrollPane scrollPane = new JScrollPane(bookList,
-				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		layoutConstraints.gridx = 0;
-		layoutConstraints.gridy = 0;
-		layoutConstraints.gridwidth = 1;
-		layoutConstraints.gridheight = 5;
-		layoutConstraints.fill = GridBagConstraints.BOTH;
-		layoutConstraints.insets = new Insets(10, 10, 10, 10);
-		layoutConstraints.anchor = GridBagConstraints.NORTHWEST;
-		layoutConstraints.weightx = 1.0;
-		layoutConstraints.weighty = 1.0;
-		layout.setConstraints(scrollPane, layoutConstraints);
-		add(scrollPane);
-
-		// Add the Add button
-		searchText = new JTextField("");
-		searchText.setFont(UIFont);
-
-		layoutConstraints.gridx = 1;
-		layoutConstraints.gridy = 0;
-		layoutConstraints.gridwidth = 1;
-		layoutConstraints.gridheight = 1;
-		layoutConstraints.fill = GridBagConstraints.BOTH;
-		layoutConstraints.insets = new Insets(10, 10, 10, 10);
-		layoutConstraints.anchor = GridBagConstraints.EAST;
-		layoutConstraints.weightx = 1.0;
-		layoutConstraints.weighty = 0.0;
-		layout.setConstraints(searchText, layoutConstraints);
-		add(searchText);
-
-		// Add the Remove button
-		searchButton = new JButton("Search");
-		layoutConstraints.gridx = 2;
-		layoutConstraints.gridy = 0;
-		layoutConstraints.gridwidth = 1;
-		layoutConstraints.gridheight = 1;
-		layoutConstraints.fill = GridBagConstraints.BOTH;
-		layoutConstraints.insets = new Insets(10, 10, 10, 10);
-		layoutConstraints.anchor = GridBagConstraints.EAST;
-		layoutConstraints.weightx = 0.0;
-		layoutConstraints.weighty = 0.0;
-		layout.setConstraints(searchButton, layoutConstraints);
-		add(searchButton);
-
-		// Add the songList list
-		songList = new JList();
-		songList.setFont(UIFont);
-		songList.setPrototypeCellValue("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-		scrollPane = new JScrollPane(songList,
-				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		layoutConstraints.gridx = 1;
-		layoutConstraints.gridy = 1;
-		layoutConstraints.gridwidth = 2;
-		layoutConstraints.gridheight = 4;
-		layoutConstraints.fill = GridBagConstraints.BOTH;
-		layoutConstraints.insets = new Insets(10, 10, 10, 10);
-		layoutConstraints.anchor = GridBagConstraints.NORTHWEST;
-		layoutConstraints.weightx = 2.0;
-		layoutConstraints.weighty = 1.0;
-		layout.setConstraints(scrollPane, layoutConstraints);
-		add(scrollPane);
-
-	}
-
-	public static void main(String args[]) {
-		VotingPanel pan = new VotingPanel();
-		pan.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		pan.setSize(600, 300);
-		pan.setVisible(true);
-	}
+		districtCandidatesList = Utilities.newJList(array, new Font("Courier New", Font.BOLD, 24));
 		
+		add(Utilities.newJLabel(district.getName()+" Candidates",0,0,layout));
+		districtCandidatesScrollPane = Utilities.newJScrollPane(districtCandidatesList, 0, 1, 1, 4, layout);
+		add(districtCandidatesScrollPane);
+		
+		candidateLabel = Utilities.newJLabel("Candidate:", 1, 1, layout);
+		add(candidateLabel);
+		
+		candidateField = Utilities.newJTextField("", 2, 1, 2, 1, layout);
+		candidateField.setEnabled(false);
+		add(candidateField);
+		
+		partyLabel = Utilities.newJLabel("Party:", 1, 2, layout);
+		add(partyLabel);
+		
+		partyField = Utilities.newJTextField("", 2, 2, 1, 1, layout);
+		partyField.setEnabled(false);
+		add(partyField);
+		
+		districtLabel = Utilities.newJLabel("District:", 1, 3, layout);
+		add(districtLabel);
+		
+		districtField = Utilities.newJTextField("", 2, 3, 1, 1, layout);
+		districtField.setEnabled(false);
+		add(districtField);
+		
+		cancleButton = Utilities.newJButton("Cancle", 1, 4, 1, 1, layout);
+		add(cancleButton);
+		
+		submitButton = Utilities.newJButton("Submit", 2, 4, 1, 1, layout);
+		add(submitButton);
+		
+		districtCandidatesList.addMouseListener(new MouseAdapter() {
+		    public void mouseClicked(MouseEvent e) {
+		    	candidateField.setText(districtCandidatesList.getSelectedValue().getName());
+		        partyField.setText(districtCandidatesList.getSelectedValue().getParty().getName());
+		    }
+		});
+		
+		submitButton.addActionListener(new ActionListener() {
+		    @Override
+		    public void actionPerformed(ActionEvent evt) {
+		        if(districtCandidatesList.getSelectedValue() != null) {
+		        	System.out.println(districtCandidatesList.getSelectedValue().getName());
+		        }
+		    }
+		});
+	}
+	
+	public JButton getSubmitButton() {
+		return submitButton;
+	}
+	
+	public JButton getCancleButton() {
+		return cancleButton;
+	}
 }
