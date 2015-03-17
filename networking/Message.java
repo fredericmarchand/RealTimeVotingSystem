@@ -19,7 +19,9 @@ public class Message implements Serializable
     }
 
     public static enum Type {
-    	REGISTER, LOGIN, HAS_VOTED, VOTE, CANDIDATES, RESULTS
+    	REGISTER, VOTE, CANDIDATES, RESULTS, LOGIN,
+        HAS_VOTED, CONFIRMATION, FRAGMENT_START, 
+        FRAGMENT_DONE, FRAGMENT, TEST
     }
     
     private static final long serialVersionUID 
@@ -30,12 +32,11 @@ public class Message implements Serializable
     private long    checksum;
     private int     length;
     private int     senderPort;
-//    private Type  	type;
-    private String type;
+    private Type  	type;
     private InetAddress senderAddr; 
 
 
-    public Message (Method method, String type, Object data) 
+    public Message (Method method, Type type, Object data) 
     throws IOException {
         this.senderPort = -1;
         this.method = method;
@@ -66,6 +67,17 @@ public class Message implements Serializable
             this.type = msg.type;
             this.data = msg.data;
             this.checksum = msg.checksum;
+            // make sure the checksums match!
+            long check = Message.calculateChecksum(msg.getData());
+            if ( check !=  msg.getChecksum() ) {
+                MessageCorruptException err 
+                    = new MessageCorruptException("error: "
+                        + "corrupted data detected. "
+                        + "checksums do not match! "
+                        + "found: "+msg.getChecksum()+". "
+                        + "calculated: "+check);
+                throw err;
+            }
         } catch ( ClassNotFoundException e ) {
             e.printStackTrace();
         }
@@ -166,7 +178,7 @@ public class Message implements Serializable
         return this.method;
     }
 
-    public String getType() { 
+    public Type getType() { 
         return this.type;
     }
 }

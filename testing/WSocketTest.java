@@ -52,16 +52,16 @@ public class WSocketTest
     public static void userPressedVoteButton() {
         try { 
 
-        	ArrayList<Vote> big_data = new ArrayList<Vote>(10000);
-        	
-        	for ( int i=0; i<10000; i++ ) 
-        		big_data.add(new Vote(
-        				new Voter("Ronald", "McDonald", new Address(), 199299399), 
-        				new Candidate("George", "Bush", new Address(), new District("Narnia"), 616717818)));
-        	
+            ArrayList<Vote> big_data = new ArrayList<Vote>(10000);
+            
+            for ( int i=0; i<10000; i++ ) 
+                big_data.add(new Vote(
+                        new Voter("Ronald", "McDonald", new Address(), 199299399), 
+                        new Candidate("George", "Bush", new Address(), 616717818)));
+            
             final Message req = new Message(
                     Message.Method.GET,
-                    "test",
+                    Message.Type.TEST,
                     big_data);
 
             ////
@@ -70,7 +70,7 @@ public class WSocketTest
             new Thread( new Runnable() {
                 @Override public void run() {
                     try { 
-                    	// will take a while to process with extremely large data sets
+                        // will take a while to process with extremely large data sets
                         Message res = c_socket.sendReceive(req);
                         processResponse(res);
                     } catch ( Exception e ) {
@@ -107,11 +107,11 @@ public class WSocketTest
         // Pretend main() is a GUI thread!
 
         try {
-			c_socket = new WSocket().connect(8080);
-		} catch (UnknownHostException | SocketException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+            c_socket = new WSocket().connect(8080);
+        } catch (UnknownHostException | SocketException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
 
 
         // ...
