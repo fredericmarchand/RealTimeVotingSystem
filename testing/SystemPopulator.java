@@ -7,16 +7,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.lang.Integer;
 
 import model.*;
 
 public class SystemPopulator {
 
-	private static ArrayList voters = new ArrayList<Person>();
-	private static ArrayList candidates = new ArrayList<Person>();
-	private static ArrayList parties = new ArrayList<Party>();
-	private static District district  = null;
+	private static ArrayList<Person> voters = new ArrayList<Person>();
+	private static ArrayList<Person> candidates = new ArrayList<Person>();
+	private static ArrayList<Party> parties = new ArrayList<Party>();
 
 	public static void populateVotersAndCandidates(String inputFile) {
 
@@ -44,17 +42,11 @@ public class SystemPopulator {
  				sin = Integer.valueOf(data[7]);
 
  				province = Province.getProvinceFromName(data[5]);
- 				//
- 				// TODO hard coded a '7' here to fit with current address constructor
- 				//
- 				address = new Address("7", street, city, province, postalCode);
+ 				address = new Address(street, city, province, postalCode);
  				newPerson = null;
  				
  				if (data[0].equals("c")) {
- 					//
- 					// TODO hard coded a district here to fit with current constructor
- 					//
- 					newPerson = new Candidate(firstName, lastName, address, new District("anywhere"), sin);
+ 					newPerson = new Candidate(firstName, lastName, address, sin);
  					candidates.add(newPerson);
  				}
  				else if (data[0].equals("v")) {
@@ -90,16 +82,9 @@ public class SystemPopulator {
  				String[] data = line.split("%");
  				
  				if (data[0].equals("p")) {
- 					Candidate leader = null;
- 					if (candidates != null && candidates.size() > index)
- 						leader = (Candidate)candidates.get(index++);
- 					Party newParty = new Party(data[1], leader);
+ 					Party newParty = new Party(data[1], null);
  					parties.add(newParty);
  				}
- 				else if (data[0].equals("d")) {
- 					district = new District(data[1], Province.getProvinceFromName(data[2]));
- 				}
-
  			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -126,10 +111,6 @@ public class SystemPopulator {
   	    return parties;
     }
 
-    public static District getDistrict() {
-  	    return district;
-    }
-
     public static void main(String args[]) {
   		try {
   	    	final String FILE_1 = args[0];
@@ -154,12 +135,8 @@ public class SystemPopulator {
 
 	            SystemPopulator.populateParties(FILE_2);
 
-	            District district = SystemPopulator.getDistrict();
 	            ArrayList parties = SystemPopulator.getParties();
-	            out.write(district.toString());
-	            out.newLine();
-	            out.newLine();
-	            out.write("Total Parties: " + parties.size());
+     			out.write("Total Parties: " + parties.size());
 	            out.newLine();
 	            out.newLine();
 
@@ -183,7 +160,7 @@ public class SystemPopulator {
 					}
 				}
 	        }
-	    } catch (Exception _) {
+	    } catch (Exception e) {
 	    	System.out.println("Usage: SystemPopulator <votersFile> <partiesFile> <outputFile>");
 	    }
     }

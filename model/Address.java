@@ -12,24 +12,15 @@ public class Address implements Serializable {
 	private String postalCode;
 	
 	public Address() {
-		streetNumber = "000";
-		street = "unknown street";
-		city = "Ottawa";
-		province = Province.Ontario;
-		try {
-			setPostalCode("A2B8U4");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		this("0000 unknown street", "Ottawa", Province.Ontario, "A2B8U4");
 	}
 	
-	public Address(String num, String str, String cit, Province prov, String post) {
-		streetNumber = num;
+	public Address(String str, String cit, Province prov, String post) {
 		street = str;
 		city = cit;
 		province = prov;
 		try {
-			setPostalCode("post");
+			setPostalCode(post);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
