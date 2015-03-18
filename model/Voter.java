@@ -24,6 +24,10 @@ public class Voter extends Person implements Serializable {
     public boolean hasVoted() {
     	return hasVoted;
     }
+    
+    public void setHasVoted ( boolean hasVoted ) { 
+    	this.hasVoted = hasVoted;
+    }
 
     @Override
     public String toString() {

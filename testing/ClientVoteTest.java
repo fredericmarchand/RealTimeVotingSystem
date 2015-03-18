@@ -31,11 +31,23 @@ public class ClientVoteTest
 		controller.vote(c, v);
 	}
 	
+	@Test
 	public void voteNonexistingUser() { 
 		Voter v = new Voter("Dont-exist", "Fictitious", new Address(), 123456789);
 		v.setPassword("abc"); 
 		Candidate c = new Candidate("Green", "Bastard", new Address(), new District("Parts Unknown"), 987654321);
 		controller.vote(c, v);	
+	}
+	
+	@Test
+	public void voteTwiceUser() { 
+		Voter v = new Voter("Homer", "Simpson", new Address(), 987987987);
+		v.setPassword("d0h"); 
+		Candidate c = new Candidate("Green", "Bastard", new Address(), new District("Parts Unknown"), 987654321);
+		assertTrue(controller.registerUser(v));
+		assertTrue(controller.loginUser(v));
+		controller.vote(c, v);
+		controller.vote(c, v);
 	}
 	
 	@After

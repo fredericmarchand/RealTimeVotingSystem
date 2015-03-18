@@ -92,9 +92,19 @@ public class DistrictServer {
 							break;
 						case RtvsType.VOTE:
 							Vote vote = (Vote)msg.getData();
+							Voter voter = vote.getVoter();
+							if (registeredVoters.get(voter.getSIN()) == null) {
+								System.out.println("Rejecting vote: Voter is not registered");
+								break;
+							}
+							if (registeredVoters.get(voter.getSIN()).hasVoted()) {
+								System.out.println("Rejecting vote: Voter has already voted");
+								break;
+							}
 							if (!votes.contains(vote)) { // <-- negated proposition, i think this is what was intended
 								votes.add(vote);
-								System.out.println("vote");
+								registeredVoters.get(voter.getSIN()).setHasVoted(true);
+								System.out.println("vote accepted: "+vote.toString());
 							}
 							break;
 						default:

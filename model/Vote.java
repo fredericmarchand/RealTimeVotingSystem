@@ -28,5 +28,8 @@ public class Vote implements Serializable {
 		this.candidate = candidate;
 	}
 	
-	
+	@Override 
+	public String toString() { 
+		return "Vote: for "+candidate+" by voter: "+voter;
+	}
 }
