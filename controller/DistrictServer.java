@@ -64,7 +64,7 @@ public class DistrictServer {
  	public void receiveMessages() {
 		try {
 	        while ( true ) {
-	        	Message msg = recvSocket.receive();
+	        	final Message msg = recvSocket.receive();
 	        	new Thread(new Runnable() {
 					public void run() {
 						processMessages(msg);
@@ -161,6 +161,11 @@ public class DistrictServer {
 					sendSocket.sendTo(msg, sender);
 					break;
 				case RtvsType.RESULTS:
+					
+					
+					
+					
+					
 					break;
 				case RtvsType.PARTIES:
 					ArrayList<Party> response;
@@ -223,27 +228,6 @@ public class DistrictServer {
 				}
 			}).start();
 
-			/*// Connect to database
-			try {
-
-				// direct java to the sqlite-jdbc driver jar code
-				// load the sqlite-JDBC driver using the current class loader
-				Class.forName("org.sqlite.JDBC");
-
-				// create connection to a database in the project home directory.
-				// if the database does not exist one will be created in the home
-				// directory
-				Connection database = DriverManager.getConnection("jdbc:sqlite:" + server.getDistrict().getName());
-				
-				
-
-				database.close(); //close connection to database
-
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}*/
 		} catch (Exception e) {
 	    	System.out.println("Usage: DistrictServer <districtName> <provinceName> <port> [<inputFile>]");
 	    	e.printStackTrace();

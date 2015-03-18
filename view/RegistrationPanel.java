@@ -149,8 +149,7 @@ public class RegistrationPanel extends JPanel {
 					firstNameText.getText(),
 					lastNameText.getText(),
 					new Address(
-							streetNumberText.getText(),
-							streetText.getText(),
+							streetNumberText.getText() + " " + streetText.getText(),
 							cityText.getText(),
 							(Province) provincesComboBox.getSelectedItem(),
 							postalCodeText.getText()

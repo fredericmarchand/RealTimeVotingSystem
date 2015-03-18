@@ -6,17 +6,19 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Arrays;
 
 import networking.*;
 import model.*;
 import testing.SystemPopulator;
+import view.ClientGUI;
 
 public class ClientController {
 	
-	private WSocket socket;
-	private int districtServerPort;
+	public static final int SIMULATION_MODE = 0;
+	public static final int USER_MODE = 1;
+	
+	private static WSocket socket;
+	private static int districtServerPort;
 
 	public ClientController (int serverPort) {
 		districtServerPort = serverPort;
@@ -28,11 +30,15 @@ public class ClientController {
         }
 	}
 	
-	public void close() { 
-		this.socket.close();
+	public WSocket getSocket() {
+		return socket;
 	}
 	
-	public boolean registerUser(Voter v) {
+	public void closeSocket() { 
+		socket.close();
+	}
+	
+	public static boolean registerUser(Voter v, WSocket socket) {
 		boolean result = false;
 		try {
 			Message newMsg = new Message(Message.Method.POST, RtvsType.REGISTER, v);
@@ -47,7 +53,8 @@ public class ClientController {
 		return result;
 	}
 	
-	public ArrayList<Party> getParties() {
+	@SuppressWarnings("unchecked")
+	public static ArrayList<Party> getParties(WSocket socket) {
 		ArrayList<Party> parties = new ArrayList<Party>();
 		try {
 			Message newMsg = new Message(Message.Method.GET, RtvsType.PARTIES, "");
@@ -61,7 +68,7 @@ public class ClientController {
 		return parties;
 	}
 
-	public boolean updateCandidate(Candidate c, Party party) {
+	public static  boolean updateCandidate(Candidate c, Party party) {
 		c.runFor(party);
 		boolean result = false;
 		try {
@@ -83,7 +90,7 @@ public class ClientController {
 		return result;
 	}
 	
-	public Voter loginUser(String username, String password) {
+	public static Voter loginUser(String username, String password, WSocket socket) {
 		Voter result = null;
 		try {
 			Message newMsg = new Message(Message.Method.POST, RtvsType.LOGIN, username+"\n"+password);
@@ -98,7 +105,7 @@ public class ClientController {
 		return result;
 	}
 	
-	public boolean userHasVoted(Voter v) {		
+	public static boolean userHasVoted(Voter v, WSocket socket) {		
 		boolean result = false;
 		try {
 			Message newMsg = new Message(Message.Method.GET, RtvsType.HAS_VOTED, v);
@@ -113,7 +120,7 @@ public class ClientController {
 		return result;
 	}
 	
-	public void vote(Candidate c, Voter v) {
+	public static void vote(Candidate c, Voter v, WSocket socket) {
 		Vote vote = new Vote(v, c);
 		try {
 			Message newMsg = new Message(Message.Method.POST, RtvsType.VOTE, vote);
@@ -125,7 +132,7 @@ public class ClientController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public ArrayList<Candidate> getDistrictCandidates(District d, WSocket socket) {
+	public static ArrayList<Candidate> getDistrictCandidates(District d, WSocket socket) {
 		ArrayList<Candidate> candidates = new ArrayList<Candidate>();
 		
 		//fetch from district server;
@@ -142,7 +149,7 @@ public class ClientController {
 		return candidates;
 	}
 	
-	public HashMap<Candidate, Integer> getLocalResults(District d, WSocket socket) {
+	public static HashMap<Candidate, Integer> getLocalResults(District d, WSocket socket) {
 		HashMap<Candidate, Integer> results = new HashMap<Candidate, Integer>();
 		
 		try {
@@ -195,7 +202,7 @@ public class ClientController {
             out.newLine();
             for (int i = 0; i < voters.size(); ++i) {
             	Voter voter = (Voter)voters.get(i);
-				if (registerUser(voter)) {
+				if (registerUser(voter, this.getSocket())) {
 					out.write("Registration Successful: " + voter.toString());
 				}
 				else {
@@ -207,7 +214,7 @@ public class ClientController {
 
 			out.write("Getting Parties from the Server.");
             out.newLine();
-            ArrayList<Party> parties = getParties();
+            ArrayList<Party> parties = ClientController.getParties(this.getSocket());
 
             if (parties.size() > 0) {
             	out.write("District Parties:");
@@ -251,7 +258,8 @@ public class ClientController {
 
 	public void startUI() {
 		//Create GUI
-		
+		@SuppressWarnings("unused")
+		ClientGUI gui = new ClientGUI(new District("Ottawa South"), this.getSocket());
 		//Click Registration button
 		//Show Registration Panel
 		//Submit Registration information (event handler)
@@ -266,14 +274,15 @@ public class ClientController {
 	
 	public static void main(String[] args) {
 		try {
-  	    	int serverPort = Integer.valueOf(args[0]);
-
+			int mode = Integer.parseInt(args[0]);
+  	    	int serverPort = Integer.valueOf(args[1]);
+  	    	
   	    	final ClientController client = new ClientController(serverPort);
 
-  	    	if (args.length > 1) {
-  	    		client.simulate(args[1], args[2]);
+  	    	if (mode == ClientController.SIMULATION_MODE) {
+  	    		client.simulate(args[2], args[3]);
   	    	}
-  	    	else {
+  	    	else if (mode ==  ClientController.USER_MODE) {
   	    		client.startUI();
   	    	}
 

@@ -43,7 +43,7 @@ public class VotingPanel extends JPanel {
 	JLabel           districtLabel;
 	JTextField       districtField;
 	
-	public VotingPanel(District district, WSocket socket) {
+	public VotingPanel(final District district, WSocket socket) {
 		
 		this.district = district;
 		this.socket = socket;
