@@ -33,7 +33,11 @@ public class Party implements Serializable {
 
     @Override
     public String toString() {
-        return "Party: " + name + ", headed by " + leader;
+        String desc = "Party: " + name;
+        if (leader != null) {
+            desc += ", headed by " + leader.getName();
+        }
+        return desc;
     }
 
     @Override

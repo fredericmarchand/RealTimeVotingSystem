@@ -47,4 +47,8 @@ public class Person implements Serializable {
         return rhs.SIN == SIN;
     }
 
+    public String toString() {
+        return getName();
+    }
+
 }

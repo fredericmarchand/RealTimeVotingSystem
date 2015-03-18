@@ -17,7 +17,7 @@ public class Candidate extends Voter {
     }
 
     public void runFor(Party party) {
-        this.party = null;
+        this.party = party;
     }
 
     public Party getParty() {
@@ -28,7 +28,7 @@ public class Candidate extends Voter {
     public String toString() {
         String desc = "";
         if (party != null) {
-            desc += "Candidate: Running for " + party + "\n";
+            desc += "Candidate: Running for " + party + "-";
         }
         desc += super.toString();
         return desc;

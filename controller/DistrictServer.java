@@ -20,7 +20,7 @@ import testing.SystemPopulator;
 public class DistrictServer {
 	
 	private District district;
-	private WSocket socket;
+	private WSocket recvSocket, sendSocket;
 	private HashMap<String, Party> parties;
 	private HashMap<String, Candidate> candidates;
 	private HashMap<String, Voter> registeredVoters;
@@ -29,7 +29,8 @@ public class DistrictServer {
 	public DistrictServer(String name, Province province, int port) {
 		district = new District (name, province);
 		try {
-			socket = new WSocket().listen(port);
+			recvSocket = new WSocket().listen(port);
+			sendSocket = new WSocket().connect(port);
         } catch (UnknownHostException | SocketException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
@@ -45,7 +46,7 @@ public class DistrictServer {
 	}
 	
 	public WSocket getSocket() {
-		return socket;
+		return recvSocket;
 	}
 
 	public void populateParties(String inputFile) {
@@ -63,7 +64,7 @@ public class DistrictServer {
  	public void receiveMessages() {
 		try {
 	        while ( true ) {
-	        	Message msg = socket.receive();
+	        	Message msg = recvSocket.receive();
 	        	new Thread(new Runnable() {
 					public void run() {
 						processMessages(msg);
@@ -71,7 +72,8 @@ public class DistrictServer {
 				}).start();
 	        }
 	    } catch (Exception e) {
-	    	socket.close();
+	    	recvSocket.close();
+	    	sendSocket.close();
 	    	e.printStackTrace();
 	    }
    	}
@@ -87,7 +89,7 @@ public class DistrictServer {
 						response1 = new ArrayList<Candidate>(candidates.values());
 					}							
 					msg = new Message(Message.Method.GET, RtvsType.CANDIDATES, response1);
-					socket.sendTo(msg, sender);
+					sendSocket.sendTo(msg, sender);
 					break;
 				case RtvsType.REGISTER:
 					Voter voter1 = (Voter)msg.getData();
@@ -106,14 +108,14 @@ public class DistrictServer {
 							msg = new Message(Message.Method.GET, RtvsType.REGISTER, Boolean.TRUE);
 						}
 					}
-					socket.sendTo(msg, sender);
+					sendSocket.sendTo(msg, sender);
 					break;
 				case RtvsType.RUN:
 					Candidate candidate1 = (Candidate)msg.getData();
 					synchronized(registeredVoters) {
 						synchronized(parties) {
 							if (candidate1 == null || !registeredVoters.containsKey(candidate1.getUsername()) ||
-								!parties.containsKey(candidate1.getParty().getName())) {
+								candidate1.getParty() == null || !parties.containsKey(candidate1.getParty().getName())) {
 								//Candidate not registered or party does not exist
 								//Return false
 								msg = new Message(Message.Method.GET, RtvsType.RUN, Boolean.FALSE);
@@ -122,13 +124,17 @@ public class DistrictServer {
 
 								synchronized(candidates) {
 									candidates.put(candidate1.getUsername(), candidate1);
+									Party party = parties.get(candidate1.getParty().getName());
+									if (party.getLeader() == null) {
+										party.setLeader(candidate1);
+									}
 								}							
 								//Return true
 								msg = new Message(Message.Method.GET, RtvsType.RUN, Boolean.TRUE);
 							}
 						}
 					}
-					socket.sendTo(msg, sender);
+					sendSocket.sendTo(msg, sender);
 					break;
 				case RtvsType.LOGIN:
 					Voter voter = null;
@@ -152,7 +158,7 @@ public class DistrictServer {
 						voter = null;
 					}
 					msg = new Message(Message.Method.GET, RtvsType.LOGIN, voter);
-					socket.sendTo(msg, sender);
+					sendSocket.sendTo(msg, sender);
 					break;
 				case RtvsType.RESULTS:
 					break;
@@ -162,7 +168,7 @@ public class DistrictServer {
 						response = new ArrayList<Party>(parties.values());
 					}							
 					msg = new Message(Message.Method.GET, RtvsType.PARTIES, response);
-					socket.sendTo(msg, sender);
+					sendSocket.sendTo(msg, sender);
 					break;
 				case RtvsType.HAS_VOTED:
 					String username = (String)msg.getData();
@@ -173,7 +179,7 @@ public class DistrictServer {
 						}
 					}
 					msg = new Message(Message.Method.GET, RtvsType.HAS_VOTED, hasVoted);
-					socket.sendTo(msg, sender);
+					sendSocket.sendTo(msg, sender);
 					break;
 				case RtvsType.VOTE:
 					Vote vote = (Vote)msg.getData();
@@ -190,6 +196,7 @@ public class DistrictServer {
             ////
             // The checksums did not match!
             System.err.println(e);
+           	e.printStackTrace();
             // do nothing, 
             // the client should resend the same message
         }

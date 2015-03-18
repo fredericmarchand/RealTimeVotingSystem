@@ -70,8 +70,12 @@ public class ClientController {
 			newMsg = socket.receive();
 			result = (boolean)newMsg.getData();
 
-			if (!result)
+			if (!result) {
 				c.runFor(null);			
+			}
+			else if (party.getLeader() == null) {
+				party.setLeader(c);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
