@@ -11,4 +11,6 @@ public interface RtvsType
 	public static final String LOGIN 		= "LOGIN";
 	public static final String RESULTS 		= "RESULTS";
 	public static final String HAS_VOTED 	= "HAS_VOTED";
+	public static final String PARTIES		= "PARTIES";
+	public static final String RUN          = "RUN";
 }

@@ -1,18 +1,23 @@
 package model;
 
+import java.util.Arrays;
+
 public class Candidate extends Voter {
-	private static final long serialVersionUID = -4516489610617345544L;
-	
+    
     private Party party;
 
-    public Candidate(String firstName, String lastName, Address address, District district, int SIN) {
+    public Candidate(String firstName, String lastName, Address address, int SIN) {
         super(firstName, lastName, address, SIN);
         party = null;
     }
 
-    public void runFor(Party party, District district) {
+    public Candidate(String firstName, String lastName, Address address, int SIN, String user, String pass) {
+        super(firstName, lastName, address, SIN, user, pass);
+        party = null;
+    }
+
+    public void runFor(Party party) {
         this.party = party;
-        setDistrict(district);
     }
 
     public Party getParty() {
@@ -23,7 +28,7 @@ public class Candidate extends Voter {
     public String toString() {
         String desc = "";
         if (party != null) {
-            desc += "Candidate: Running for " + party + "\n";
+            desc += "Candidate: Running for " + party + "-";
         }
         desc += super.toString();
         return desc;

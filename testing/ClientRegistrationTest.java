@@ -1,12 +1,12 @@
 package testing;
 
-import static org.junit.Assert.*;
+//import static org.junit.Assert.*;
 import model.Address;
 import model.Voter;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+//import org.junit.After;
+//import org.junit.Before;
+//import org.junit.Test;
 
 import controller.ClientController;
 
@@ -14,7 +14,7 @@ public class ClientRegistrationTest
 {
 	ClientController controller;
 	
-	@Before
+	/*@Before
 	public void setup() {
 		controller = new ClientController(60002);
 	}
@@ -42,5 +42,5 @@ public class ClientRegistrationTest
 		if ( controller != null ) { 
 			controller.close();
 		}
-	}
+	}*/
 }

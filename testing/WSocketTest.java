@@ -57,7 +57,7 @@ public class WSocketTest
         	for ( int i=0; i<10000; i++ ) 
         		big_data.add(new Vote(
         				new Voter("Ronald", "McDonald", new Address(), 199299399), 
-        				new Candidate("George", "Bush", new Address(), new District("Narnia"), 616717818)));
+        				new Candidate("George", "Bush", new Address(), 616717818)));
         	
             final Message req = new Message(
                     Message.Method.GET,

@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
 
 import networking.*;
 import model.*;
@@ -43,13 +47,49 @@ public class ClientController {
 		return result;
 	}
 	
-	public boolean loginUser(Voter v) {
+	public ArrayList<Party> getParties() {
+		ArrayList<Party> parties = new ArrayList<Party>();
+		try {
+			Message newMsg = new Message(Message.Method.GET, RtvsType.PARTIES, "");
+			socket.sendTo(newMsg, districtServerPort);
+			newMsg = socket.receive();
+			parties = (ArrayList<Party>)newMsg.getData();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return parties;
+	}
+
+	public boolean updateCandidate(Candidate c, Party party) {
+		c.runFor(party);
 		boolean result = false;
 		try {
-			Message newMsg = new Message(Message.Method.POST, RtvsType.LOGIN, v);
-			socket.sendTo(newMsg, districtServerPort); //Get port from list of district servers
+			Message newMsg = new Message(Message.Method.POST, RtvsType.RUN, c);
+			socket.sendTo(newMsg, districtServerPort);
 			newMsg = socket.receive();
 			result = (boolean)newMsg.getData();
+
+			if (!result) {
+				c.runFor(null);			
+			}
+			else if (party.getLeader() == null) {
+				party.setLeader(c);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	public Voter loginUser(String username, String password) {
+		Voter result = null;
+		try {
+			Message newMsg = new Message(Message.Method.POST, RtvsType.LOGIN, username+"\n"+password);
+			socket.sendTo(newMsg, districtServerPort);
+			newMsg = socket.receive();
+			result = (Voter)newMsg.getData();
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -134,13 +174,79 @@ public class ClientController {
 		return results;
 	}
 
-	public void simulate(String inputFile) {
-		SystemPopulator.populateVotersAndCandidates(inputFile);
+	public void simulate(String inputFile, String outputFile) {
 
-		ArrayList<Person> voters = SystemPopulator.getVoters();
-		for (int i = 0; i < voters.size(); ++i) {
-			registerUser((Voter)voters.get(i));
-		}
+		BufferedWriter out = null;
+
+  	    try { 
+            out = new BufferedWriter(new FileWriter(outputFile));
+            out.write("Populating the system with Voters and Candidates...");
+            out.newLine();
+            SystemPopulator.populateVotersAndCandidates(inputFile);
+            ArrayList<Person> voters = SystemPopulator.getVoters();
+      		ArrayList<Person> candidates = SystemPopulator.getCandidates();
+            out.write("Total Voters: " + voters.size());
+            out.newLine();
+            out.write("Done Populating.");
+            out.newLine();
+            out.newLine();
+
+            out.write("Registering Voters on the Server.");
+            out.newLine();
+            for (int i = 0; i < voters.size(); ++i) {
+            	Voter voter = (Voter)voters.get(i);
+				if (registerUser(voter)) {
+					out.write("Registration Successful: " + voter.toString());
+				}
+				else {
+					out.write("Registration Failed: " + voter.toString());
+				}
+				out.newLine();
+			}
+			out.newLine();
+
+			out.write("Getting Parties from the Server.");
+            out.newLine();
+            ArrayList<Party> parties = getParties();
+
+            if (parties.size() > 0) {
+            	out.write("District Parties:");
+            	out.newLine();
+            	for (int i = 0; i < parties.size(); ++i) {
+            		out.write(parties.get(i).getName());
+            		out.newLine();
+            	}
+            	out.newLine();
+
+            	out.write("Updating Candidates and their Parties on the Server.");
+	            out.newLine();
+	            for (int i = 0; i < candidates.size(); ++i) {
+	            	Candidate candidate = (Candidate)candidates.get(i);
+					if (updateCandidate(candidate, parties.get((i%parties.size())))) {
+						out.write("Candidate Run Successful: " + candidate.toString());
+					}
+					else {
+						out.write("Candidate Run Failed: " + candidate.toString());
+					}
+					out.newLine();
+				}
+            }
+            else {
+            	out.write("There are no parties in the District Server");
+            	out.newLine();
+            	out.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+        	if (out != null) {
+				try {
+					out.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+        }
 	}
 
 	public void startUI() {
@@ -165,15 +271,14 @@ public class ClientController {
   	    	final ClientController client = new ClientController(serverPort);
 
   	    	if (args.length > 1) {
-  	    		client.simulate(args[1]);
+  	    		client.simulate(args[1], args[2]);
   	    	}
   	    	else {
   	    		client.startUI();
   	    	}
 
-	    } catch (Exception _e) {
-	    	_e.printStackTrace();
-	    	System.out.println("Usage: ClientController <serverPort> [<inputFile>]");
+	    } catch (Exception e) {
+	    	System.out.println("Usage: ClientController <serverPort> [<inputFile> <outputFile>]");
 	    }
 	}
 

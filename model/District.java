@@ -1,13 +1,13 @@
 package model;
 
 import java.util.Collection;
-import java.io.Serializable;
 import java.util.HashMap;
+import java.io.Serializable;
 
 public class District implements Serializable {
 
-	private static final long serialVersionUID = -4507489611517393544L;
-	
+    private static final long serialVersionUID = -4166628343233841359L;
+
     private Province province;
     private String name;
     private HashMap<Party, Candidate> candidates;
@@ -15,25 +15,26 @@ public class District implements Serializable {
     private int id;
 
     public District(String name) {
-        this.name = name;
-        this.setProvince(Province.Alberta);
-        candidates = new HashMap<Party, Candidate>();
-        this.id = ++staticID;
+        this(name, Province.Alberta);
     }
     
     public District(String name, Province province) {
         this.name = name;
-        this.setProvince(province);
-        candidates = new HashMap<Party, Candidate>();
+        this.province = province;
+        this.candidates = new HashMap<Party, Candidate>();
         this.id = ++staticID;
     }
 
-    public void addCandidate(Candidate candidate) {
-        candidates.put(candidate.getParty(), candidate);
+    public void addCandidate(Candidate candidate, Party party) {
+        candidates.put(party, candidate);
     }
 
     public Candidate getCandidate(Party party) {
-        return candidates.getOrDefault(party, null);
+        if (candidates.containsKey(party)) {
+            return candidates.get(party);
+        }
+        
+        return null;
     }
 
     public Collection<Candidate> getAllCandidates() {
@@ -53,11 +54,11 @@ public class District implements Serializable {
         return "District: " + id + ", " + name;
     }
 
-	public Province getProvince() {
-		return province;
-	}
+    public Province getProvince() {
+        return province;
+    }
 
-	public void setProvince(Province province) {
-		this.province = province;
-	}
+    public void setProvince(Province province) {
+        this.province = province;
+    }
 }

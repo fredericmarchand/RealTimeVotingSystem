@@ -1,10 +1,18 @@
 package model;
+
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class Party implements Serializable {
-	private static final long serialVersionUID = -4517388610617393544L;
+
+    private static final long serialVersionUID = -8743695743565242934L;
+    
     private String name;
     private Candidate leader;
+
+    public Party(String name) {
+        this(name, null);
+    }
 
     public Party(String name, Candidate leader) {
         this.name = name;
@@ -14,14 +22,22 @@ public class Party implements Serializable {
     public Candidate getLeader() {
         return leader;
     }
-    
+
     public String getName() {
-    	return name;
+        return name;
+    }
+
+    public void setLeader(Candidate leader) {
+        this.leader = leader;
     }
 
     @Override
     public String toString() {
-        return "Party: " + name + ", headed by " + leader;
+        String desc = "Party: " + name;
+        if (leader != null) {
+            desc += ", headed by " + leader.getName();
+        }
+        return desc;
     }
 
     @Override
