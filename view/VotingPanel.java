@@ -15,6 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import networking.WSocket;
+import controller.ClientController;
 import model.Address;
 import model.Candidate;
 import model.District;
@@ -24,7 +26,7 @@ public class VotingPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
 	// The Socket
-//	WSocket socket;
+	WSocket socket;
 	
 	// The District
 	District district;
@@ -41,22 +43,15 @@ public class VotingPanel extends JPanel {
 	JLabel           districtLabel;
 	JTextField       districtField;
 	
-	public VotingPanel(District district) {
+	public VotingPanel(District district, WSocket socket) {
 		
 		this.district = district;
-		//this.socket = socket;
-		
-		ArrayList<Candidate> array = new ArrayList<Candidate>();
-		
-		array.add(new Candidate("Jason","Coles",new Address(),district,23487345));
-		array.add(new Candidate("Jason","Coles",new Address(),district,23487345));
-		array.add(new Candidate("Jeff","Horton",new Address(),district,23487345));
-		array.add(new Candidate("Justin","Crawford",new Address(),district,23487345));
+		this.socket = socket;
 		
 		GridBagLayout layout = new GridBagLayout();
 		setLayout(layout);
-
-		districtCandidatesList = Utilities.newJList(array, new Font("Courier New", Font.BOLD, 24));
+		
+		districtCandidatesList = Utilities.newJList(ClientController.getDistrictCandidates(district, socket), new Font("Courier New", Font.BOLD, 24));
 		
 		add(Utilities.newJLabel(district.getName()+" Candidates",0,0,layout));
 		districtCandidatesScrollPane = Utilities.newJScrollPane(districtCandidatesList, 0, 1, 1, 4, layout);

@@ -38,7 +38,7 @@ public class RegistrationPanel extends JPanel {
 	private final Color ERROR_COLOUR = Color.RED;
 	private final Color SUCCESS_COLOUR = Color.GREEN;
 
-	public RegistrationPanel() {
+	public RegistrationPanel(WSocket socket) {
 		super();
 
 		GridBagLayout layout = new GridBagLayout();

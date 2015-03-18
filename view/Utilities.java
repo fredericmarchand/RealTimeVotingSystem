@@ -7,6 +7,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -18,6 +21,8 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
 import model.Candidate;
+import model.District;
+import networking.WSocket;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -27,6 +32,8 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
+
+import controller.ClientController;
 
 public final class Utilities {
 	
@@ -54,8 +61,8 @@ public final class Utilities {
 		return jScrollPane;
 	}
 	
-	public static ChartPanel newResultsChartPanel(String title, int gridx, int gridy, int gridwidth, int gridheight, GridBagLayout layout) {
-		CategoryDataset dataset = getElectionResults();
+	public static ChartPanel newResultsChartPanel(String title, int gridx, int gridy, int gridwidth, int gridheight, GridBagLayout layout, District district, WSocket socket) {
+		CategoryDataset dataset = getElectionResults(district, socket);
 		JFreeChart chart = createChart(dataset, title);
 		ChartPanel chartPanel = new ChartPanel(chart);
 		chartPanel.setFillZoomRectangle(true);
@@ -76,12 +83,17 @@ public final class Utilities {
 		return chartPanel;
 	}
 	
-	private static CategoryDataset getElectionResults() {
+	private static CategoryDataset getElectionResults(District district, WSocket socket) {
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		dataset.addValue(7445, "Party1", "Party1");
-		dataset.addValue(24448, "Party2", "Party2");
-		dataset.addValue(4297, "Party3", "Party3");
-		dataset.addValue(21022, "Party4", "Party4");
+		HashMap<Candidate, Integer> results = ClientController.getLocalResults(district, socket);
+		
+	    Iterator<Entry<Candidate, Integer>> it = results.entrySet().iterator();
+	    while (it.hasNext()) {
+	        HashMap.Entry<Candidate, Integer> pair = (HashMap.Entry<Candidate, Integer>)it.next();
+	        dataset.addValue((Number)pair.getValue(), (Comparable<String>)pair.getKey().getName(), (Comparable<String>)pair.getKey().getName());
+	        it.remove();
+	    }
+
 		return dataset;
 	}
 	 

@@ -8,15 +8,21 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import networking.WSocket;
+
 public class LoginPanel extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
 	
+	WSocket socket;
+	
 	JTextField     usernameField;
 	JPasswordField passwordField;
 
-	public LoginPanel() {
-	    GridBagLayout layout = new GridBagLayout();
+	public LoginPanel(WSocket socket) {
+	    this.socket = socket;
+		
+		GridBagLayout layout = new GridBagLayout();
 		setLayout(layout);
 	    
 	    add(Utilities.newJLabel("SIN", 0, 0, layout));
@@ -38,7 +44,10 @@ public class LoginPanel extends JPanel {
 		username = usernameField.getText();
 		password = new String(passwordField.getPassword());
 		
-		return true;
+		if(true) { //check if creds are good
+			return true;
+		}
+		return false;
 	}
 	
 }

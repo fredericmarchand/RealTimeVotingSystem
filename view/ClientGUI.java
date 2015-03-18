@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 
+import networking.WSocket;
 import model.District;
 
 public class ClientGUI extends JFrame {
@@ -12,24 +13,33 @@ public class ClientGUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	JFrame frame = this;
+	
+	// The Socket
+	WSocket socket;
+	
+	// The District
+	District district;
 
 	RegistrationPanel registrationPanel;
 	LoginPanel        loginPanel;
 	ResultsPanel      resultsPanel;
 	VotingPanel       votingPanel;
 
-	public ClientGUI() {
+	public ClientGUI(District distrit, WSocket socket) {
 		super();
 		
-		registrationPanel = new RegistrationPanel();
-		loginPanel = new LoginPanel();
-		votingPanel = new VotingPanel(new District("Some District"));
-		resultsPanel = new ResultsPanel();
+		this.socket   = socket;
+		this.district = distrit;
+		
+		registrationPanel = new RegistrationPanel(socket);
+		loginPanel        = new LoginPanel(socket);
+		votingPanel       = new VotingPanel(distrit, socket);
+		resultsPanel      = new ResultsPanel(distrit, socket);
 		
 		resultsPanel.getLoginButton().addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent evt) {
-		    	if(true) {
+		    	if(loginPanel.login(frame)) {
 		    		setContentPane(votingPanel);
 		    		setSize(700,250);
 			    	setVisible(true);
@@ -89,9 +99,5 @@ public class ClientGUI extends JFrame {
 		setResizable(false);
 		setContentPane(resultsPanel);
 		setVisible(true);
-	}
-
-	public static void main(String[] args) {
-		ClientGUI gui = new ClientGUI();
 	}
 }
