@@ -92,8 +92,9 @@ public class DistrictServer {
 							break;
 						case RtvsType.VOTE:
 							Vote vote = (Vote)msg.getData();
-							if (votes.contains(vote)) {
+							if (!votes.contains(vote)) { // <-- negated proposition, i think this is what was intended
 								votes.add(vote);
+								System.out.println("vote");
 							}
 							break;
 						default:

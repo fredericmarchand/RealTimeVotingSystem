@@ -1,7 +1,6 @@
 package testing;
 
 import static org.junit.Assert.*;
-
 import model.Address;
 import model.Voter;
 
@@ -38,17 +37,8 @@ public class ClientRegistrationTest
 		assertFalse("attempt to register same user: ",b);
 	}
 	
-	@Test
-	public void loginExistingUser() { 
-		Voter v = new Voter("Hugh", "Jarms", new Address(), 111222333);
-		v.setPassword("secr3t");
-		boolean b = controller.registerUser(v);
-		b = controller.loginUser(v);
-		assertTrue("loging in existing user: ", b);
-	}
-	
 	@After
-	public void tearDown() throws InterruptedException { 
+	public void teardown() { 
 		if ( controller != null ) { 
 			controller.close();
 		}
