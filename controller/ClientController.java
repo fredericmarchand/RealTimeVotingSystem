@@ -24,11 +24,14 @@ public class ClientController {
         }
 	}
 	
-	public boolean registerUser(Voter v, String password) {
+	public void close() { 
+		this.socket.close();
+	}
+	
+	public boolean registerUser(Voter v) {
 		boolean result = false;
 		try {
-			v.setPassword(password);
-			Message newMsg = new Message(Message.Method.POST, Message.Type.REGISTER, v);
+			Message newMsg = new Message(Message.Method.POST, RtvsType.REGISTER, v);
 			socket.sendTo(newMsg, districtServerPort); //Get port from list of district servers
 			newMsg = socket.receive();
 			result = (boolean)newMsg.getData();
@@ -43,7 +46,7 @@ public class ClientController {
 	public boolean loginUser(Voter v) {
 		boolean result = false;
 		try {
-			Message newMsg = new Message(Message.Method.POST, Message.Type.LOGIN, v);
+			Message newMsg = new Message(Message.Method.POST, RtvsType.LOGIN, v);
 			socket.sendTo(newMsg, districtServerPort); //Get port from list of district servers
 			newMsg = socket.receive();
 			result = (boolean)newMsg.getData();
@@ -58,7 +61,7 @@ public class ClientController {
 	public boolean userHasVoted(Voter v) {		
 		boolean result = false;
 		try {
-			Message newMsg = new Message(Message.Method.GET, Message.Type.HAS_VOTED, v);
+			Message newMsg = new Message(Message.Method.GET, RtvsType.HAS_VOTED, v);
 			socket.sendTo(newMsg, districtServerPort); //Get port from list of district servers
 			newMsg = socket.receive();
 			result = (boolean)newMsg.getData();
@@ -73,7 +76,7 @@ public class ClientController {
 	public void vote(Candidate c, Voter v) {
 		Vote vote = new Vote(v, c);
 		try {
-			Message newMsg = new Message(Message.Method.POST, Message.Type.VOTE, vote);
+			Message newMsg = new Message(Message.Method.POST, RtvsType.VOTE, vote);
 			socket.sendTo(newMsg, districtServerPort); //Get port from list of district servers
 			//Dont expect response
 		} catch (IOException e) {
@@ -87,7 +90,7 @@ public class ClientController {
 		
 		//fetch from district server;
 		try {
-			Message newMsg = new Message(Message.Method.GET, Message.Type.CANDIDATES, "Ottawa-South");
+			Message newMsg = new Message(Message.Method.GET, RtvsType.CANDIDATES, "Ottawa-South");
 			socket.sendTo(newMsg, districtServerPort); //Get port from list of district servers
 			newMsg = socket.receive();
 			candidates = (ArrayList<Candidate>)newMsg.getData();
@@ -103,7 +106,7 @@ public class ClientController {
 		HashMap<Candidate, Integer> results = new HashMap<Candidate, Integer>();
 		
 		try {
-			Message newMsg = new Message(Message.Method.GET, Message.Type.RESULTS, d);
+			Message newMsg = new Message(Message.Method.GET, RtvsType.RESULTS, d);
 			socket.sendTo(newMsg, districtServerPort); //Get port from list of district servers
 			newMsg = socket.receive();
 			results = ((ResultSet)newMsg.getData()).getDistrictVotes();
@@ -119,7 +122,7 @@ public class ClientController {
 		HashMap<Party, Integer> results = new HashMap<Party, Integer>();
 		
 		try {
-			Message newMsg = new Message(Message.Method.GET, Message.Type.RESULTS, null);
+			Message newMsg = new Message(Message.Method.GET, RtvsType.RESULTS, null);
 			socket.sendTo(newMsg, districtServerPort); //Get port from list of district servers
 			newMsg = socket.receive();
 			results = ((ResultSet)newMsg.getData()).getTotalVotes();
@@ -136,7 +139,7 @@ public class ClientController {
 
 		ArrayList<Person> voters = SystemPopulator.getVoters();
 		for (int i = 0; i < voters.size(); ++i) {
-			registerUser((Voter)voters.get(i), "password");
+			registerUser((Voter)voters.get(i));
 		}
 	}
 
@@ -168,8 +171,8 @@ public class ClientController {
   	    		client.startUI();
   	    	}
 
-	    } catch (Exception _) {
-	    	_.printStackTrace();
+	    } catch (Exception _e) {
+	    	_e.printStackTrace();
 	    	System.out.println("Usage: ClientController <serverPort> [<inputFile>]");
 	    }
 	}

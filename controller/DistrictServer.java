@@ -1,14 +1,7 @@
 package controller;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.io.IOException;
 import java.lang.Thread;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -52,14 +45,14 @@ public class DistrictServer {
 	                int sender = msg.getSenderPort();
 			
 					switch (msg.getType()) {
-						case CANDIDATES:
+						case RtvsType.CANDIDATES:
 							break;
-						case REGISTER:
+						case RtvsType.REGISTER:
 							Voter voter1 = (Voter)msg.getData();
 							if (registeredVoters.containsKey(voter1.getSIN())) {
 								//Voter already registered
 								//Return false
-								msg = new Message(Message.Method.GET, Message.Type.REGISTER, Boolean.FALSE);
+								msg = new Message(Message.Method.GET, RtvsType.REGISTER, Boolean.FALSE);
 								socket.sendTo(msg, sender);
 							}
 							else {
@@ -67,37 +60,37 @@ public class DistrictServer {
 								registeredVoters.put(voter1.getSIN(), voter1);
 							
 								//Return true
-								msg = new Message(Message.Method.GET, Message.Type.REGISTER, Boolean.TRUE);
+								msg = new Message(Message.Method.GET, RtvsType.REGISTER, Boolean.TRUE);
 								socket.sendTo(msg, sender);
 							}
 							break;
-						case LOGIN:
+						case RtvsType.LOGIN:
 							Voter voter2 = (Voter)msg.getData();
 							if (registeredVoters.containsKey(voter2.getSIN()) && 
-								registeredVoters.get(voter2.getSIN()).getPassword() == voter2.getPassword()) {
+								registeredVoters.get(voter2.getSIN()).getPassword().equals(voter2.getPassword())) {
 								
 								//Voter is registered return true
-								msg = new Message(Message.Method.GET, Message.Type.LOGIN, Boolean.TRUE);
+								msg = new Message(Message.Method.GET, RtvsType.LOGIN, Boolean.TRUE);
 								socket.sendTo(msg, sender);
 							}
 							else {
 								//Voter is not registered or doesnt have the right password return false
-								msg = new Message(Message.Method.GET, Message.Type.LOGIN, Boolean.FALSE);
+								msg = new Message(Message.Method.GET, RtvsType.LOGIN, Boolean.FALSE);
 								socket.sendTo(msg, sender);
 							}
 							break;
-						case RESULTS:
+						case RtvsType.RESULTS:
 							break;
-						case HAS_VOTED:
+						case RtvsType.HAS_VOTED:
 							Voter voter3 = (Voter)msg.getData();
 							boolean hasVoted = false;
 							if (registeredVoters.containsKey(voter3.getSIN())) {
 								hasVoted = registeredVoters.get(voter3.getSIN()).hasVoted();
 							}
-							msg = new Message(Message.Method.GET, Message.Type.HAS_VOTED, hasVoted);
+							msg = new Message(Message.Method.GET, RtvsType.HAS_VOTED, hasVoted);
 							socket.sendTo(msg, sender);
 							break;
-						case VOTE:
+						case RtvsType.VOTE:
 							Vote vote = (Vote)msg.getData();
 							if (votes.contains(vote)) {
 								votes.add(vote);
@@ -127,6 +120,7 @@ public class DistrictServer {
 			int port = Integer.parseInt(args[2]);
 			
 			final DistrictServer server = new DistrictServer(districtName, Province.getProvinceFromName(provinceName), port);
+			System.out.println("DistrictServer "+districtName+", "+provinceName+" running on "+port);
 			new Thread(new Runnable() {
 				public void run() {
 					server.receiveMessages();
@@ -154,8 +148,8 @@ public class DistrictServer {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}*/
-		} catch (Exception _) {
-	    	_.printStackTrace();
+		} catch (Exception e) {
+	    	e.printStackTrace();
 	    	System.out.println("Usage: DistrictServer <port>");
 	    }
 	}

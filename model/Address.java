@@ -3,18 +3,17 @@ package model;
 import java.io.Serializable;
 
 public class Address implements Serializable {
+	private static final long serialVersionUID = -4507477610617393544L;
 
-	private static final long serialVersionUID = 2906894937478240245L;
-
-	//private String streetNumber;
+	private String streetNumber;
 	private String street;
 	private String city;
 	private Province province;
 	private String postalCode;
 	
 	public Address() {
-		//streetNumber = "000";
-		street = "0000 unknown street";
+		streetNumber = "000";
+		street = "unknown street";
 		city = "Ottawa";
 		province = Province.Ontario;
 		try {
@@ -24,24 +23,24 @@ public class Address implements Serializable {
 		}
 	}
 	
-	public Address(String str, String cit, Province prov, String post) {
-		//streetNumber = num;
+	public Address(String num, String str, String cit, Province prov, String post) {
+		streetNumber = num;
 		street = str;
 		city = cit;
 		province = prov;
 		try {
-			setPostalCode(post);
+			setPostalCode("post");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	/*public String getStreetNumber() {
+	public String getStreetNumber() {
 		return streetNumber;
 	}
 	public void setStreetNumber(String streetNumber) {
 		this.streetNumber = streetNumber;
-	}*/
+	}
 	public String getStreet() {
 		return street;
 	}

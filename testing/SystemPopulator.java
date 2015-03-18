@@ -44,11 +44,17 @@ public class SystemPopulator {
  				sin = Integer.valueOf(data[7]);
 
  				province = Province.getProvinceFromName(data[5]);
- 				address = new Address(street, city, province, postalCode);
+ 				//
+ 				// TODO hard coded a '7' here to fit with current address constructor
+ 				//
+ 				address = new Address("7", street, city, province, postalCode);
  				newPerson = null;
  				
  				if (data[0].equals("c")) {
- 					newPerson = new Candidate(firstName, lastName, address, sin);
+ 					//
+ 					// TODO hard coded a district here to fit with current constructor
+ 					//
+ 					newPerson = new Candidate(firstName, lastName, address, new District("anywhere"), sin);
  					candidates.add(newPerson);
  				}
  				else if (data[0].equals("v")) {
