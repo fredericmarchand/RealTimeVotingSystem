@@ -17,7 +17,7 @@ public class Message implements Serializable
     public static enum Method {
         GET, POST, PUT, DELETE, CONNECT
     }
-
+    
     private static final long serialVersionUID 
         = -4507489610617393544L;
 
@@ -26,11 +26,11 @@ public class Message implements Serializable
     private long    checksum;
     private int     length;
     private int     senderPort;
-    private String  type;
+    private String type;
     private InetAddress senderAddr; 
 
 
-    public Message ( Method method, String type, Object data ) 
+    public Message (Method method, String type, Object data) 
     throws IOException {
         this.senderPort = -1;
         this.method = method;
@@ -61,17 +61,6 @@ public class Message implements Serializable
             this.type = msg.type;
             this.data = msg.data;
             this.checksum = msg.checksum;
-            // make sure the checksums match!
-            long check = Message.calculateChecksum(msg.getData());
-            if ( check !=  msg.getChecksum() ) {
-                MessageCorruptException err 
-                    = new MessageCorruptException("error: "
-                        + "corrupted data detected. "
-                        + "checksums do not match! "
-                        + "found: "+msg.getChecksum()+". "
-                        + "calculated: "+check);
-                throw err;
-            }
         } catch ( ClassNotFoundException e ) {
             e.printStackTrace();
         }
