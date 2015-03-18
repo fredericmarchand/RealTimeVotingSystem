@@ -35,7 +35,7 @@ public class RegistrationPanel extends JPanel {
 	private JButton           submitButton;
 	private JButton           cancleButton;
 
-	private final Color ERROR_COLOUR = Color.RED;
+	private final Color ERROR_COLOUR   = Color.RED;
 	private final Color SUCCESS_COLOUR = Color.GREEN;
 
 	public RegistrationPanel(WSocket socket) {

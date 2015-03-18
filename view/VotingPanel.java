@@ -86,8 +86,11 @@ public class VotingPanel extends JPanel {
 		
 		districtCandidatesList.addMouseListener(new MouseAdapter() {
 		    public void mouseClicked(MouseEvent e) {
-		    	candidateField.setText(districtCandidatesList.getSelectedValue().getName());
-		        partyField.setText(districtCandidatesList.getSelectedValue().getParty().getName());
+		    	Candidate selected = districtCandidatesList.getSelectedValue();
+		    	
+		    	candidateField.setText(selected.getName());
+		        partyField.setText(selected.getParty().getName());
+		        districtField.setText(district.getName());
 		    }
 		});
 		
