@@ -97,7 +97,7 @@ public class DistrictServer {
 				case RtvsType.REGISTER:
 					Voter voter1 = (Voter)msg.getData();
 					synchronized(registeredVoters) {
-						if (voter1 == null || registeredVoters.containsKey(voter1.getUsername())) {
+						if (voter1 == null || registeredVoters.containsKey(String.valueOf(voter1.getSIN()))) {
 							//Voter already registered
 							//Return false
 							msg = new Message(Message.Method.GET, RtvsType.REGISTER, Boolean.FALSE);
@@ -105,7 +105,7 @@ public class DistrictServer {
 
 						else {
 							//Register voter
-							registeredVoters.put(voter1.getUsername(), voter1);
+							registeredVoters.put(String.valueOf(voter1.getSIN()), voter1);
 						
 							//Return true
 							msg = new Message(Message.Method.GET, RtvsType.REGISTER, Boolean.TRUE);
@@ -143,14 +143,14 @@ public class DistrictServer {
 					Voter voter = null;
 					try {
 						String[]loginInfo = ((String)msg.getData()).split("\n");
-						String username = loginInfo[0];
+						String SIN = loginInfo[0];
 						String password = loginInfo[1];
 						synchronized(registeredVoters) {
-							if (registeredVoters.containsKey(username) && 
-								registeredVoters.get(username).getPassword() == password) {
+							if (registeredVoters.containsKey(SIN) && 
+								registeredVoters.get(SIN).getPassword().equals(password)) {
 								
 								//Voter is registered return the voter
-								voter = registeredVoters.get(username);
+								voter = registeredVoters.get(SIN);
 							}
 							else {
 								//Voter is not registered or doesnt have the right password return null
@@ -187,11 +187,12 @@ public class DistrictServer {
 					sendSocket.sendTo(msg, sender);
 					break;
 				case RtvsType.HAS_VOTED:
-					String username = (String)msg.getData();
+					Voter voter2 = (Voter)msg.getData();
+					String SIN = String.valueOf(voter2.getSIN());
 					boolean hasVoted = false;
 					synchronized(registeredVoters) {
-						if (registeredVoters.containsKey(username)) {
-							hasVoted = registeredVoters.get(username).hasVoted();
+						if (registeredVoters.containsKey(SIN)) {
+							hasVoted = registeredVoters.get(SIN).hasVoted();
 						}
 					}
 					msg = new Message(Message.Method.GET, RtvsType.HAS_VOTED, hasVoted);

@@ -9,18 +9,18 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import controller.ClientController;
 import model.Address;
+import model.District;
 import model.Province;
 import model.Voter;
-import networking.WSocket;
+import controller.ClientController;
 
 public class RegistrationPanel extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
-
-	// The socket
-	private WSocket socket;
+	
+	// The District
+	District district;
 	
 	// These are the components
 	private JTextField        sinText;
@@ -33,12 +33,13 @@ public class RegistrationPanel extends JPanel {
 	private JTextField        postalCodeText;
 	private JComboBox<String> provincesComboBox;
 	private JButton           submitButton;
-	private JButton           cancleButton;
+	private JButton           cancelButton;
 
 	private final Color ERROR_COLOUR   = Color.RED;
 	private final Color SUCCESS_COLOUR = Color.GREEN;
+	private final Color DEFAULT_COLOUR = Color.BLACK;
 
-	public RegistrationPanel(WSocket socket) {
+	public RegistrationPanel(District district) {
 		super();
 
 		GridBagLayout layout = new GridBagLayout();
@@ -83,14 +84,21 @@ public class RegistrationPanel extends JPanel {
 		submitButton = Utilities.newJButton("Submit", 1, 9, 1, 1, layout);
 		add(submitButton);
 		
-		cancleButton = Utilities.newJButton("Cancle", 0, 9, 1, 1, layout);
-		add(cancleButton);
+		cancelButton = Utilities.newJButton("Cancel", 0, 9, 1, 1, layout);
+		add(cancelButton);
 	}
 
 	public boolean validateFields() {
 		
 		boolean bool = true;
 
+		if(!sinText.getText().isEmpty() && sinText.getText().matches("^[0-9]{9}$")) {
+			sinText.setForeground(SUCCESS_COLOUR);
+		} else {
+			sinText.setForeground(ERROR_COLOUR);
+			bool = false;
+		}
+		
 		if(!firstNameText.getText().isEmpty() && firstNameText.getText().matches("^[a-zA-Z]+$")) {
 			firstNameText.setForeground(SUCCESS_COLOUR);
 		} else {
@@ -105,13 +113,6 @@ public class RegistrationPanel extends JPanel {
 			bool = false;
 		}
 
-		if(!sinText.getText().isEmpty() && sinText.getText().matches("^[0-9]+$")) {
-			sinText.setForeground(SUCCESS_COLOUR);
-		} else {
-			sinText.setForeground(ERROR_COLOUR);
-			bool = false;
-		}
-
 		if(!streetNumberText.getText().isEmpty() && streetNumberText.getText().matches("^[0-9]+$")) {
 			streetNumberText.setForeground(SUCCESS_COLOUR);
 		} else {
@@ -119,14 +120,14 @@ public class RegistrationPanel extends JPanel {
 			bool = false;
 		}
 
-		if(!streetText.getText().isEmpty() && streetText.getText().matches("^[a-zA-Z]+$")) {
+		if(!streetText.getText().isEmpty() && streetText.getText().matches("^[a-zA-Z\\s]+$")) {
 			streetText.setForeground(SUCCESS_COLOUR);
 		} else {
 			streetText.setForeground(ERROR_COLOUR);
 			bool = false;
 		}
 
-		if(!cityText.getText().isEmpty() && cityText.getText().matches("^[a-zA-Z]+$")) {
+		if(!cityText.getText().isEmpty() && cityText.getText().matches("^[a-zA-Z\\s]+$")) {
 			cityText.setForeground(SUCCESS_COLOUR);
 		} else {
 			cityText.setForeground(ERROR_COLOUR);
@@ -143,9 +144,8 @@ public class RegistrationPanel extends JPanel {
 		return bool;
 	}
 	
-	public void registerUser() {
-		System.out.println(provincesComboBox.getSelectedItem().toString());
-    	ClientController.registerUser(
+	public boolean registerUser() {
+    	if(ClientController.registerUser(
 			new Voter(
 					firstNameText.getText(),
 					lastNameText.getText(),
@@ -154,17 +154,45 @@ public class RegistrationPanel extends JPanel {
 							cityText.getText(),
 							Province.getProvinceFromName(provincesComboBox.getSelectedItem().toString()),
 							postalCodeText.getText()
-							),
-					Integer.parseInt(sinText.getText())
+					),
+					Integer.parseInt(sinText.getText()),
+					new String(passwordText.getPassword()),
+					district
 			)
-    	);
+    	)) {
+    		clearFields();
+    		return true;
+    	} else {
+    		sinText.setForeground(ERROR_COLOUR);
+    		return false;
+    	}
+	}
+	
+	public void clearFields() {
+		sinText.setText("");
+		passwordText.setText("");
+		firstNameText.setText("");
+		lastNameText.setText("");
+		streetNumberText.setText("");
+		streetText.setText("");
+		cityText.setText("");
+		postalCodeText.setText("");
+		provincesComboBox.setSelectedIndex(0);
+		sinText.setForeground(DEFAULT_COLOUR);
+		passwordText.setForeground(DEFAULT_COLOUR);
+		firstNameText.setForeground(DEFAULT_COLOUR);
+		lastNameText.setForeground(DEFAULT_COLOUR);
+		streetNumberText.setForeground(DEFAULT_COLOUR);
+		streetText.setForeground(DEFAULT_COLOUR);
+		cityText.setForeground(DEFAULT_COLOUR);
+		postalCodeText.setForeground(DEFAULT_COLOUR);
 	}
 	
 	public JButton getSubmitButton() {
 		return submitButton;
 	}
 	
-	public JButton getCancleButton() {
-		return cancleButton;
+	public JButton getCancelButton() {
+		return cancelButton;
 	}
 }

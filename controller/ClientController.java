@@ -259,7 +259,7 @@ public class ClientController {
 	public void startUI() {
 		//Create GUI
 		@SuppressWarnings("unused")
-		ClientGUI gui = new ClientGUI(new District("Ottawa South"), this.getSocket());
+		ClientGUI gui = new ClientGUI(new District("Ottawa South"));
 
 		System.out.println("Started GUI");
 	}

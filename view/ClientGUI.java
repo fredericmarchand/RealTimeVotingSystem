@@ -5,17 +5,14 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 
-import networking.WSocket;
 import model.District;
+import model.Voter;
 
 public class ClientGUI extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 	
 	private JFrame frame = this;
-	
-	// The Socket
-	private WSocket socket;
 	
 	// The District
 	private District district;
@@ -25,21 +22,22 @@ public class ClientGUI extends JFrame {
 	private ResultsPanel      resultsPanel;
 	private VotingPanel       votingPanel;
 
-	public ClientGUI(District distrit, WSocket socket) {
+	public ClientGUI(District district) {
 		super();
 		
-		this.socket   = socket;
-		this.district = distrit;
+		this.district = district;
 		
-		registrationPanel = new RegistrationPanel(socket);
-		loginPanel        = new LoginPanel(socket);
-		votingPanel       = new VotingPanel(distrit, socket);
-		resultsPanel      = new ResultsPanel(distrit, socket);
+		registrationPanel = new RegistrationPanel(this.district);
+		loginPanel        = new LoginPanel();
+		votingPanel       = new VotingPanel(this.district);
+		resultsPanel      = new ResultsPanel(this.district);
 		
 		resultsPanel.getLoginButton().addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent evt) {
-		    	if(loginPanel.login(frame)) {
+		    	Voter voter = loginPanel.login(frame);
+		    	if(voter != null) {
+		    		votingPanel.setVoter(voter);
 		    		setContentPane(votingPanel);
 		    		setSize(700,250);
 			    	setVisible(true);
@@ -60,14 +58,15 @@ public class ClientGUI extends JFrame {
 		    @Override
 		    public void actionPerformed(ActionEvent evt) {
 		        if(registrationPanel.validateFields()) {
-		        	registrationPanel.registerUser();
-		        	setContentPane(resultsPanel);
-			    	setVisible(true);
+		        	if(registrationPanel.registerUser()) {
+		        		setContentPane(resultsPanel);
+			    		setVisible(true);
+		        	}
 		        }
 		    }
 		});
 		
-		registrationPanel.getCancleButton().addActionListener(new ActionListener() {
+		registrationPanel.getCancelButton().addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent evt) {
 		    	setContentPane(resultsPanel);
@@ -76,7 +75,7 @@ public class ClientGUI extends JFrame {
 		    }
 		});
 		
-		votingPanel.getCancleButton().addActionListener(new ActionListener() {
+		votingPanel.getCancelButton().addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent evt) {
 		    	setContentPane(resultsPanel);
@@ -88,9 +87,12 @@ public class ClientGUI extends JFrame {
 		votingPanel.getSubmitButton().addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent evt) {
-		    	setContentPane(resultsPanel);
-		    	setSize(500,500);
-		    	setVisible(true);
+		    	if(votingPanel.vote()) {
+		    		resultsPanel.updateResultsChart();
+			    	setContentPane(resultsPanel);
+			    	setSize(500,500);
+			    	setVisible(true);
+		    	}
 		    }
 		});
 		

@@ -22,11 +22,11 @@ import javax.swing.ScrollPaneConstants;
 
 import model.Candidate;
 import model.District;
-import networking.WSocket;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
@@ -61,8 +61,8 @@ public final class Utilities {
 		return jScrollPane;
 	}
 	
-	public static ChartPanel newResultsChartPanel(String title, int gridx, int gridy, int gridwidth, int gridheight, GridBagLayout layout, District district, WSocket socket) {
-		CategoryDataset dataset = getElectionResults(district, socket);
+	public static ChartPanel newResultsChartPanel(String title, int gridx, int gridy, int gridwidth, int gridheight, GridBagLayout layout, District district) {
+		CategoryDataset dataset = getElectionResults(district);
 		JFreeChart chart = createChart(dataset, title);
 		ChartPanel chartPanel = new ChartPanel(chart);
 		chartPanel.setFillZoomRectangle(true);
@@ -83,13 +83,14 @@ public final class Utilities {
 		return chartPanel;
 	}
 	
-	private static CategoryDataset getElectionResults(District district, WSocket socket) {
+	private static CategoryDataset getElectionResults(District district) {
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 		HashMap<Candidate, Integer> results = ClientController.getLocalResults(district);
 		
 	    Iterator<Entry<Candidate, Integer>> it = results.entrySet().iterator();
 	    while (it.hasNext()) {
 	        HashMap.Entry<Candidate, Integer> pair = (HashMap.Entry<Candidate, Integer>)it.next();
+	        System.out.println(pair.getKey().getName()+pair.getValue());
 	        dataset.addValue((Number)pair.getValue(), (Comparable<String>)pair.getKey().getName(), (Comparable<String>)pair.getKey().getName());
 	        it.remove();
 	    }
@@ -102,6 +103,8 @@ public final class Utilities {
 		chart.setBackgroundPaint(Color.white);
 		CategoryPlot plot = (CategoryPlot) chart.getPlot();
 		
+		NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 		BarRenderer renderer = (BarRenderer) plot.getRenderer();
 		renderer.setDrawBarOutline(false);
 		chart.getLegend().setFrame(BlockBorder.NONE);
