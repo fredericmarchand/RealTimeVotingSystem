@@ -1,7 +1,9 @@
 package view;
 
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -27,6 +29,8 @@ public class LoginPanel extends JPanel {
 	    
 	    SINField = Utilities.newJTextField("", 1, 0, 1, 1, layout);
 	    passwordField = Utilities.newJPasswordField("", 1, 1, layout);
+	    SINField.setPreferredSize(new Dimension(200, 25));
+	    passwordField.setPreferredSize(new Dimension(200,25));
 	    
 	    add(SINField);
 	    add(passwordField);
@@ -36,17 +40,23 @@ public class LoginPanel extends JPanel {
 		String SIN;
 		String password;
 		
-		JOptionPane.showConfirmDialog(frame, this, "Login", JOptionPane.OK_CANCEL_OPTION);
+		ImageIcon icon = new ImageIcon("img/login_icon.png");
 		
-		SIN = SINField.getText();
-		password = new String(passwordField.getPassword());
-		
-		Voter voter = ClientController.loginUser(SIN, password);
-		
-		if(voter != null && !ClientController.userHasVoted(voter)) {
-			return voter;
+		while ( true ) {
+			int res = JOptionPane.showConfirmDialog(frame, this, "Login", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, icon);
+			if ( res > 0 ) return null;
+			
+			SIN = SINField.getText();
+			password = new String(passwordField.getPassword());
+			
+			Voter voter = ClientController.loginUser(SIN, password);
+			
+			if(voter != null && !ClientController.userHasVoted(voter)) {
+				return voter;
+			}
+			
+			JOptionPane.showMessageDialog(frame, "Error, invalid credentials", password, JOptionPane.OK_OPTION);
 		}
-		return null;
 	}
 	
 }
