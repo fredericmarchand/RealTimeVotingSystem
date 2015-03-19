@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -17,7 +16,6 @@ import javax.swing.JTextField;
 
 import networking.WSocket;
 import controller.ClientController;
-import model.Address;
 import model.Candidate;
 import model.District;
 
@@ -51,7 +49,7 @@ public class VotingPanel extends JPanel {
 		GridBagLayout layout = new GridBagLayout();
 		setLayout(layout);
 		
-		districtCandidatesList = Utilities.newJList(ClientController.getDistrictCandidates(district, socket), new Font("Courier New", Font.BOLD, 24));
+		districtCandidatesList = Utilities.newJList(ClientController.getDistrictCandidates(district), new Font("Courier New", Font.BOLD, 24));
 		
 		add(Utilities.newJLabel(district.getName()+" Candidates",0,0,layout));
 		districtCandidatesScrollPane = Utilities.newJScrollPane(districtCandidatesList, 0, 1, 1, 4, layout);

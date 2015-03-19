@@ -1,14 +1,8 @@
 package controller;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.io.IOException;
 import java.lang.Thread;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -32,7 +26,6 @@ public class DistrictServer {
 			recvSocket = new WSocket().listen(port);
 			sendSocket = new WSocket().connect(port);
         } catch (UnknownHostException | SocketException e1) {
-            // TODO Auto-generated catch block
             e1.printStackTrace();
         }
         parties = new HashMap<String, Party>();
@@ -47,6 +40,14 @@ public class DistrictServer {
 	
 	public WSocket getSocket() {
 		return recvSocket;
+	}
+	
+	public HashMap<String, Party> getParties() {
+		return parties;
+	}
+	
+	public HashMap<String, Candidate> getCandidates() {
+		return candidates;
 	}
 
 	public void populateParties(String inputFile) {
@@ -65,11 +66,13 @@ public class DistrictServer {
 		try {
 	        while ( true ) {
 	        	final Message msg = recvSocket.receive();
-	        	new Thread(new Runnable() {
+	        	Thread t = new Thread(new Runnable() {
 					public void run() {
 						processMessages(msg);
 					}
-				}).start();
+				});
+	        	t.start();
+	        	t.join();
 	        }
 	    } catch (Exception e) {
 	    	recvSocket.close();
@@ -161,10 +164,18 @@ public class DistrictServer {
 					sendSocket.sendTo(msg, sender);
 					break;
 				case RtvsType.RESULTS:
+					ResultSet rs = new ResultSet(ResultSet.DISTRICT);
+					for (Candidate c: this.getCandidates().values()) {
+						int totalVotes = 0;
+						for (Vote v: votes) {
+							if (v.getCandidate().getName().equals(c.getName()))
+								totalVotes++;
+						}
+						rs.getDistrictVotes().put(c, totalVotes);
+					}
 					
-					
-					
-					
+					msg = new Message(Message.Method.GET, RtvsType.RESULTS, rs);
+					sendSocket.sendTo(msg, sender);
 					
 					break;
 				case RtvsType.PARTIES:
@@ -215,18 +226,38 @@ public class DistrictServer {
 			
 			final DistrictServer server = new DistrictServer(districtName, Province.getProvinceFromName(provinceName), port);
 
+			//Shitty way to determine if simulation
 			if (args.length > 3) {
 				server.populateParties(args[3]);
 			}
+			else {
+				server.getParties().put(Party.CONSERVATIVES, new Party(Party.CONSERVATIVES));
+				server.getParties().put(Party.LIBERALS, new Party(Party.LIBERALS));
+				server.getParties().put(Party.NDP, new Party(Party.NDP));
+				
+				Candidate candidate1 = new Candidate("Javaris Javar", "Javarison-Lamar", new Address(), 789798987, new Party(Party.CONSERVATIVES));
+				server.getCandidates().put(candidate1.getName(), candidate1);
+				server.getParties().get(candidate1.getParty().getName()).setLeader(candidate1);
+				
+				Candidate candidate2 = new Candidate("Scoish Velociraptor", "Maloish", new Address(), 465464132, new Party(Party.LIBERALS));
+				server.getCandidates().put(candidate2.getName(), candidate2);
+				server.getParties().get(candidate2.getParty().getName()).setLeader(candidate2);
+				
+				Candidate candidate3 = new Candidate("X-wing", "@aliciousness", new Address(), 111111111, new Party(Party.NDP));
+				server.getCandidates().put(candidate3.getName(), candidate3);
+				server.getParties().get(candidate3.getParty().getName()).setLeader(candidate3);
+			
+			}
 
-			System.out.println();
 			System.out.println(districtName + " Server running on port " + port);
 			
-			new Thread(new Runnable() {
+			Thread t = new Thread(new Runnable() {
 				public void run() {
 					server.receiveMessages();
 				}
-			}).start();
+			});
+			t.start();
+			t.join();
 
 		} catch (Exception e) {
 	    	System.out.println("Usage: DistrictServer <districtName> <provinceName> <port> [<inputFile>]");

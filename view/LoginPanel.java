@@ -14,10 +14,10 @@ public class LoginPanel extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
 	
-	WSocket socket;
+	private WSocket socket;
 	
-	JTextField     usernameField;
-	JPasswordField passwordField;
+	private JTextField     usernameField;
+	private JPasswordField passwordField;
 
 	public LoginPanel(WSocket socket) {
 	    this.socket = socket;

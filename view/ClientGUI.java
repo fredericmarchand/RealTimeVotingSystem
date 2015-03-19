@@ -12,18 +12,18 @@ public class ClientGUI extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 	
-	JFrame frame = this;
+	private JFrame frame = this;
 	
 	// The Socket
-	WSocket socket;
+	private WSocket socket;
 	
 	// The District
-	District district;
+	private District district;
 
-	RegistrationPanel registrationPanel;
-	LoginPanel        loginPanel;
-	ResultsPanel      resultsPanel;
-	VotingPanel       votingPanel;
+	private RegistrationPanel registrationPanel;
+	private LoginPanel        loginPanel;
+	private ResultsPanel      resultsPanel;
+	private VotingPanel       votingPanel;
 
 	public ClientGUI(District distrit, WSocket socket) {
 		super();

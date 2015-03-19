@@ -85,7 +85,7 @@ public final class Utilities {
 	
 	private static CategoryDataset getElectionResults(District district, WSocket socket) {
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		HashMap<Candidate, Integer> results = ClientController.getLocalResults(district, socket);
+		HashMap<Candidate, Integer> results = ClientController.getLocalResults(district);
 		
 	    Iterator<Entry<Candidate, Integer>> it = results.entrySet().iterator();
 	    while (it.hasNext()) {

@@ -1,10 +1,13 @@
 package model;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 public class Party implements Serializable {
-
+	
+	public static final String LIBERALS = "Liberals";
+	public static final String CONSERVATIVES = "Conservatives";
+	public static final String NDP = "NDP";
+	
     private static final long serialVersionUID = -8743695743565242934L;
     
     private String name;

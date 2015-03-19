@@ -20,7 +20,7 @@ public class RegistrationPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	// The socket
-	WSocket socket;
+	private WSocket socket;
 	
 	// These are the components
 	private JTextField        sinText;
@@ -144,6 +144,7 @@ public class RegistrationPanel extends JPanel {
 	}
 	
 	public void registerUser() {
+		System.out.println(provincesComboBox.getSelectedItem().toString());
     	ClientController.registerUser(
 			new Voter(
 					firstNameText.getText(),
@@ -151,12 +152,11 @@ public class RegistrationPanel extends JPanel {
 					new Address(
 							streetNumberText.getText() + " " + streetText.getText(),
 							cityText.getText(),
-							(Province) provincesComboBox.getSelectedItem(),
+							Province.getProvinceFromName(provincesComboBox.getSelectedItem().toString()),
 							postalCodeText.getText()
 							),
 					Integer.parseInt(sinText.getText())
-			),
-			socket
+			)
     	);
 	}
 	

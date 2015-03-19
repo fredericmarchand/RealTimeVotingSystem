@@ -107,6 +107,7 @@ public class WSocket
 
     public void sendTo ( Message msg, int port ) 
     throws IOException {
+    	System.out.println(port + " " + this.addr.toString());
         this.sendTo(msg, port, this.addr);
     }
             

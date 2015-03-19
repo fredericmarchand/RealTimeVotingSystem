@@ -15,14 +15,14 @@ public class ResultsPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
 	// The socket
-	WSocket socket;
+	private WSocket socket;
 	
 	// The district
-	District district;
+	private District district;
 	
-	ChartPanel  resultsChart;
-	JButton     loginButton;
-	JButton     registerButton;
+	private ChartPanel  resultsChart;
+	private JButton     loginButton;
+	private JButton     registerButton;
 	
 	public ResultsPanel(District district, WSocket socket) {
 		super();

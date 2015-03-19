@@ -1,10 +1,9 @@
  package model;
 
-import java.util.Arrays;
-
 public class Voter extends Person {
-
-    protected District district;
+	
+	private static final long serialVersionUID = -6943752036828144655L;
+	protected District district;
     protected boolean hasVoted;
     protected String username;
     protected String password;

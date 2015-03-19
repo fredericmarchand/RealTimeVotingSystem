@@ -25,7 +25,6 @@ public class ClientController {
 		 try {
 			socket = new WSocket().connect(districtServerPort);
         } catch (UnknownHostException | SocketException e1) {
-            // TODO Auto-generated catch block
             e1.printStackTrace();
         }
 	}
@@ -38,11 +37,12 @@ public class ClientController {
 		socket.close();
 	}
 	
-	public static boolean registerUser(Voter v, WSocket socket) {
+	public static boolean registerUser(Voter v) {
 		boolean result = false;
 		try {
 			Message newMsg = new Message(Message.Method.POST, RtvsType.REGISTER, v);
-			socket.sendTo(newMsg, districtServerPort); //Get port from list of district servers
+			System.out.println(newMsg.toString() + " " + districtServerPort);
+			socket.sendTo(newMsg, districtServerPort); 
 			newMsg = socket.receive();
 			result = (boolean)newMsg.getData();
 			
@@ -54,7 +54,7 @@ public class ClientController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Party> getParties(WSocket socket) {
+	public static ArrayList<Party> getParties() {
 		ArrayList<Party> parties = new ArrayList<Party>();
 		try {
 			Message newMsg = new Message(Message.Method.GET, RtvsType.PARTIES, "");
@@ -68,7 +68,7 @@ public class ClientController {
 		return parties;
 	}
 
-	public static  boolean updateCandidate(Candidate c, Party party) {
+	public static boolean updateCandidate(Candidate c, Party party) {
 		c.runFor(party);
 		boolean result = false;
 		try {
@@ -90,7 +90,7 @@ public class ClientController {
 		return result;
 	}
 	
-	public static Voter loginUser(String username, String password, WSocket socket) {
+	public static Voter loginUser(String username, String password) {
 		Voter result = null;
 		try {
 			Message newMsg = new Message(Message.Method.POST, RtvsType.LOGIN, username+"\n"+password);
@@ -105,11 +105,11 @@ public class ClientController {
 		return result;
 	}
 	
-	public static boolean userHasVoted(Voter v, WSocket socket) {		
+	public static boolean userHasVoted(Voter v) {		
 		boolean result = false;
 		try {
 			Message newMsg = new Message(Message.Method.GET, RtvsType.HAS_VOTED, v);
-			socket.sendTo(newMsg, districtServerPort); //Get port from list of district servers
+			socket.sendTo(newMsg, districtServerPort); 
 			newMsg = socket.receive();
 			result = (boolean)newMsg.getData();
 			
@@ -120,11 +120,11 @@ public class ClientController {
 		return result;
 	}
 	
-	public static void vote(Candidate c, Voter v, WSocket socket) {
+	public static void vote(Candidate c, Voter v) {
 		Vote vote = new Vote(v, c);
 		try {
 			Message newMsg = new Message(Message.Method.POST, RtvsType.VOTE, vote);
-			socket.sendTo(newMsg, districtServerPort); //Get port from list of district servers
+			socket.sendTo(newMsg, districtServerPort); 
 			//Dont expect response
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -132,13 +132,13 @@ public class ClientController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Candidate> getDistrictCandidates(District d, WSocket socket) {
+	public static ArrayList<Candidate> getDistrictCandidates(District d) {
 		ArrayList<Candidate> candidates = new ArrayList<Candidate>();
 		
 		//fetch from district server;
 		try {
 			Message newMsg = new Message(Message.Method.GET, RtvsType.CANDIDATES, "Ottawa-South");
-			socket.sendTo(newMsg, districtServerPort); //Get port from list of district servers
+			socket.sendTo(newMsg, districtServerPort); 
 			newMsg = socket.receive();
 			candidates = (ArrayList<Candidate>)newMsg.getData();
 			
@@ -149,7 +149,7 @@ public class ClientController {
 		return candidates;
 	}
 	
-	public static HashMap<Candidate, Integer> getLocalResults(District d, WSocket socket) {
+	public static HashMap<Candidate, Integer> getLocalResults(District d) {
 		HashMap<Candidate, Integer> results = new HashMap<Candidate, Integer>();
 		
 		try {
@@ -165,7 +165,7 @@ public class ClientController {
 		return results;
 	}
 	
-	public HashMap<Party, Integer> getNationalResults(WSocket socket) {
+	public HashMap<Party, Integer> getNationalResults() {
 		HashMap<Party, Integer> results = new HashMap<Party, Integer>();
 		
 		try {
@@ -202,7 +202,7 @@ public class ClientController {
             out.newLine();
             for (int i = 0; i < voters.size(); ++i) {
             	Voter voter = (Voter)voters.get(i);
-				if (registerUser(voter, this.getSocket())) {
+				if (registerUser(voter)) {
 					out.write("Registration Successful: " + voter.toString());
 				}
 				else {
@@ -214,7 +214,7 @@ public class ClientController {
 
 			out.write("Getting Parties from the Server.");
             out.newLine();
-            ArrayList<Party> parties = ClientController.getParties(this.getSocket());
+            ArrayList<Party> parties = ClientController.getParties();
 
             if (parties.size() > 0) {
             	out.write("District Parties:");
@@ -260,14 +260,6 @@ public class ClientController {
 		//Create GUI
 		@SuppressWarnings("unused")
 		ClientGUI gui = new ClientGUI(new District("Ottawa South"), this.getSocket());
-		//Click Registration button
-		//Show Registration Panel
-		//Submit Registration information (event handler)
-		//Click Voting button
-		//Show Voting Panel
-		//Submit Vote (event handler)
-		//Click View Results button
-		//Show Results panel
 
 		System.out.println("Started GUI");
 	}
@@ -275,8 +267,7 @@ public class ClientController {
 	public static void main(String[] args) {
 		try {
 			int mode = Integer.parseInt(args[0]);
-  	    	int serverPort = Integer.valueOf(args[1]);
-  	    	
+  	    	int serverPort = Integer.parseInt(args[1]);
   	    	final ClientController client = new ClientController(serverPort);
 
   	    	if (mode == ClientController.SIMULATION_MODE) {
