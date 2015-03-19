@@ -57,11 +57,11 @@ public class LoginPanel extends JPanel {
 			}
 			
 			if ( hasVoted ) { 
-				JOptionPane.showMessageDialog(frame, "You have already voted!", password, JOptionPane.OK_OPTION);
+				JOptionPane.showMessageDialog(frame, "You have already voted!", "Error", JOptionPane.OK_OPTION);
 				return null;
 			}
 			else
-				JOptionPane.showMessageDialog(frame, "Error, invalid credentials", password, JOptionPane.OK_OPTION);
+				JOptionPane.showMessageDialog(frame, "Invalid credentials", "Error", JOptionPane.OK_OPTION);
 		}
 	}
 	
