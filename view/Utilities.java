@@ -7,9 +7,12 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -39,6 +42,11 @@ public final class Utilities {
 	
 	private static Font UIFont = new Font("Courier New", Font.BOLD, 16);
 	private static GridBagConstraints constraints = new GridBagConstraints();
+	private static Comparator<Candidate> comparator = new Comparator<Candidate>() {
+		public int compare(Candidate candidate1, Candidate candidate2) {
+			return candidate1.getName().compareTo(candidate2.getName());
+		}
+	};
 	
 	public static JScrollPane newJScrollPane(JList<Candidate> jList, int gridx, int gridy, int gridwidth, int gridheight, GridBagLayout layout) {
 		JScrollPane jScrollPane = new JScrollPane(jList,
@@ -62,9 +70,7 @@ public final class Utilities {
 	}
 	
 	public static ChartPanel newResultsChartPanel(String title, int gridx, int gridy, int gridwidth, int gridheight, GridBagLayout layout, District district) {
-		CategoryDataset dataset = getElectionResults(district);
-		JFreeChart chart = createChart(dataset, title);
-		ChartPanel chartPanel = new ChartPanel(chart);
+		ChartPanel chartPanel = new ChartPanel(newResultsChart(title, district));
 		chartPanel.setFillZoomRectangle(true);
 		chartPanel.setMouseWheelEnabled(true);
 		chartPanel.setPreferredSize(new Dimension(500, 270));
@@ -83,15 +89,24 @@ public final class Utilities {
 		return chartPanel;
 	}
 	
+	public static JFreeChart newResultsChart(String title, District district) {
+		CategoryDataset dataset = getElectionResults(district);
+		JFreeChart chart = createChart(dataset, title);
+		return chart;
+	}
+	
 	private static CategoryDataset getElectionResults(District district) {
-		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		DefaultCategoryDataset dataset = new DefaultCategoryDataset();		
 		HashMap<Candidate, Integer> results = ClientController.getLocalResults(district);
 		
-	    Iterator<Entry<Candidate, Integer>> it = results.entrySet().iterator();
+		// To have results returned in alphabetical order
+		SortedSet<Candidate> keys = new TreeSet<Candidate>(comparator);
+		keys.addAll(results.keySet());
+		
+	    Iterator<Candidate> it = keys.iterator();
 	    while (it.hasNext()) {
-	        HashMap.Entry<Candidate, Integer> pair = (HashMap.Entry<Candidate, Integer>)it.next();
-	        System.out.println(pair.getKey().getName()+pair.getValue());
-	        dataset.addValue((Number)pair.getValue(), (Comparable<String>)pair.getKey().getName(), (Comparable<String>)pair.getKey().getName());
+	    	Candidate candidate = it.next();
+	        dataset.addValue((Number)results.get(candidate), (Comparable<String>)candidate.getName(), (Comparable<String>)candidate.getName());
 	        it.remove();
 	    }
 
