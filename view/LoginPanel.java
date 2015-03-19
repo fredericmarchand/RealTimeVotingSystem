@@ -50,12 +50,18 @@ public class LoginPanel extends JPanel {
 			password = new String(passwordField.getPassword());
 			
 			Voter voter = ClientController.loginUser(SIN, password);
+			boolean hasVoted = (voter == null) ? false : ClientController.userHasVoted(voter);
 			
-			if(voter != null && !ClientController.userHasVoted(voter)) {
+			if(voter != null && !hasVoted) {
 				return voter;
 			}
 			
-			JOptionPane.showMessageDialog(frame, "Error, invalid credentials", password, JOptionPane.OK_OPTION);
+			if ( hasVoted ) { 
+				JOptionPane.showMessageDialog(frame, "You have already voted!", password, JOptionPane.OK_OPTION);
+				return null;
+			}
+			else
+				JOptionPane.showMessageDialog(frame, "Error, invalid credentials", password, JOptionPane.OK_OPTION);
 		}
 	}
 	
