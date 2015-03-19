@@ -41,6 +41,17 @@ public class ClientVoteTest
 		assertFalse("Vote should be invalid", ClientController.vote(c, v));
 	}
 	
+	@Test
+	public void voteTwice() { 
+		Voter v = new Voter("Homer", "Simpson", new Address(), 100100111);
+		v.setPassword("d0h"); 
+		Candidate c = new Candidate("Green", "Bastard", new Address(), 987654321, new Party(Party.CONSERVATIVES));
+		assertTrue("Register new user should pass", ClientController.registerUser(v));
+		assertTrue("Loging in existing user should pass", ClientController.loginUser(v.getUsername(), v.getPassword()) != null);
+		assertTrue("vote should be valid", ClientController.vote(c, v));
+		assertFalse("second vote should be invalid", ClientController.vote(c,v));
+	}
+	
 	@After
 	public void teardown() { 
 		if ( controller != null ) { 

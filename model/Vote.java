@@ -28,5 +28,13 @@ public class Vote implements Serializable {
 		this.candidate = candidate;
 	}
 	
+	@Override
+	public boolean equals ( Object other ) {
+		return this.voter.getSIN() == (((Vote)other).voter.getSIN());
+	}
 	
+	@Override 
+	public int hashCode() {
+		return this.voter.getSIN();
+	}
 }
