@@ -1,6 +1,7 @@
 # Real-Time Electronic Voting System
 
-Instructions
+Instructions:
+
 cd to project root directory
 
 > java controller/DistrictServer Ottawa Ontario 60002
