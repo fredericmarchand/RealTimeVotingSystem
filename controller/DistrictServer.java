@@ -201,8 +201,13 @@ public class DistrictServer {
 				case RtvsType.VOTE:
 					Vote vote = (Vote)msg.getData();
 					synchronized(votes) {
-						if (votes.contains(vote)) {
+						if (!votes.contains(vote)) {
 							votes.add(vote);
+							for (Voter v: registeredVoters.values()) {
+								if (v.getSIN() == vote.getVoter().getSIN()) {
+									registeredVoters.get(String.valueOf(v.getSIN())).vote();
+								}
+							}
 						}
 					}
 					break;
@@ -210,7 +215,6 @@ public class DistrictServer {
 					break;
 			}
         } catch ( Exception e ) {
-            ////
             // The checksums did not match!
             System.err.println(e);
            	e.printStackTrace();
