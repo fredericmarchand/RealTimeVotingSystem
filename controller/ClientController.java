@@ -120,15 +120,18 @@ public class ClientController {
 		return result;
 	}
 	
-	public static void vote(Candidate c, Voter v) {
+	public static boolean vote(Candidate c, Voter v) {
 		Vote vote = new Vote(v, c);
+		boolean result = false;
 		try {
 			Message newMsg = new Message(Message.Method.POST, RtvsType.VOTE, vote);
 			socket.sendTo(newMsg, districtServerPort); 
-			//Dont expect response
+			newMsg = socket.receive();
+			result = (boolean)newMsg.getData();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return result;
 	}
 	
 	@SuppressWarnings("unchecked")

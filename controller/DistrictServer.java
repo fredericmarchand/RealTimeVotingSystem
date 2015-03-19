@@ -199,6 +199,7 @@ public class DistrictServer {
 					sendSocket.sendTo(msg, sender);
 					break;
 				case RtvsType.VOTE:
+					boolean ret = false;
 					Vote vote = (Vote)msg.getData();
 					synchronized(votes) {
 						if (!votes.contains(vote)) {
@@ -208,8 +209,11 @@ public class DistrictServer {
 									registeredVoters.get(String.valueOf(v.getSIN())).vote();
 								}
 							}
+							ret = true;
 						}
 					}
+					msg = new Message(Message.Method.GET, RtvsType.VOTE, ret);
+					sendSocket.sendTo(msg, sender);
 					break;
 				default:
 					break;
