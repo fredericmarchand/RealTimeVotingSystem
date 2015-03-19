@@ -9,14 +9,35 @@ import model.District;
 
 import org.jfree.chart.ChartPanel;
 
+import controller.CentralServer;
+
 public class ResultsPanel extends JPanel {
+	
+	class resultsChartThread implements Runnable {
+		
+		public void run() {
+			while(true) {
+				try {
+					Thread.sleep(CentralServer.PERIOD);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				updateResultsChart();
+			}
+		}
+	} 
 	
 	private static final long serialVersionUID = 1L;
 	
 	// The district
 	private District district;
 	
-	private ChartPanel  resultsChart;
+	// Thread responsible for updating the results chart
+	Thread thread;
+	
+	private static final String title = "Current Election Results";
+	
+	private ChartPanel  chartPanel;
 	private JButton     loginButton;
 	private JButton     registerButton;
 	
@@ -30,20 +51,21 @@ public class ResultsPanel extends JPanel {
 		layout = new GridBagLayout();
 		setLayout(layout);
 		
-		resultsChart = Utilities.newResultsChartPanel("Current Election Results", 0, 0, 4, 3, layout, this.district);
-		add(resultsChart);
+		chartPanel = Utilities.newResultsChartPanel(title, 0, 0, 4, 3, layout, this.district);
+		add(chartPanel);
 
 		loginButton = Utilities.newJButton("Vote", 0, 4, 1, 1, layout);
 		add(loginButton);
 		
 		registerButton = Utilities.newJButton("Register", 1, 4, 1, 1, layout);
 		add(registerButton);
+		
+		thread = new Thread(new resultsChartThread());
+		thread.start();
 	}
 	
 	public void updateResultsChart() {
-		remove(resultsChart);
-		resultsChart = Utilities.newResultsChartPanel("Current Election Results", 0, 0, 4, 3, layout, this.district);
-		add(resultsChart);
+		chartPanel.setChart(Utilities.newResultsChart(title, district));
 	}
 	
 	public JButton getLoginButton() {
