@@ -281,7 +281,7 @@ public class ClientController {
   	    	}
 
 	    } catch (Exception e) {
-	    	System.out.println("Usage: ClientController <serverPort> [<inputFile> <outputFile>]");
+	    	System.out.println("Usage: ClientController <mode> <serverPort> [<inputFile> <outputFile>]");
 	    }
 	}
 
