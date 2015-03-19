@@ -202,7 +202,8 @@ public class DistrictServer {
 					boolean ret = false;
 					Vote vote = (Vote)msg.getData();
 					synchronized(votes) {
-						if (!votes.contains(vote)) {
+						if (!votes.contains(vote) 
+						&& registeredVoters.keySet().contains(""+vote.getVoter().getSIN())) {
 							votes.add(vote);
 							for (Voter v: registeredVoters.values()) {
 								if (v.getSIN() == vote.getVoter().getSIN()) {
