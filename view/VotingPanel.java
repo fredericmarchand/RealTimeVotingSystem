@@ -2,8 +2,6 @@ package view;
 
 import java.awt.Font;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -14,24 +12,24 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import networking.WSocket;
-import controller.ClientController;
 import model.Candidate;
 import model.District;
+import model.Voter;
+import controller.ClientController;
 
 public class VotingPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
-	// The Socket
-	WSocket socket;
-	
 	// The District
 	District district;
 	
+	// The Voter
+	Voter voter;
+	
 	// These are the components
 	JButton          submitButton;
-	JButton          cancleButton;
+	JButton          cancelButton;
 	JList<Candidate> districtCandidatesList;
 	JScrollPane      districtCandidatesScrollPane;
 	JLabel           partyLabel;
@@ -41,10 +39,9 @@ public class VotingPanel extends JPanel {
 	JLabel           districtLabel;
 	JTextField       districtField;
 	
-	public VotingPanel(final District district, WSocket socket) {
+	public VotingPanel(District district) {
 		
 		this.district = district;
-		this.socket = socket;
 		
 		GridBagLayout layout = new GridBagLayout();
 		setLayout(layout);
@@ -63,6 +60,7 @@ public class VotingPanel extends JPanel {
 		add(candidateField);
 		
 		partyLabel = Utilities.newJLabel("Party:", 1, 2, layout);
+		candidateField.setEnabled(false);
 		add(partyLabel);
 		
 		partyField = Utilities.newJTextField("", 2, 2, 1, 1, layout);
@@ -76,8 +74,8 @@ public class VotingPanel extends JPanel {
 		districtField.setEnabled(false);
 		add(districtField);
 		
-		cancleButton = Utilities.newJButton("Cancle", 1, 4, 1, 1, layout);
-		add(cancleButton);
+		cancelButton = Utilities.newJButton("Cancel", 1, 4, 1, 1, layout);
+		add(cancelButton);
 		
 		submitButton = Utilities.newJButton("Submit", 2, 4, 1, 1, layout);
 		add(submitButton);
@@ -91,22 +89,27 @@ public class VotingPanel extends JPanel {
 		        districtField.setText(district.getName());
 		    }
 		});
-		
-		submitButton.addActionListener(new ActionListener() {
-		    @Override
-		    public void actionPerformed(ActionEvent evt) {
-		        if(districtCandidatesList.getSelectedValue() != null) {
-		        	System.out.println(districtCandidatesList.getSelectedValue().getName());
-		        }
-		    }
-		});
+	}
+	
+	public void setVoter(Voter voter) {
+		this.voter = voter;
+	}
+	
+	public boolean vote() {
+		if(districtCandidatesList.getSelectedValue() != null) {
+			Candidate selected = districtCandidatesList.getSelectedValue();
+			System.out.println(selected +" voted by " + voter);
+			ClientController.vote(selected, voter);
+			return true;
+		}
+		return false;
 	}
 	
 	public JButton getSubmitButton() {
 		return submitButton;
 	}
 	
-	public JButton getCancleButton() {
-		return cancleButton;
+	public JButton getCancelButton() {
+		return cancelButton;
 	}
 }

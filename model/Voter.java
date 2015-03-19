@@ -16,6 +16,13 @@ public class Voter extends Person {
         this(firstName, lastName, address, SIN, user, pass, null);
     }
 
+    public Voter(String firstName, String lastName, Address address, int SIN, String pass, District district) {
+        super(firstName, lastName, address, SIN);
+        setDistrict(district);
+        this.hasVoted = false;
+        password = pass;
+    }
+    
     public Voter(String firstName, String lastName, Address address, int SIN, String user, String pass, District district) {
         super(firstName, lastName, address, SIN);
         setDistrict(district);
