@@ -2,11 +2,8 @@ package controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.io.BufferedWriter;
@@ -190,7 +187,7 @@ public class ClientController {
 		return results;
 	}
 	
-	public void simulate(String inputFolder, String outputFolder) {
+	public void simulate(String inputFolder, final String outputFolder) {
 		BufferedWriter out = null;
 		
 		try {
@@ -199,8 +196,8 @@ public class ClientController {
 			File[] listOfFiles = folder.listFiles();
 	
 			for (int i = 0; i < listOfFiles.length; i++) {
-				File file = listOfFiles[i];
-				int fileCount = i+1;
+				final File file = listOfFiles[i];
+				final int fileCount = i+1;
 				if (file.isFile()) {
 			       threads.add(new Thread(new Runnable() {
 						public void run() {

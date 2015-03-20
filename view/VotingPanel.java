@@ -39,7 +39,7 @@ public class VotingPanel extends JPanel {
 	JLabel           districtLabel;
 	JTextField       districtField;
 	
-	public VotingPanel(District district) {
+	public VotingPanel(final District district) {
 		
 		this.district = district;
 		
