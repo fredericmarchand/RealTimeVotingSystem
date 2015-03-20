@@ -4,7 +4,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import model.Address;
 import model.Candidate;
-import model.District;
 import model.Party;
 import model.Voter;
 

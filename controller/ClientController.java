@@ -2,9 +2,12 @@ package controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 
 import networking.*;
@@ -168,7 +171,7 @@ public class ClientController {
 		return results;
 	}
 	
-	public HashMap<Party, Integer> getNationalResults() {
+	public static HashMap<Party, Integer> getNationalResults() {
 		HashMap<Party, Integer> results = new HashMap<Party, Integer>();
 		
 		try {
@@ -183,18 +186,68 @@ public class ClientController {
 		
 		return results;
 	}
+	
+	public void simulate(String inputFolder, final String outputFolder) {
+		BufferedWriter out = null;
+		
+		try {
+			ArrayList<Thread> threads = new ArrayList<Thread>();
+			File folder = new File(inputFolder);
+			File[] listOfFiles = folder.listFiles();
+	
+			for (int i = 0; i < listOfFiles.length; i++) {
+				final File file = listOfFiles[i];
+				final int fileCount = i+1;
+				if (file.isFile()) {
+			       threads.add(new Thread(new Runnable() {
+						public void run() {
+							(new ClientController(districtServerPort)).simulateFromFile(file.getAbsolutePath(),
+							outputFolder+File.separator+"client_output"+fileCount+".txt");
+						}
+					}));
+			    }
+			}
+			
+			for (Thread t : threads)
+				t.start();
+			for (Thread t : threads)
+				t.join();
+			
+			out = new BufferedWriter(new FileWriter(outputFolder+File.separator+"final_output.txt"));
+			out.write("Results after all voting session");
+            out.newLine();
+            HashMap<Candidate, Integer> results = getLocalResults(new District("Ottawa South"));
+			for (Map.Entry<Candidate,Integer> entry : results.entrySet()) {
+			  out.write(((Candidate)entry.getKey()).toString() + " - " + ((Integer)entry.getValue()).toString() + " votes");
+			  out.newLine();
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+        	if (out != null) {
+				try {
+					out.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+        }
+	} 
 
-	public void simulate(String inputFile, String outputFile) {
+	public void simulateFromFile(String inputFile, String outputFile) {
 
 		BufferedWriter out = null;
+		District district = new District("Ottawa South");
 
   	    try { 
             out = new BufferedWriter(new FileWriter(outputFile));
-            out.write("Populating the system with Voters and Candidates...");
+            out.write("Populating the system with Voters read in from " + inputFile);
             out.newLine();
-            SystemPopulator.populateVotersAndCandidates(inputFile);
-            ArrayList<Person> voters = SystemPopulator.getVoters();
-      		ArrayList<Person> candidates = SystemPopulator.getCandidates();
+            
+            ArrayList<Person> voters = new ArrayList<Person>();
+            ArrayList<Person> candidates = new ArrayList<Person>();
+            SystemPopulator.populateVotersAndCandidates(inputFile, voters, candidates);
+            
             out.write("Total Voters: " + voters.size());
             out.newLine();
             out.write("Done Populating.");
@@ -227,25 +280,67 @@ public class ClientController {
             		out.newLine();
             	}
             	out.newLine();
-
-            	out.write("Updating Candidates and their Parties on the Server.");
-	            out.newLine();
-	            for (int i = 0; i < candidates.size(); ++i) {
-	            	Candidate candidate = (Candidate)candidates.get(i);
-					if (updateCandidate(candidate, parties.get((i%parties.size())))) {
-						out.write("Candidate Run Successful: " + candidate.toString());
-					}
-					else {
-						out.write("Candidate Run Failed: " + candidate.toString());
-					}
-					out.newLine();
-				}
             }
             else {
             	out.write("There are no parties in the District Server");
             	out.newLine();
             	out.newLine();
             }
+            
+            out.write("Getting Candidates from the Server.");
+            out.newLine();
+            ArrayList<Candidate> districtCandidates = getDistrictCandidates(district);
+            int numCandidates = districtCandidates.size();
+            if (numCandidates > 0) {
+            	out.write("District Candidates:");
+            	out.newLine();
+            	for (int i = 0; i < numCandidates; ++i) {
+            		out.write(districtCandidates.get(i).toString());
+            		out.newLine();
+            	}
+            	out.newLine();
+            	
+            	out.write("Voters voting for Candidates.");
+                out.newLine();
+                Random randomGenerator = new Random();
+                for (int i = 0; i < voters.size(); ++i) {
+                	Voter voter = (Voter)voters.get(i);
+                	Voter serverVoter = loginUser(voter.getUsername(), voter.getPassword());
+    				if (serverVoter != null) {
+    					out.write("Login Successful: " + serverVoter.toString());
+    					out.newLine();
+    					int index = randomGenerator.nextInt(numCandidates);
+    					Candidate luckyCandidate = districtCandidates.get(index);
+    					if (vote(luckyCandidate, serverVoter)) {
+    						out.write("Vote Successful: Voted for " + luckyCandidate.toString());
+        					out.newLine();
+    					}
+    					else {
+    						out.write("Vote Failed");
+    						out.newLine();
+    					}
+    				}
+    				else {
+    					out.write("Login Failed: " + voter.toString());
+    				}
+    				out.newLine();
+    			}
+    			out.newLine();
+            }
+            else {
+            	out.write("There are no Candidates in the District Server");
+            	out.newLine();
+            	out.newLine();
+            }
+            
+            out.write("Results after current voting session");
+            out.newLine();
+            HashMap<Candidate, Integer> results = getLocalResults(district);
+			for (Map.Entry<Candidate,Integer> entry : results.entrySet()) {
+			  out.write(((Candidate)entry.getKey()).toString() + " - " + ((Integer)entry.getValue()).toString() + " votes");
+			  out.newLine();
+			}
+            
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -281,7 +376,7 @@ public class ClientController {
   	    	}
 
 	    } catch (Exception e) {
-	    	System.out.println("Usage: ClientController <mode> <serverPort> [<inputFile> <outputFile>]");
+	    	System.out.println("Usage: ClientController <mode> <serverPort> [<inputFolder> <outputFolder>]");
 	    }
 	}
 

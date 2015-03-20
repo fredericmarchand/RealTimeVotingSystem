@@ -22,7 +22,7 @@ public class WSocket
     private int port;
     
     
-    public WSocket listen ( int port, String host ) 
+    public synchronized WSocket listen ( int port, String host ) 
 	throws UnknownHostException, SocketException {
         this.socket = new DatagramSocket(port, addr);
     	this.port = port;
@@ -35,7 +35,7 @@ public class WSocket
     	return this.listen(port, "localhost");
     }
     
-    public WSocket connect ( int port, String host )
+    public synchronized WSocket connect ( int port, String host )
     throws UnknownHostException, SocketException { 
          this.socket = new DatagramSocket(); 
          this.port = port;
