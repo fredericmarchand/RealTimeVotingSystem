@@ -1,4 +1,4 @@
-Populating the system with Voters read in from C:\Users\Fred\repos\RealTimeVotingSystem\test_files\voters_candidates5.txt
+Populating the system with Voters read in from /home/brandon/Dropbox/School/SYSC3303/assignments/project/RealTimeVotingSystem/test_files/voters_candidates5.txt
 Total Voters: 10
 Done Populating.
 
@@ -28,37 +28,37 @@ Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
 
 Voters voting for Candidates.
 Login Successful: Voter: Adrienne Frost
-Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
+Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
 
 Login Successful: Voter: Olivia Howard
 Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
 
 Login Successful: Voter: Fuller Carver
-Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
+Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
 
 Login Successful: Voter: Simone Kramer
-Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
+Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
 
 Login Successful: Voter: Jordan Holmes
-Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
+Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
 
 Login Successful: Voter: Hunter Lucas
-Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
-
-Login Successful: Voter: Kyle Delaney
 Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
 
-Login Successful: Voter: Randall Nielsen
+Login Successful: Voter: Kyle Delaney
 Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
+
+Login Successful: Voter: Randall Nielsen
+Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
 
 Login Successful: Voter: Macy Rowe
 Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
 
 Login Successful: Voter: Quyn Gallagher
-Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
+Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
 
 
 Results after current voting session
-Candidate: Running for Party: NDP - Voter: X-wing @aliciousness - 34 votes
 Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar - 30 votes
-Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish - 24 votes
+Candidate: Running for Party: NDP - Voter: X-wing @aliciousness - 34 votes
+Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish - 36 votes

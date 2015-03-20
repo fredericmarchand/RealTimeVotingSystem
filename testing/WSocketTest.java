@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import networking.Message;
+import networking.WServerSocket;
 import networking.WSocket;
 import model.*;
 
@@ -26,13 +27,25 @@ public class WSocketTest
      */
     public static void echoServer() throws IOException { 
 
-        WSocket s_socket = new WSocket().listen(8080);
+        WServerSocket s_socket = new WServerSocket(8080);
 
         while ( true ) {
 
-            Message msg = s_socket.receive();
-
-            s_socket.sendTo(msg, msg.getSenderPort());
+        	final WSocket client_conn = s_socket.accept();
+        	
+        	new Thread( new Runnable() { 
+        		@Override public void run() {
+                    try {
+                    	while ( true ) {
+	                    	Message msg = client_conn.receive();
+							client_conn.sendTo(msg, msg.getSenderPort());
+                    	}
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+        		}
+        	}).start();
         }
     }
 
@@ -62,7 +75,7 @@ public class WSocketTest
             final Message req = new Message(
                     Message.Method.GET,
                     "test",
-                    big_data);
+                    "test");
 
             ////
             // run this in a background thread

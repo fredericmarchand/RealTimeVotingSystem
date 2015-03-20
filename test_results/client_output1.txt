@@ -1,4 +1,4 @@
-Populating the system with Voters read in from C:\Users\Fred\repos\RealTimeVotingSystem\test_files\voters_candidates1.txt
+Populating the system with Voters read in from /home/brandon/Dropbox/School/SYSC3303/assignments/project/RealTimeVotingSystem/test_files/voters_candidates1.txt
 Total Voters: 10
 Done Populating.
 
@@ -28,37 +28,37 @@ Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
 
 Voters voting for Candidates.
 Login Successful: Voter: Doris Mcleod
-Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
+Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
 
 Login Successful: Voter: Camden Tran
-Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
+Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
 
 Login Successful: Voter: Paula Clarke
-Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
+Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
 
 Login Successful: Voter: Adara Walters
 Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
 
 Login Successful: Voter: Russell Fletcher
-Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
-
-Login Successful: Voter: Madaline Brooks
-Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
-
-Login Successful: Voter: Richard Moody
-Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
-
-Login Successful: Voter: Chaney Sandoval
 Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
 
-Login Successful: Voter: Ethan Gay
+Login Successful: Voter: Madaline Brooks
+Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
+
+Login Successful: Voter: Richard Moody
+Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
+
+Login Successful: Voter: Chaney Sandoval
 Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
+
+Login Successful: Voter: Ethan Gay
+Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
 
 Login Successful: Voter: Imelda Marks
 Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
 
 
 Results after current voting session
-Candidate: Running for Party: NDP - Voter: X-wing @aliciousness - 11 votes
-Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar - 14 votes
-Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish - 6 votes
+Candidate: Running for Party: NDP - Voter: X-wing @aliciousness - 25 votes
+Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar - 20 votes
+Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish - 28 votes

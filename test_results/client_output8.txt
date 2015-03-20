@@ -1,4 +1,4 @@
-Populating the system with Voters read in from C:\Users\Fred\repos\RealTimeVotingSystem\test_files\voters_candidates7.txt
+Populating the system with Voters read in from /home/brandon/Dropbox/School/SYSC3303/assignments/project/RealTimeVotingSystem/test_files/voters_candidates7.txt
 Total Voters: 10
 Done Populating.
 
@@ -34,16 +34,16 @@ Login Successful: Voter: Hector Cooke
 Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
 
 Login Successful: Voter: Honorato Parrish
-Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
+Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
 
 Login Successful: Voter: Ila Marshall
-Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
+Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
 
 Login Successful: Voter: Mollie Romero
 Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
 
 Login Successful: Voter: Alana Hardin
-Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
+Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
 
 Login Successful: Voter: Orla Quinn
 Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
@@ -52,13 +52,13 @@ Login Successful: Voter: Talon Bradley
 Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
 
 Login Successful: Voter: Nathan Chase
-Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
+Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
 
 Login Successful: Voter: Benjamin Carrillo
-Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
+Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
 
 
 Results after current voting session
-Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar - 30 votes
-Candidate: Running for Party: NDP - Voter: X-wing @aliciousness - 32 votes
-Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish - 22 votes
+Candidate: Running for Party: NDP - Voter: X-wing @aliciousness - 17 votes
+Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar - 18 votes
+Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish - 19 votes

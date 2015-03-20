@@ -19,7 +19,7 @@ public class WSocket
 
     private DatagramSocket socket;
     private InetAddress addr;
-    private int port;
+    public int port;
     
     
     public synchronized WSocket listen ( int port, String host ) 
@@ -27,6 +27,14 @@ public class WSocket
         this.socket = new DatagramSocket(port, addr);
     	this.port = port;
     	this.addr = InetAddress.getByName(host);
+    	return this;
+    }
+    
+    public synchronized WSocket listen() 
+	throws UnknownHostException, SocketException {
+        this.socket = new DatagramSocket();
+    	this.port = socket.getLocalPort();
+    	this.addr = socket.getLocalAddress();
     	return this;
     }
 
@@ -37,10 +45,27 @@ public class WSocket
     
     public synchronized WSocket connect ( int port, String host )
     throws UnknownHostException, SocketException { 
+    	synchronized ( this ) { 
          this.socket = new DatagramSocket(); 
          this.port = port;
          this.addr = InetAddress.getByName(host);
+         try {
+        	 System.out.println("connecting");
+             Message msg = new Message(
+            		 Message.Method.POST,
+            		 "%%%connect%%%",
+            		 "%%%connect%%%");
+			this.sendTo(msg, port);
+			Message res = this.receive();
+			System.out.println("conncet received");
+			if ( res.getType().equals("%%%new-connection%%%") )
+				this.port = (Integer)res.getData();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
          return this;
+    	}
     }
 
     public WSocket connect ( int port )

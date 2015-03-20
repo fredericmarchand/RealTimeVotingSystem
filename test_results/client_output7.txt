@@ -1,4 +1,4 @@
-Populating the system with Voters read in from C:\Users\Fred\repos\RealTimeVotingSystem\test_files\voters_candidates6.txt
+Populating the system with Voters read in from /home/brandon/Dropbox/School/SYSC3303/assignments/project/RealTimeVotingSystem/test_files/voters_candidates6.txt
 Total Voters: 10
 Done Populating.
 
@@ -28,37 +28,37 @@ Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
 
 Voters voting for Candidates.
 Login Successful: Voter: Keegan Hughes
-Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
-
-Login Successful: Voter: Evan Hunter
-Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
-
-Login Successful: Voter: Fulton Stone
-Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
-
-Login Successful: Voter: Asher Cooke
-Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
-
-Login Successful: Voter: Summer Bryan
 Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
 
-Login Successful: Voter: Kennan Ochoa
+Login Successful: Voter: Evan Hunter
+Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
+
+Login Successful: Voter: Fulton Stone
+Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
+
+Login Successful: Voter: Asher Cooke
+Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
+
+Login Successful: Voter: Summer Bryan
 Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
+
+Login Successful: Voter: Kennan Ochoa
+Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
 
 Login Successful: Voter: Ruby Cohen
 Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
 
 Login Successful: Voter: Blair Richardson
-Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
+Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
 
 Login Successful: Voter: Hope Carlson
-Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
+Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
 
 Login Successful: Voter: Constance Lawson
 Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
 
 
 Results after current voting session
-Candidate: Running for Party: NDP - Voter: X-wing @aliciousness - 26 votes
-Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish - 19 votes
-Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar - 28 votes
+Candidate: Running for Party: NDP - Voter: X-wing @aliciousness - 17 votes
+Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish - 21 votes
+Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar - 18 votes

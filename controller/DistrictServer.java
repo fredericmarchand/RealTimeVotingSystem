@@ -15,6 +15,7 @@ public class DistrictServer {
 	
 	private District district;
 	private WSocket recvSocket, sendSocket;
+	private WServerSocket servSocket;
 	private HashMap<String, Party> parties;
 	private HashMap<String, Candidate> candidates;
 	private HashMap<String, Voter> registeredVoters;
@@ -23,9 +24,10 @@ public class DistrictServer {
 	public DistrictServer(String name, Province province, int port) {
 		district = new District (name, province);
 		try {
-			recvSocket = new WSocket().listen(port);
-			sendSocket = new WSocket().connect(port);
-        } catch (UnknownHostException | SocketException e1) {
+			//recvSocket = new WSocket().listen(port);
+			//sendSocket = new WSocket().connect(port);
+			servSocket = new WServerSocket(port);
+        } catch (Exception e1) {
             e1.printStackTrace();
         }
         parties = new HashMap<String, Party>();
@@ -65,23 +67,25 @@ public class DistrictServer {
  	public void receiveMessages() {
 		try {
 	        while ( true ) {
-	        	final Message msg = recvSocket.receive();
+	        	final WSocket client = servSocket.accept();
 	        	Thread t = new Thread(new Runnable() {
 					public void run() {
-						processMessages(msg);
+						handleClient(client);
 					}
 				});
 	        	t.start();
 	        }
 	    } catch (Exception e) {
-	    	recvSocket.close();
-	    	sendSocket.close();
+	    	//recvSocket.close();
+	    	//sendSocket.close();
 	    	e.printStackTrace();
 	    }
    	}
 
-   	private void processMessages(Message msg) {
+   	private void handleClient(WSocket socket) {
+   		while ( true ) { 
    		try {                
+   			Message msg = socket.receive();
             int sender = msg.getSenderPort();
 
 			switch (msg.getType()) {
@@ -91,7 +95,7 @@ public class DistrictServer {
 						response1 = new ArrayList<Candidate>(candidates.values());
 					}							
 					msg = new Message(Message.Method.GET, RtvsType.CANDIDATES, response1);
-					sendSocket.sendTo(msg, sender);
+					socket.sendTo(msg, sender);
 					break;
 				case RtvsType.REGISTER:
 					Voter voter1 = (Voter)msg.getData();
@@ -110,7 +114,7 @@ public class DistrictServer {
 							msg = new Message(Message.Method.GET, RtvsType.REGISTER, Boolean.TRUE);
 						}
 					}
-					sendSocket.sendTo(msg, sender);
+					socket.sendTo(msg, sender);
 					break;
 				case RtvsType.RUN:
 					Candidate candidate1 = (Candidate)msg.getData();
@@ -136,7 +140,7 @@ public class DistrictServer {
 							}
 						}
 					}
-					sendSocket.sendTo(msg, sender);
+					socket.sendTo(msg, sender);
 					break;
 				case RtvsType.LOGIN:
 					Voter voter = null;
@@ -160,7 +164,7 @@ public class DistrictServer {
 						voter = null;
 					}
 					msg = new Message(Message.Method.GET, RtvsType.LOGIN, voter);
-					sendSocket.sendTo(msg, sender);
+					socket.sendTo(msg, sender);
 					break;
 				case RtvsType.RESULTS:
 					ResultSet rs = new ResultSet(ResultSet.DISTRICT);
@@ -174,7 +178,7 @@ public class DistrictServer {
 					}
 					
 					msg = new Message(Message.Method.GET, RtvsType.RESULTS, rs);
-					sendSocket.sendTo(msg, sender);
+					socket.sendTo(msg, sender);
 					
 					break;
 				case RtvsType.PARTIES:
@@ -183,7 +187,7 @@ public class DistrictServer {
 						response = new ArrayList<Party>(parties.values());
 					}							
 					msg = new Message(Message.Method.GET, RtvsType.PARTIES, response);
-					sendSocket.sendTo(msg, sender);
+					socket.sendTo(msg, sender);
 					break;
 				case RtvsType.HAS_VOTED:
 					Voter voter2 = (Voter)msg.getData();
@@ -195,7 +199,7 @@ public class DistrictServer {
 						}
 					}
 					msg = new Message(Message.Method.GET, RtvsType.HAS_VOTED, hasVoted);
-					sendSocket.sendTo(msg, sender);
+					socket.sendTo(msg, sender);
 					break;
 				case RtvsType.VOTE:
 					boolean ret = false;
@@ -213,7 +217,7 @@ public class DistrictServer {
 						}
 					}
 					msg = new Message(Message.Method.GET, RtvsType.VOTE, ret);
-					sendSocket.sendTo(msg, sender);
+					socket.sendTo(msg, sender);
 					break;
 				default:
 					break;
@@ -225,6 +229,7 @@ public class DistrictServer {
             // do nothing, 
             // the client should resend the same message
         }
+   		}
    	}
 	
 	public static void main(String[] args) {
