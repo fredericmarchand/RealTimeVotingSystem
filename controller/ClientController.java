@@ -40,7 +40,7 @@ public class ClientController {
 		socket.close();
 	}
 	
-	public static boolean registerUser(Voter v) {
+	public static synchronized boolean registerUser(Voter v) {
 		boolean result = false;
 		try {
 			Message newMsg = new Message(Message.Method.POST, RtvsType.REGISTER, v);
@@ -57,7 +57,7 @@ public class ClientController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Party> getParties() {
+	public static synchronized ArrayList<Party> getParties() {
 		ArrayList<Party> parties = new ArrayList<Party>();
 		try {
 			Message newMsg = new Message(Message.Method.GET, RtvsType.PARTIES, "");
@@ -71,7 +71,7 @@ public class ClientController {
 		return parties;
 	}
 
-	public static boolean updateCandidate(Candidate c, Party party) {
+	public static synchronized boolean updateCandidate(Candidate c, Party party) {
 		c.runFor(party);
 		boolean result = false;
 		try {
@@ -93,7 +93,7 @@ public class ClientController {
 		return result;
 	}
 	
-	public static Voter loginUser(String username, String password) {
+	public static synchronized Voter loginUser(String username, String password) {
 		Voter result = null;
 		try {
 			Message newMsg = new Message(Message.Method.POST, RtvsType.LOGIN, username+"\n"+password);
@@ -108,7 +108,7 @@ public class ClientController {
 		return result;
 	}
 	
-	public static boolean userHasVoted(Voter v) {		
+	public static synchronized boolean userHasVoted(Voter v) {		
 		boolean result = false;
 		try {
 			Message newMsg = new Message(Message.Method.GET, RtvsType.HAS_VOTED, v);
@@ -123,7 +123,7 @@ public class ClientController {
 		return result;
 	}
 	
-	public static boolean vote(Candidate c, Voter v) {
+	public static synchronized boolean vote(Candidate c, Voter v) {
 		Vote vote = new Vote(v, c);
 		boolean result = false;
 		try {
@@ -138,7 +138,7 @@ public class ClientController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Candidate> getDistrictCandidates(District d) {
+	public static synchronized ArrayList<Candidate> getDistrictCandidates(District d) {
 		ArrayList<Candidate> candidates = new ArrayList<Candidate>();
 		
 		//fetch from district server;
@@ -155,7 +155,7 @@ public class ClientController {
 		return candidates;
 	}
 	
-	public static HashMap<Candidate, Integer> getLocalResults(District d) {
+	public static synchronized HashMap<Candidate, Integer> getLocalResults(District d) {
 		HashMap<Candidate, Integer> results = new HashMap<Candidate, Integer>();
 		
 		try {
@@ -171,7 +171,7 @@ public class ClientController {
 		return results;
 	}
 	
-	public static HashMap<Party, Integer> getNationalResults() {
+	public static synchronized HashMap<Party, Integer> getNationalResults() {
 		HashMap<Party, Integer> results = new HashMap<Party, Integer>();
 		
 		try {
@@ -199,12 +199,11 @@ public class ClientController {
 				final File file = listOfFiles[i];
 				final int fileCount = i+1;
 				if (file.isFile()) {
-			       //threads.add(new Thread(new Runnable() {
-					//	public void run() {
-							(new ClientController(districtServerPort)).simulateFromFile(file.getAbsolutePath(),
-							outputFolder+File.separator+"client_output"+fileCount+".txt");
-						//}
-					//}));
+			       threads.add(new Thread(new Runnable() {
+						public void run() {
+							ClientController.simulateFromFile(file.getAbsolutePath(), outputFolder+File.separator+"client_output"+fileCount+".txt");
+						}
+					}));
 			    }
 			}
 			
@@ -234,7 +233,7 @@ public class ClientController {
         }
 	} 
 
-	public void simulateFromFile(String inputFile, String outputFile) {
+	public static void simulateFromFile(String inputFile, String outputFile) {
 
 		BufferedWriter out = null;
 		District district = new District("Ottawa South");
