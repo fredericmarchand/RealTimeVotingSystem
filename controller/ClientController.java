@@ -199,12 +199,12 @@ public class ClientController {
 				final File file = listOfFiles[i];
 				final int fileCount = i+1;
 				if (file.isFile()) {
-			       threads.add(new Thread(new Runnable() {
-						public void run() {
+			       //threads.add(new Thread(new Runnable() {
+					//	public void run() {
 							(new ClientController(districtServerPort)).simulateFromFile(file.getAbsolutePath(),
 							outputFolder+File.separator+"client_output"+fileCount+".txt");
-						}
-					}));
+						//}
+					//}));
 			    }
 			}
 			
