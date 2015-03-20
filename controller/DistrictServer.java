@@ -72,7 +72,6 @@ public class DistrictServer {
 					}
 				});
 	        	t.start();
-	        	t.join();
 	        }
 	    } catch (Exception e) {
 	    	recvSocket.close();
@@ -267,7 +266,6 @@ public class DistrictServer {
 				}
 			});
 			t.start();
-			t.join();
 
 		} catch (Exception e) {
 	    	System.out.println("Usage: DistrictServer <districtName> <provinceName> <port> [<inputFile>]");
