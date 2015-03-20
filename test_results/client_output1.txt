@@ -1,0 +1,64 @@
+Populating the system with Voters read in from /home/ib/SYSC_3303/RealTimeVotingSystem/test_files/voters_candidates8.txt
+Total Voters: 10
+Done Populating.
+
+Registering Voters on the Server.
+Registration Successful: Voter: Quincy Wooten
+Registration Successful: Voter: Bethany Decker
+Registration Successful: Voter: Sigourney Caldwell
+Registration Successful: Voter: Vanna Wilkins
+Registration Successful: Voter: Hayden Wilson
+Registration Successful: Voter: Jemima Raymond
+Registration Successful: Voter: Zane Richard
+Registration Successful: Voter: Elton Benton
+Registration Successful: Voter: Reed Barrera
+Registration Successful: Voter: Yetta Gibson
+
+Getting Parties from the Server.
+District Parties:
+Liberals
+Conservatives
+NDP
+
+Getting Candidates from the Server.
+District Candidates:
+Candidate: Running for Party: NDP- Voter: X-wing @aliciousness
+Candidate: Running for Party: Conservatives- Voter: Javaris Javar Javarison-Lamar
+Candidate: Running for Party: Liberals- Voter: Scoish Velociraptor Maloish
+
+Voters voting for Candidates.
+Login Successful: Voter: Quincy Wooten
+Vote Successful: Voted for Candidate: Running for Party: Liberals- Voter: Scoish Velociraptor Maloish
+
+Login Successful: Voter: Bethany Decker
+Vote Successful: Voted for Candidate: Running for Party: Liberals- Voter: Scoish Velociraptor Maloish
+
+Login Successful: Voter: Sigourney Caldwell
+Vote Successful: Voted for Candidate: Running for Party: Liberals- Voter: Scoish Velociraptor Maloish
+
+Login Successful: Voter: Vanna Wilkins
+Vote Successful: Voted for Candidate: Running for Party: Conservatives- Voter: Javaris Javar Javarison-Lamar
+
+Login Successful: Voter: Hayden Wilson
+Vote Successful: Voted for Candidate: Running for Party: Liberals- Voter: Scoish Velociraptor Maloish
+
+Login Successful: Voter: Jemima Raymond
+Vote Successful: Voted for Candidate: Running for Party: Conservatives- Voter: Javaris Javar Javarison-Lamar
+
+Login Successful: Voter: Zane Richard
+Vote Successful: Voted for Candidate: Running for Party: Liberals- Voter: Scoish Velociraptor Maloish
+
+Login Successful: Voter: Elton Benton
+Vote Successful: Voted for Candidate: Running for Party: Conservatives- Voter: Javaris Javar Javarison-Lamar
+
+Login Successful: Voter: Reed Barrera
+Vote Successful: Voted for Candidate: Running for Party: NDP- Voter: X-wing @aliciousness
+
+Login Successful: Voter: Yetta Gibson
+Vote Successful: Voted for Candidate: Running for Party: Conservatives- Voter: Javaris Javar Javarison-Lamar
+
+
+Results after current voting session
+Candidate: Running for Party: Liberals- Voter: Scoish Velociraptor Maloish - 34 votes
+Candidate: Running for Party: NDP- Voter: X-wing @aliciousness - 29 votes
+Candidate: Running for Party: Conservatives- Voter: Javaris Javar Javarison-Lamar - 24 votes

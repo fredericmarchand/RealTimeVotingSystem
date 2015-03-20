@@ -1,0 +1,64 @@
+Populating the system with Voters read in from /home/ib/SYSC_3303/RealTimeVotingSystem/test_files/voters_candidates7.txt
+Total Voters: 10
+Done Populating.
+
+Registering Voters on the Server.
+Registration Successful: Voter: Dora Avila
+Registration Successful: Voter: Hector Cooke
+Registration Successful: Voter: Honorato Parrish
+Registration Successful: Voter: Ila Marshall
+Registration Successful: Voter: Mollie Romero
+Registration Successful: Voter: Alana Hardin
+Registration Successful: Voter: Orla Quinn
+Registration Successful: Voter: Talon Bradley
+Registration Successful: Voter: Nathan Chase
+Registration Successful: Voter: Benjamin Carrillo
+
+Getting Parties from the Server.
+District Parties:
+Liberals
+Conservatives
+NDP
+
+Getting Candidates from the Server.
+District Candidates:
+Candidate: Running for Party: NDP- Voter: X-wing @aliciousness
+Candidate: Running for Party: Conservatives- Voter: Javaris Javar Javarison-Lamar
+Candidate: Running for Party: Liberals- Voter: Scoish Velociraptor Maloish
+
+Voters voting for Candidates.
+Login Successful: Voter: Dora Avila
+Vote Successful: Voted for Candidate: Running for Party: Liberals- Voter: Scoish Velociraptor Maloish
+
+Login Successful: Voter: Hector Cooke
+Vote Successful: Voted for Candidate: Running for Party: NDP- Voter: X-wing @aliciousness
+
+Login Successful: Voter: Honorato Parrish
+Vote Successful: Voted for Candidate: Running for Party: Liberals- Voter: Scoish Velociraptor Maloish
+
+Login Successful: Voter: Ila Marshall
+Vote Successful: Voted for Candidate: Running for Party: Conservatives- Voter: Javaris Javar Javarison-Lamar
+
+Login Successful: Voter: Mollie Romero
+Vote Successful: Voted for Candidate: Running for Party: Liberals- Voter: Scoish Velociraptor Maloish
+
+Login Successful: Voter: Alana Hardin
+Vote Successful: Voted for Candidate: Running for Party: Liberals- Voter: Scoish Velociraptor Maloish
+
+Login Successful: Voter: Orla Quinn
+Vote Successful: Voted for Candidate: Running for Party: Liberals- Voter: Scoish Velociraptor Maloish
+
+Login Successful: Voter: Talon Bradley
+Vote Successful: Voted for Candidate: Running for Party: Liberals- Voter: Scoish Velociraptor Maloish
+
+Login Successful: Voter: Nathan Chase
+Vote Successful: Voted for Candidate: Running for Party: Conservatives- Voter: Javaris Javar Javarison-Lamar
+
+Login Successful: Voter: Benjamin Carrillo
+Vote Successful: Voted for Candidate: Running for Party: NDP- Voter: X-wing @aliciousness
+
+
+Results after current voting session
+Candidate: Running for Party: NDP- Voter: X-wing @aliciousness - 23 votes
+Candidate: Running for Party: Conservatives- Voter: Javaris Javar Javarison-Lamar - 19 votes
+Candidate: Running for Party: Liberals- Voter: Scoish Velociraptor Maloish - 33 votes

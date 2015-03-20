@@ -52,8 +52,8 @@ public class DistrictServer {
 
 	public void populateParties(String inputFile) {
 		System.out.println("Populating the Server with Parties...");
-		SystemPopulator.populateParties(inputFile);
-		ArrayList<Party> parties = SystemPopulator.getParties();
+		ArrayList<Party> parties = new ArrayList<Party>();
+		SystemPopulator.populateParties(inputFile, parties);
 		for (int i = 0; i < parties.size(); ++i) {
             Party party = parties.get(i);
             this.parties.put(party.getName(), party);
@@ -237,10 +237,10 @@ public class DistrictServer {
 			final DistrictServer server = new DistrictServer(districtName, Province.getProvinceFromName(provinceName), port);
 
 			//Shitty way to determine if simulation
-			if (args.length > 3) {
+			/*if (args.length > 3) {
 				server.populateParties(args[3]);
 			}
-			else {
+			else {*/
 				server.getParties().put(Party.CONSERVATIVES, new Party(Party.CONSERVATIVES));
 				server.getParties().put(Party.LIBERALS, new Party(Party.LIBERALS));
 				server.getParties().put(Party.NDP, new Party(Party.NDP));
@@ -257,7 +257,7 @@ public class DistrictServer {
 				server.getCandidates().put(candidate3.getName(), candidate3);
 				server.getParties().get(candidate3.getParty().getName()).setLeader(candidate3);
 			
-			}
+			//}
 
 			System.out.println(districtName + " Server running on port " + port);
 			
