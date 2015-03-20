@@ -12,11 +12,7 @@ import model.*;
 
 public class SystemPopulator {
 
-	private static ArrayList<Person> voters = new ArrayList<Person>();
-	private static ArrayList<Person> candidates = new ArrayList<Person>();
-	private static ArrayList<Party> parties = new ArrayList<Party>();
-
-	public static void populateVotersAndCandidates(String inputFile) {
+	public static void populateVotersAndCandidates(String inputFile, ArrayList<Person> voters, ArrayList<Person> candidates) {
 
 		BufferedReader br = null;
 		String line;
@@ -69,14 +65,13 @@ public class SystemPopulator {
 		} 
     }
 
-    public static void populateParties(String inputFile) {
+    public static void populateParties(String inputFile, ArrayList<Party> parties) {
   		BufferedReader br = null;
 		String line;
 
 		try {
  
 			br = new BufferedReader(new FileReader(inputFile));
-			int index = 0;
 
 			while ((line = br.readLine()) != null) {
  				String[] data = line.split("%");
@@ -99,18 +94,6 @@ public class SystemPopulator {
 		} 
     } 
 
-    public static ArrayList<Person> getCandidates() {
-  	    return candidates;
-    }
-
-    public static ArrayList<Person> getVoters() {
-  	    return voters;
-    }
-
-    public static ArrayList<Party> getParties() {
-  	    return parties;
-    }
-
     public static void main(String args[]) {
   		try {
   	    	final String FILE_1 = args[0];
@@ -125,17 +108,17 @@ public class SystemPopulator {
 	            out.newLine();
 	            out.newLine();
 	            
-	            SystemPopulator.populateVotersAndCandidates(FILE_1);
+	            ArrayList<Person> voters = new ArrayList<Person>();
+	            ArrayList<Person> candidates = new ArrayList<Person>();	            
+	            SystemPopulator.populateVotersAndCandidates(FILE_1, voters, candidates);
 
-	            ArrayList voters = SystemPopulator.getVoters();
-	      		ArrayList candidates = SystemPopulator.getCandidates();
 	            out.write("Total Voters: " + voters.size());
 	            out.newLine();
 	            out.newLine();
 
-	            SystemPopulator.populateParties(FILE_2);
+	            ArrayList<Party> parties = new ArrayList<Party>();
+	            SystemPopulator.populateParties(FILE_2, parties);
 
-	            ArrayList parties = SystemPopulator.getParties();
      			out.write("Total Parties: " + parties.size());
 	            out.newLine();
 	            out.newLine();

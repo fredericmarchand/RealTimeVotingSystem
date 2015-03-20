@@ -33,7 +33,7 @@ public class Candidate extends Voter {
     public String toString() {
         String desc = "";
         if (party != null) {
-            desc += "Candidate: Running for " + party + "-";
+            desc += "Candidate: Running for " + party + " - ";
         }
         desc += super.toString();
         return desc;
