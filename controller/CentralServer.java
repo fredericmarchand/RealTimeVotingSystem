@@ -16,7 +16,7 @@ public class CentralServer {
 		
 		WSocket socket = null;
 		try {
-			socket = new WSocket().listen(CENTRAL_SERVER_PORT);
+			socket = new WSocket(CENTRAL_SERVER_PORT);
 		} catch (UnknownHostException | SocketException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

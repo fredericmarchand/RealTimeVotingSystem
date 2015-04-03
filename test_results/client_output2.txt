@@ -28,37 +28,37 @@ Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
 
 Voters voting for Candidates.
 Login Successful: Voter: Eve Glenn
-Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
+Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
 
 Login Successful: Voter: Joy Garrison
 Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
 
 Login Successful: Voter: Cora Durham
-Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
+Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
 
 Login Successful: Voter: Chloe Randolph
 Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
 
 Login Successful: Voter: Scarlet Mendez
-Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
+Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
 
 Login Successful: Voter: Rhonda Juarez
-Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
-
-Login Successful: Voter: Peter Nolan
 Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
 
-Login Successful: Voter: Karly Ball
+Login Successful: Voter: Peter Nolan
 Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
 
-Login Successful: Voter: Barrett Stout
+Login Successful: Voter: Karly Ball
 Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
 
+Login Successful: Voter: Barrett Stout
+Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
+
 Login Successful: Voter: Freya Flynn
-Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
+Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
 
 
 Results after current voting session
-Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish - 17 votes
-Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar - 15 votes
-Candidate: Running for Party: NDP - Voter: X-wing @aliciousness - 14 votes
+Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish - 11 votes
+Candidate: Running for Party: NDP - Voter: X-wing @aliciousness - 21 votes
+Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar - 10 votes

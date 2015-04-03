@@ -27,7 +27,7 @@ public class WSocketTest
      */
     public static void echoServer() throws IOException { 
 
-        WServerSocket s_socket = new WServerSocket(8080);
+        WServerSocket s_socket = new WServerSocket(8080, "localhost");
 
         while ( true ) {
 
@@ -77,6 +77,8 @@ public class WSocketTest
                     "test",
                     "test");
 
+            final WSocket socket = c_socket;
+            
             ////
             // run this in a background thread
             // as to not BLOCK the GUI thread
@@ -84,7 +86,7 @@ public class WSocketTest
                 @Override public void run() {
                     try { 
                     	// will take a while to process with extremely large data sets
-                        Message res = c_socket.sendReceive(req);
+                        Message res = socket.sendReceive(req);
                         processResponse(res);
                     } catch ( Exception e ) {
                         System.err.println(
@@ -120,7 +122,7 @@ public class WSocketTest
         // Pretend main() is a GUI thread!
 
         try {
-			c_socket = new WSocket().connect(8080);
+			c_socket = new WSocket().connect(8080, "localhost");
 		} catch (UnknownHostException | SocketException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

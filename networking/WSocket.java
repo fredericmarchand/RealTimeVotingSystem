@@ -21,34 +21,28 @@ public class WSocket
     private InetAddress addr;
     public int port;
     
+    public WSocket() 
+    throws SocketException, UnknownHostException { 
+    	this.socket = new DatagramSocket();
+    	this.port = socket.getLocalPort();
+    	this.addr = InetAddress.getByName("localhost");
+    }
     
-    public synchronized WSocket listen ( int port, String host ) 
-	throws UnknownHostException, SocketException {
+    public WSocket ( int port, String host ) 
+    throws UnknownHostException, SocketException {
         this.socket = new DatagramSocket(port, addr);
     	this.port = port;
     	this.addr = InetAddress.getByName(host);
-    	return this;
     }
     
-    public synchronized WSocket listen() 
-	throws UnknownHostException, SocketException {
-        this.socket = new DatagramSocket();
-    	this.port = socket.getLocalPort();
-    	this.addr = socket.getLocalAddress();
-    	return this;
-    }
-
-    public WSocket listen ( int port ) 
-    throws UnknownHostException, SocketException {
-    	return this.listen(port, "localhost");
+    public WSocket ( int port ) 
+    throws UnknownHostException, SocketException { 
+    	this(port, "localhost");
     }
     
     public synchronized WSocket connect ( int port, String host )
     throws UnknownHostException, SocketException { 
-    	synchronized ( this ) { 
          this.socket = new DatagramSocket(); 
-         this.port = port;
-         this.addr = InetAddress.getByName(host);
          try {
         	 System.out.println("connecting");
              Message msg = new Message(
@@ -57,20 +51,19 @@ public class WSocket
             		 "%%%connect%%%");
 			this.sendTo(msg, port);
 			Message res = this.receive();
-			System.out.println("conncet received");
-			if ( res.getType().equals("%%%new-connection%%%") )
+			if ( res.getType().equals("%%%new-connection%%%") ) {
 				this.port = (Integer)res.getData();
+				System.out.println("conncet received, new port = "+this.port+", new host = "+addr);
+			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
          return this;
-    	}
     }
-
-    public WSocket connect ( int port )
-	throws UnknownHostException, SocketException {
-       return this.connect(port, "localhost");
+    
+    public WSocket connect ( int port ) 
+    throws UnknownHostException, SocketException { 
+    	return this.connect(port, "localhost");
     }
     
     public void setTimeout( int timeout ) {
@@ -113,7 +106,7 @@ public class WSocket
 		        msg = new Message(response.getData());
 		        msg.setSender(response.getPort(), response.getAddress());
 	        } catch ( MessageCorruptException e ) { 
-	        	System.out.println(e);
+	        	e.printStackTrace();
 	        }
         }
         
@@ -132,7 +125,7 @@ public class WSocket
 
     public void sendTo ( Message msg, int port ) 
     throws IOException {
-    	System.out.println(port + " " + this.addr.toString());
+    	//System.out.println(port + " " + this.addr.toString());
         this.sendTo(msg, port, this.addr);
     }
             
@@ -175,9 +168,9 @@ public class WSocket
 		        	System.out.println("huh? "+msg);
 		        msg_rcvd = true;
         	} catch ( SocketTimeoutException e ) { 
-        		System.out.println(e);
+        		e.printStackTrace();
         	} catch ( MessageCorruptException e ) {
-        		System.out.println(e);
+        		e.printStackTrace();
         	}
         	socket.setSoTimeout(1000000);
         }
