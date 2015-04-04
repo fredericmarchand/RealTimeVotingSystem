@@ -99,8 +99,7 @@ public final class Utilities {
 
 	private static CategoryDataset getElectionResults(District district) {
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		HashMap<Candidate, Integer> results = ClientController
-				.getLocalResults(district);
+		HashMap<Candidate, Integer> results = ClientController.getLocalResults(district);
 
 		// To have results returned in alphabetical order
 		SortedSet<Candidate> keys = new TreeSet<Candidate>(comparator);

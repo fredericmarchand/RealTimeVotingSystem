@@ -3,6 +3,7 @@ package controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.io.IOException;
 import java.lang.Thread;
 
 import networking.*;
@@ -12,19 +13,20 @@ import testing.SystemPopulator;
 public class DistrictServer {
 
 	private District district;
-	private WSocket recvSocket, sendSocket;
 	private WServerSocket servSocket;
+	private WSocket sendSocket;
 	private HashMap<String, Party> parties;
 	private HashMap<String, Candidate> candidates;
 	private HashMap<String, Voter> registeredVoters;
 	private HashSet<Vote> votes;
+	private ResultSet totals;
 
 	public DistrictServer(String name, Province province, int port) {
 		district = new District(name, province);
+		totals = new ResultSet(ResultSet.NATIONAL);
 		try {
-			// recvSocket = new WSocket().listen(port);
-			// sendSocket = new WSocket().connect(port);
 			servSocket = new WServerSocket(port);
+			sendSocket = new WSocket().connect(CentralServer.CENTRAL_SERVER_PORT);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
@@ -36,10 +38,6 @@ public class DistrictServer {
 
 	public District getDistrict() {
 		return district;
-	}
-
-	public WSocket getSocket() {
-		return recvSocket;
 	}
 
 	public HashMap<String, Party> getParties() {
@@ -74,8 +72,6 @@ public class DistrictServer {
 				t.start();
 			}
 		} catch (Exception e) {
-			// recvSocket.close();
-			// sendSocket.close();
 			e.printStackTrace();
 		}
 	}
@@ -182,17 +178,26 @@ public class DistrictServer {
 					socket.sendTo(msg, sender);
 					break;
 				case RtvsType.RESULTS:
-					ResultSet rs = new ResultSet(ResultSet.DISTRICT);
-					for (Candidate c : this.getCandidates().values()) {
-						int totalVotes = 0;
-						for (Vote v : votes) {
-							if (v.getCandidate().getName().equals(c.getName()))
-								totalVotes++;
+					if (((String)msg.getData()).equals("district")) {
+						System.out.println("Local");
+						ResultSet rs = new ResultSet(ResultSet.DISTRICT);
+						for (Candidate c : this.getCandidates().values()) {
+							int totalVotes = 0;
+							for (Vote v : votes) {
+								if (v.getCandidate().getName().equals(c.getName()))
+									totalVotes++;
+							}
+							rs.getDistrictVotes().put(c, totalVotes);
 						}
-						rs.getDistrictVotes().put(c, totalVotes);
+	
+						msg = new Message(Message.Method.GET, RtvsType.RESULTS, rs);
 					}
-
-					msg = new Message(Message.Method.GET, RtvsType.RESULTS, rs);
+					else {
+						synchronized (totals) {
+							System.out.println("National");
+							msg = new Message(Message.Method.GET, RtvsType.RESULTS, totals);
+						}
+					}
 					socket.sendTo(msg, sender);
 
 					break;
@@ -242,12 +247,48 @@ public class DistrictServer {
 					break;
 				}
 			} catch (Exception e) {
-				// The checksums did not match!
 				System.err.println(e);
 				e.printStackTrace();
-				// do nothing,
-				// the client should resend the same message
 			}
+		}
+	}
+	
+	public void getNationalResults() {
+		Thread thread = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				while (true) {
+					try {
+						Thread.sleep(CentralServer.PERIOD);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+	
+					try {
+						Message msg = new Message(Message.Method.GET, RtvsType.RESULTS, null);
+						sendSocket.send(msg);
+						msg = sendSocket.receive();
+						synchronized (totals) {
+							totals = (ResultSet)msg.getData();
+						}
+						System.out.println("National: " + totals.getTotalVotes().size());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+
+		thread.start();
+	}
+	
+	public void connectToCentralServer() {
+		try {
+			Message msg = new Message(Message.Method.POST, RtvsType.CONNECT, servSocket.getPort());
+			sendSocket.send(msg);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -260,10 +301,6 @@ public class DistrictServer {
 			final DistrictServer server = new DistrictServer(districtName,
 					Province.getProvinceFromName(provinceName), port);
 
-			// Shitty way to determine if simulation
-			/*
-			 * if (args.length > 3) { server.populateParties(args[3]); } else {
-			 */
 			server.getParties().put(Party.CONSERVATIVES,
 					new Party(Party.CONSERVATIVES));
 			server.getParties().put(Party.LIBERALS, new Party(Party.LIBERALS));
@@ -289,21 +326,22 @@ public class DistrictServer {
 			server.getParties().get(candidate3.getParty().getName())
 					.setLeader(candidate3);
 
-			// }
+			System.out.println(districtName + " Server running on port " + port);
 
-			System.out
-					.println(districtName + " Server running on port " + port);
-
+			System.out.println("Connecting to Central Server");
+			server.connectToCentralServer();
+			
 			Thread t = new Thread(new Runnable() {
 				public void run() {
 					server.receiveMessages();
 				}
 			});
 			t.start();
+			
+			server.getNationalResults();
 
 		} catch (Exception e) {
-			System.out
-					.println("Usage: DistrictServer <districtName> <provinceName> <port> [<inputFile>]");
+			System.out.println("Usage: DistrictServer <districtName> <provinceName> <port> [<inputFile>]");
 			e.printStackTrace();
 		}
 	}
