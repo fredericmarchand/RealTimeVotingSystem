@@ -82,10 +82,12 @@ public class RegistrationPanel extends JPanel {
 				1, 8, layout);
 		add(provincesComboBox);
 
-		submitButton = Utilities.newJButton("Submit", 1, 9, 1, 1, layout);
+		submitButton = Utilities.newJButton("Submit", "submit_icon.png", 1, 9,
+				1, 1, layout);
 		add(submitButton);
 
-		cancelButton = Utilities.newJButton("Cancel", 0, 9, 1, 1, layout);
+		cancelButton = Utilities.newJButton("Cancel", "cancel_icon.png", 0, 9,
+				1, 1, layout);
 		add(cancelButton);
 	}
 
