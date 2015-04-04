@@ -1,4 +1,4 @@
 Results after all voting session
-Candidate: Running for Party: NDP- Voter: X-wing @aliciousness - 31 votes
-Candidate: Running for Party: Conservatives- Voter: Javaris Javar Javarison-Lamar - 31 votes
-Candidate: Running for Party: Liberals- Voter: Scoish Velociraptor Maloish - 38 votes
+Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish - 31 votes
+Candidate: Running for Party: NDP - Voter: X-wing @aliciousness - 48 votes
+Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar - 21 votes

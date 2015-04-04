@@ -45,7 +45,7 @@ public class ClientController {
 		try {
 			Message newMsg = new Message(Message.Method.POST, RtvsType.REGISTER, v);
 			System.out.println(newMsg.toString() + " " + districtServerPort);
-			socket.sendTo(newMsg, districtServerPort); 
+			socket.send(newMsg); 
 			newMsg = socket.receive();
 			result = (boolean)newMsg.getData();
 			
@@ -61,7 +61,7 @@ public class ClientController {
 		ArrayList<Party> parties = new ArrayList<Party>();
 		try {
 			Message newMsg = new Message(Message.Method.GET, RtvsType.PARTIES, "");
-			socket.sendTo(newMsg, districtServerPort);
+			socket.send(newMsg);
 			newMsg = socket.receive();
 			parties = (ArrayList<Party>)newMsg.getData();
 		} catch (IOException e) {
@@ -76,7 +76,7 @@ public class ClientController {
 		boolean result = false;
 		try {
 			Message newMsg = new Message(Message.Method.POST, RtvsType.RUN, c);
-			socket.sendTo(newMsg, districtServerPort);
+			socket.send(newMsg);
 			newMsg = socket.receive();
 			result = (boolean)newMsg.getData();
 
@@ -97,7 +97,7 @@ public class ClientController {
 		Voter result = null;
 		try {
 			Message newMsg = new Message(Message.Method.POST, RtvsType.LOGIN, username+"\n"+password);
-			socket.sendTo(newMsg, districtServerPort);
+			socket.send(newMsg);
 			newMsg = socket.receive();
 			result = (Voter)newMsg.getData();
 			
@@ -108,11 +108,11 @@ public class ClientController {
 		return result;
 	}
 	
-	public static boolean userHasVoted(Voter v) {		
+	public static synchronized boolean userHasVoted(Voter v) {		
 		boolean result = false;
 		try {
 			Message newMsg = new Message(Message.Method.GET, RtvsType.HAS_VOTED, v);
-			socket.sendTo(newMsg, districtServerPort); 
+			socket.send(newMsg); 
 			newMsg = socket.receive();
 			result = (boolean)newMsg.getData();
 			
@@ -128,7 +128,7 @@ public class ClientController {
 		boolean result = false;
 		try {
 			Message newMsg = new Message(Message.Method.POST, RtvsType.VOTE, vote);
-			socket.sendTo(newMsg, districtServerPort); 
+			socket.send(newMsg); 
 			newMsg = socket.receive();
 			result = (boolean)newMsg.getData();
 		} catch (IOException e) {
@@ -144,7 +144,7 @@ public class ClientController {
 		//fetch from district server;
 		try {
 			Message newMsg = new Message(Message.Method.GET, RtvsType.CANDIDATES, "Ottawa-South");
-			socket.sendTo(newMsg, districtServerPort); 
+			socket.send(newMsg); 
 			newMsg = socket.receive();
 			candidates = (ArrayList<Candidate>)newMsg.getData();
 			
@@ -160,7 +160,7 @@ public class ClientController {
 		
 		try {
 			Message newMsg = new Message(Message.Method.GET, RtvsType.RESULTS, d);
-			socket.sendTo(newMsg, districtServerPort); //Get port from list of district servers
+			socket.send(newMsg); //Get port from list of district servers
 			newMsg = socket.receive();
 			results = ((ResultSet)newMsg.getData()).getDistrictVotes();
 			
@@ -176,7 +176,7 @@ public class ClientController {
 		
 		try {
 			Message newMsg = new Message(Message.Method.GET, RtvsType.RESULTS, null);
-			socket.sendTo(newMsg, districtServerPort); //Get port from list of district servers
+			socket.send(newMsg); //Get port from list of district servers
 			newMsg = socket.receive();
 			results = ((ResultSet)newMsg.getData()).getTotalVotes();
 			
@@ -366,6 +366,8 @@ public class ClientController {
 			int mode = Integer.parseInt(args[0]);
   	    	int serverPort = Integer.parseInt(args[1]);
   	    	final ClientController client = new ClientController(serverPort);
+  	    	try { Thread.sleep(1000); } catch( Exception e ) { } 
+  	    	System.out.println(client.getSocket().port);
 
   	    	if (mode == ClientController.SIMULATION_MODE) {
   	    		client.simulate(args[2], args[3]);
@@ -375,6 +377,7 @@ public class ClientController {
   	    	}
 
 	    } catch (Exception e) {
+	    	System.err.println(e);
 	    	System.out.println("Usage: ClientController <mode> <serverPort> [<inputFolder> <outputFolder>]");
 	    }
 	}

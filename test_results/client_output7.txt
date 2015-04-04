@@ -1,18 +1,18 @@
-Populating the system with Voters read in from /home/ib/SYSC_3303/RealTimeVotingSystem/test_files/voters_candidates4.txt
+Populating the system with Voters read in from /home/brandon/Dropbox/School/SYSC3303/assignments/project/RealTimeVotingSystem/test_files/voters_candidates6.txt
 Total Voters: 10
 Done Populating.
 
 Registering Voters on the Server.
-Registration Successful: Voter: Nathan Morton
-Registration Successful: Voter: Iliana Hansen
-Registration Successful: Voter: Mallory Underwood
-Registration Successful: Voter: Whoopi Schneider
-Registration Successful: Voter: Aidan Knapp
-Registration Successful: Voter: Nicholas Terry
-Registration Successful: Voter: Amaya Rollins
-Registration Successful: Voter: Pandora Acosta
-Registration Successful: Voter: Moses Finley
-Registration Successful: Voter: Macon Odom
+Registration Successful: Voter: Keegan Hughes
+Registration Successful: Voter: Evan Hunter
+Registration Successful: Voter: Fulton Stone
+Registration Successful: Voter: Asher Cooke
+Registration Successful: Voter: Summer Bryan
+Registration Successful: Voter: Kennan Ochoa
+Registration Successful: Voter: Ruby Cohen
+Registration Successful: Voter: Blair Richardson
+Registration Successful: Voter: Hope Carlson
+Registration Successful: Voter: Constance Lawson
 
 Getting Parties from the Server.
 District Parties:
@@ -22,43 +22,43 @@ NDP
 
 Getting Candidates from the Server.
 District Candidates:
-Candidate: Running for Party: NDP- Voter: X-wing @aliciousness
-Candidate: Running for Party: Conservatives- Voter: Javaris Javar Javarison-Lamar
-Candidate: Running for Party: Liberals- Voter: Scoish Velociraptor Maloish
+Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
+Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
+Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
 
 Voters voting for Candidates.
-Login Successful: Voter: Nathan Morton
-Vote Successful: Voted for Candidate: Running for Party: Liberals- Voter: Scoish Velociraptor Maloish
+Login Successful: Voter: Keegan Hughes
+Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
 
-Login Successful: Voter: Iliana Hansen
-Vote Successful: Voted for Candidate: Running for Party: Liberals- Voter: Scoish Velociraptor Maloish
+Login Successful: Voter: Evan Hunter
+Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
 
-Login Successful: Voter: Mallory Underwood
-Vote Successful: Voted for Candidate: Running for Party: NDP- Voter: X-wing @aliciousness
+Login Successful: Voter: Fulton Stone
+Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
 
-Login Successful: Voter: Whoopi Schneider
-Vote Successful: Voted for Candidate: Running for Party: Liberals- Voter: Scoish Velociraptor Maloish
+Login Successful: Voter: Asher Cooke
+Vote Successful: Voted for Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar
 
-Login Successful: Voter: Aidan Knapp
-Vote Successful: Voted for Candidate: Running for Party: Liberals- Voter: Scoish Velociraptor Maloish
+Login Successful: Voter: Summer Bryan
+Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
 
-Login Successful: Voter: Nicholas Terry
-Vote Successful: Voted for Candidate: Running for Party: Conservatives- Voter: Javaris Javar Javarison-Lamar
+Login Successful: Voter: Kennan Ochoa
+Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
 
-Login Successful: Voter: Amaya Rollins
-Vote Successful: Voted for Candidate: Running for Party: NDP- Voter: X-wing @aliciousness
+Login Successful: Voter: Ruby Cohen
+Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
 
-Login Successful: Voter: Pandora Acosta
-Vote Successful: Voted for Candidate: Running for Party: NDP- Voter: X-wing @aliciousness
+Login Successful: Voter: Blair Richardson
+Vote Successful: Voted for Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish
 
-Login Successful: Voter: Moses Finley
-Vote Successful: Voted for Candidate: Running for Party: Conservatives- Voter: Javaris Javar Javarison-Lamar
+Login Successful: Voter: Hope Carlson
+Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
 
-Login Successful: Voter: Macon Odom
-Vote Successful: Voted for Candidate: Running for Party: NDP- Voter: X-wing @aliciousness
+Login Successful: Voter: Constance Lawson
+Vote Successful: Voted for Candidate: Running for Party: NDP - Voter: X-wing @aliciousness
 
 
 Results after current voting session
-Candidate: Running for Party: Conservatives- Voter: Javaris Javar Javarison-Lamar - 7 votes
-Candidate: Running for Party: NDP- Voter: X-wing @aliciousness - 6 votes
-Candidate: Running for Party: Liberals- Voter: Scoish Velociraptor Maloish - 7 votes
+Candidate: Running for Party: Liberals - Voter: Scoish Velociraptor Maloish - 17 votes
+Candidate: Running for Party: Conservatives - Voter: Javaris Javar Javarison-Lamar - 11 votes
+Candidate: Running for Party: NDP - Voter: X-wing @aliciousness - 29 votes
