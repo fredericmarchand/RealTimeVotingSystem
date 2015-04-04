@@ -2,7 +2,6 @@ package view;
 
 import java.awt.GridBagLayout;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
@@ -62,12 +61,12 @@ public class ResultsPanel extends JPanel {
 				nationalTitle, 4, 0, 4, 3, layout);
 		add(nationalChartPanel);
 
-		loginButton = Utilities.newJButton("Vote    ", 0, 4, 4, 1, layout);
-		loginButton.setIcon(new ImageIcon("img/vote_icon.png"));
+		loginButton = Utilities.newJButton("Vote    ", "vote_icon.png", 0, 4,
+				4, 1, layout);
 		add(loginButton);
 
-		registerButton = Utilities.newJButton("Register", 5, 4, 4, 1, layout);
-		registerButton.setIcon(new ImageIcon("img/register_icon.png"));
+		registerButton = Utilities.newJButton("Register", "register_icon.png",
+				5, 4, 4, 1, layout);
 		add(registerButton);
 
 		thread = new Thread(new resultsChartThread());

@@ -78,10 +78,12 @@ public class VotingPanel extends JPanel {
 		districtField.setEnabled(false);
 		add(districtField);
 
-		cancelButton = Utilities.newJButton("Cancel", 1, 4, 1, 1, layout);
+		cancelButton = Utilities.newJButton("Cancel", "cancel_icon.png", 1, 4,
+				1, 1, layout);
 		add(cancelButton);
 
-		submitButton = Utilities.newJButton("Submit", 2, 4, 1, 1, layout);
+		submitButton = Utilities.newJButton("Submit", "submit_icon.png", 2, 4,
+				1, 1, layout);
 		add(submitButton);
 
 		districtCandidatesList.addMouseListener(new MouseAdapter() {

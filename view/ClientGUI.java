@@ -39,7 +39,7 @@ public class ClientGUI extends JFrame {
 				if (voter != null) {
 					votingPanel.setVoter(voter);
 					setContentPane(votingPanel);
-					setSize(700, 250);
+					setSize(1000, 300);
 					setVisible(true);
 				}
 			}
@@ -50,7 +50,7 @@ public class ClientGUI extends JFrame {
 					@Override
 					public void actionPerformed(ActionEvent evt) {
 						setContentPane(registrationPanel);
-						setSize(500, 500);
+						setSize(525, 525);
 						setVisible(true);
 					}
 				});
@@ -73,6 +73,7 @@ public class ClientGUI extends JFrame {
 				new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent evt) {
+						registrationPanel.clearFields();
 						setContentPane(resultsPanel);
 						setSize(1000, 500);
 						setVisible(true);
