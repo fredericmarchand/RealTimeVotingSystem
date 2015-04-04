@@ -1,6 +1,18 @@
 # Real-Time Electronic Voting System
 
+An electronic version of the Canadian electoral system. This project is implemented as a distributed client-server application in Java.
+
 Running instructions
+--------------------
+
+From command line:
+
+> `cd RealTimeVotingSystem` 
+
+> `java controller.DistrictServer Ottawa Ontario 60002`
+
+> `java controller.ClientController 1 60002`
+
 
 From eclipse:
 
