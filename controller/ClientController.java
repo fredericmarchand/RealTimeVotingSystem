@@ -1,4 +1,5 @@
 package controller;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,58 +17,60 @@ import testing.SystemPopulator;
 import view.ClientGUI;
 
 public class ClientController {
-	
+
 	public static final int SIMULATION_MODE = 0;
 	public static final int USER_MODE = 1;
-	
+
 	private static WSocket socket;
 	private static int districtServerPort;
 
-	public ClientController (int serverPort) {
+	public ClientController(int serverPort) {
 		districtServerPort = serverPort;
-		 try {
+		try {
 			socket = new WSocket().connect(districtServerPort);
-        } catch (UnknownHostException | SocketException e1) {
-            e1.printStackTrace();
-        }
+		} catch (UnknownHostException | SocketException e1) {
+			e1.printStackTrace();
+		}
 	}
-	
+
 	public WSocket getSocket() {
 		return socket;
 	}
-	
-	public void closeSocket() { 
+
+	public void closeSocket() {
 		socket.close();
 	}
-	
+
 	public static synchronized boolean registerUser(Voter v) {
 		boolean result = false;
 		try {
-			Message newMsg = new Message(Message.Method.POST, RtvsType.REGISTER, v);
+			Message newMsg = new Message(Message.Method.POST,
+					RtvsType.REGISTER, v);
 			System.out.println(newMsg.toString() + " " + districtServerPort);
-			socket.send(newMsg); 
+			socket.send(newMsg);
 			newMsg = socket.receive();
-			result = (boolean)newMsg.getData();
-			
+			result = (boolean) newMsg.getData();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return result;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static synchronized ArrayList<Party> getParties() {
 		ArrayList<Party> parties = new ArrayList<Party>();
 		try {
-			Message newMsg = new Message(Message.Method.GET, RtvsType.PARTIES, "");
+			Message newMsg = new Message(Message.Method.GET, RtvsType.PARTIES,
+					"");
 			socket.send(newMsg);
 			newMsg = socket.receive();
-			parties = (ArrayList<Party>)newMsg.getData();
+			parties = (ArrayList<Party>) newMsg.getData();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return parties;
 	}
 
@@ -78,189 +81,203 @@ public class ClientController {
 			Message newMsg = new Message(Message.Method.POST, RtvsType.RUN, c);
 			socket.send(newMsg);
 			newMsg = socket.receive();
-			result = (boolean)newMsg.getData();
+			result = (boolean) newMsg.getData();
 
 			if (!result) {
-				c.runFor(null);			
-			}
-			else if (party.getLeader() == null) {
+				c.runFor(null);
+			} else if (party.getLeader() == null) {
 				party.setLeader(c);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return result;
 	}
-	
+
 	public static synchronized Voter loginUser(String username, String password) {
 		Voter result = null;
 		try {
-			Message newMsg = new Message(Message.Method.POST, RtvsType.LOGIN, username+"\n"+password);
+			Message newMsg = new Message(Message.Method.POST, RtvsType.LOGIN,
+					username + "\n" + password);
 			socket.send(newMsg);
 			newMsg = socket.receive();
-			result = (Voter)newMsg.getData();
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
-		
-		return result;
-	}
-	
-	public static synchronized boolean userHasVoted(Voter v) {		
-		boolean result = false;
-		try {
-			Message newMsg = new Message(Message.Method.GET, RtvsType.HAS_VOTED, v);
-			socket.send(newMsg); 
-			newMsg = socket.receive();
-			result = (boolean)newMsg.getData();
-			
+			result = (Voter) newMsg.getData();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return result;
 	}
-	
+
+	public static synchronized boolean userHasVoted(Voter v) {
+		boolean result = false;
+		try {
+			Message newMsg = new Message(Message.Method.GET,
+					RtvsType.HAS_VOTED, v);
+			socket.send(newMsg);
+			newMsg = socket.receive();
+			result = (boolean) newMsg.getData();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
 	public static synchronized boolean vote(Candidate c, Voter v) {
 		Vote vote = new Vote(v, c);
 		boolean result = false;
 		try {
-			Message newMsg = new Message(Message.Method.POST, RtvsType.VOTE, vote);
-			socket.send(newMsg); 
+			Message newMsg = new Message(Message.Method.POST, RtvsType.VOTE,
+					vote);
+			socket.send(newMsg);
 			newMsg = socket.receive();
-			result = (boolean)newMsg.getData();
+			result = (boolean) newMsg.getData();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return result;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public static synchronized ArrayList<Candidate> getDistrictCandidates(District d) {
+	public static synchronized ArrayList<Candidate> getDistrictCandidates(
+			District d) {
 		ArrayList<Candidate> candidates = new ArrayList<Candidate>();
-		
-		//fetch from district server;
+
+		// fetch from district server;
 		try {
-			Message newMsg = new Message(Message.Method.GET, RtvsType.CANDIDATES, "Ottawa-South");
-			socket.send(newMsg); 
+			Message newMsg = new Message(Message.Method.GET,
+					RtvsType.CANDIDATES, "Ottawa-South");
+			socket.send(newMsg);
 			newMsg = socket.receive();
-			candidates = (ArrayList<Candidate>)newMsg.getData();
-			
+			candidates = (ArrayList<Candidate>) newMsg.getData();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return candidates;
 	}
-	
-	public static synchronized HashMap<Candidate, Integer> getLocalResults(District d) {
+
+	public static synchronized HashMap<Candidate, Integer> getLocalResults(
+			District d) {
 		HashMap<Candidate, Integer> results = new HashMap<Candidate, Integer>();
-		
+
 		try {
-			Message newMsg = new Message(Message.Method.GET, RtvsType.RESULTS, d);
-			socket.send(newMsg); //Get port from list of district servers
+			Message newMsg = new Message(Message.Method.GET, RtvsType.RESULTS,
+					d);
+			socket.send(newMsg); // Get port from list of district servers
 			newMsg = socket.receive();
-			results = ((ResultSet)newMsg.getData()).getDistrictVotes();
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
-		
-		return results;
-	}
-	
-	public static synchronized HashMap<Party, Integer> getNationalResults() {
-		HashMap<Party, Integer> results = new HashMap<Party, Integer>();
-		
-		try {
-			Message newMsg = new Message(Message.Method.GET, RtvsType.RESULTS, null);
-			socket.send(newMsg); //Get port from list of district servers
-			newMsg = socket.receive();
-			results = ((ResultSet)newMsg.getData()).getTotalVotes();
-			
+			results = ((ResultSet) newMsg.getData()).getDistrictVotes();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return results;
 	}
-	
+
+	public static synchronized HashMap<Party, Integer> getNationalResults() {
+		HashMap<Party, Integer> results = new HashMap<Party, Integer>();
+
+		try {
+			Message newMsg = new Message(Message.Method.GET, RtvsType.RESULTS,
+					null);
+			socket.send(newMsg); // Get port from list of district servers
+			newMsg = socket.receive();
+			results = ((ResultSet) newMsg.getData()).getTotalVotes();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return results;
+	}
+
 	public void simulate(String inputFolder, final String outputFolder) {
 		BufferedWriter out = null;
-		
+
 		try {
 			ArrayList<Thread> threads = new ArrayList<Thread>();
 			File folder = new File(inputFolder);
 			File[] listOfFiles = folder.listFiles();
-	
+
 			for (int i = 0; i < listOfFiles.length; i++) {
 				final File file = listOfFiles[i];
-				final int fileCount = i+1;
+				final int fileCount = i + 1;
 				if (file.isFile()) {
-			       threads.add(new Thread(new Runnable() {
+					threads.add(new Thread(new Runnable() {
 						public void run() {
-							ClientController.simulateFromFile(file.getAbsolutePath(), outputFolder+File.separator+"client_output"+fileCount+".txt");
+							ClientController.simulateFromFile(
+									file.getAbsolutePath(), outputFolder
+											+ File.separator + "client_output"
+											+ fileCount + ".txt");
 						}
 					}));
-			    }
+				}
 			}
-			
+
 			for (Thread t : threads)
 				t.start();
 			for (Thread t : threads)
 				t.join();
-			
-			out = new BufferedWriter(new FileWriter(outputFolder+File.separator+"final_output.txt"));
+
+			out = new BufferedWriter(new FileWriter(outputFolder
+					+ File.separator + "final_output.txt"));
 			out.write("Results after all voting session");
-            out.newLine();
-            HashMap<Candidate, Integer> results = getLocalResults(new District("Ottawa South"));
-			for (Map.Entry<Candidate,Integer> entry : results.entrySet()) {
-			  out.write(((Candidate)entry.getKey()).toString() + " - " + ((Integer)entry.getValue()).toString() + " votes");
-			  out.newLine();
+			out.newLine();
+			HashMap<Candidate, Integer> results = getLocalResults(new District(
+					"Ottawa South"));
+			for (Map.Entry<Candidate, Integer> entry : results.entrySet()) {
+				out.write(((Candidate) entry.getKey()).toString() + " - "
+						+ ((Integer) entry.getValue()).toString() + " votes");
+				out.newLine();
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-        	if (out != null) {
+			if (out != null) {
 				try {
 					out.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-        }
-	} 
+		}
+	}
 
 	public static void simulateFromFile(String inputFile, String outputFile) {
 
 		BufferedWriter out = null;
 		District district = new District("Ottawa South");
 
-  	    try { 
-            out = new BufferedWriter(new FileWriter(outputFile));
-            out.write("Populating the system with Voters read in from " + inputFile);
-            out.newLine();
-            
-            ArrayList<Person> voters = new ArrayList<Person>();
-            ArrayList<Person> candidates = new ArrayList<Person>();
-            SystemPopulator.populateVotersAndCandidates(inputFile, voters, candidates);
-            
-            out.write("Total Voters: " + voters.size());
-            out.newLine();
-            out.write("Done Populating.");
-            out.newLine();
-            out.newLine();
+		try {
+			out = new BufferedWriter(new FileWriter(outputFile));
+			out.write("Populating the system with Voters read in from "
+					+ inputFile);
+			out.newLine();
 
-            out.write("Registering Voters on the Server.");
-            out.newLine();
-            for (int i = 0; i < voters.size(); ++i) {
-            	Voter voter = (Voter)voters.get(i);
+			ArrayList<Person> voters = new ArrayList<Person>();
+			ArrayList<Person> candidates = new ArrayList<Person>();
+			SystemPopulator.populateVotersAndCandidates(inputFile, voters,
+					candidates);
+
+			out.write("Total Voters: " + voters.size());
+			out.newLine();
+			out.write("Done Populating.");
+			out.newLine();
+			out.newLine();
+
+			out.write("Registering Voters on the Server.");
+			out.newLine();
+			for (int i = 0; i < voters.size(); ++i) {
+				Voter voter = (Voter) voters.get(i);
 				if (registerUser(voter)) {
 					out.write("Registration Successful: " + voter.toString());
-				}
-				else {
+				} else {
 					out.write("Registration Failed: " + voter.toString());
 				}
 				out.newLine();
@@ -268,118 +285,121 @@ public class ClientController {
 			out.newLine();
 
 			out.write("Getting Parties from the Server.");
-            out.newLine();
-            ArrayList<Party> parties = ClientController.getParties();
+			out.newLine();
+			ArrayList<Party> parties = ClientController.getParties();
 
-            if (parties.size() > 0) {
-            	out.write("District Parties:");
-            	out.newLine();
-            	for (int i = 0; i < parties.size(); ++i) {
-            		out.write(parties.get(i).getName());
-            		out.newLine();
-            	}
-            	out.newLine();
-            }
-            else {
-            	out.write("There are no parties in the District Server");
-            	out.newLine();
-            	out.newLine();
-            }
-            
-            out.write("Getting Candidates from the Server.");
-            out.newLine();
-            ArrayList<Candidate> districtCandidates = getDistrictCandidates(district);
-            int numCandidates = districtCandidates.size();
-            if (numCandidates > 0) {
-            	out.write("District Candidates:");
-            	out.newLine();
-            	for (int i = 0; i < numCandidates; ++i) {
-            		out.write(districtCandidates.get(i).toString());
-            		out.newLine();
-            	}
-            	out.newLine();
-            	
-            	out.write("Voters voting for Candidates.");
-                out.newLine();
-                Random randomGenerator = new Random();
-                for (int i = 0; i < voters.size(); ++i) {
-                	Voter voter = (Voter)voters.get(i);
-                	Voter serverVoter = loginUser(voter.getUsername(), voter.getPassword());
-    				if (serverVoter != null) {
-    					out.write("Login Successful: " + serverVoter.toString());
-    					out.newLine();
-    					int index = randomGenerator.nextInt(numCandidates);
-    					Candidate luckyCandidate = districtCandidates.get(index);
-    					if (vote(luckyCandidate, serverVoter)) {
-    						out.write("Vote Successful: Voted for " + luckyCandidate.toString());
-        					out.newLine();
-    					}
-    					else {
-    						out.write("Vote Failed");
-    						out.newLine();
-    					}
-    				}
-    				else {
-    					out.write("Login Failed: " + voter.toString());
-    				}
-    				out.newLine();
-    			}
-    			out.newLine();
-            }
-            else {
-            	out.write("There are no Candidates in the District Server");
-            	out.newLine();
-            	out.newLine();
-            }
-            
-            out.write("Results after current voting session");
-            out.newLine();
-            HashMap<Candidate, Integer> results = getLocalResults(district);
-			for (Map.Entry<Candidate,Integer> entry : results.entrySet()) {
-			  out.write(((Candidate)entry.getKey()).toString() + " - " + ((Integer)entry.getValue()).toString() + " votes");
-			  out.newLine();
+			if (parties.size() > 0) {
+				out.write("District Parties:");
+				out.newLine();
+				for (int i = 0; i < parties.size(); ++i) {
+					out.write(parties.get(i).getName());
+					out.newLine();
+				}
+				out.newLine();
+			} else {
+				out.write("There are no parties in the District Server");
+				out.newLine();
+				out.newLine();
 			}
-            
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-        	if (out != null) {
+
+			out.write("Getting Candidates from the Server.");
+			out.newLine();
+			ArrayList<Candidate> districtCandidates = getDistrictCandidates(district);
+			int numCandidates = districtCandidates.size();
+			if (numCandidates > 0) {
+				out.write("District Candidates:");
+				out.newLine();
+				for (int i = 0; i < numCandidates; ++i) {
+					out.write(districtCandidates.get(i).toString());
+					out.newLine();
+				}
+				out.newLine();
+
+				out.write("Voters voting for Candidates.");
+				out.newLine();
+				Random randomGenerator = new Random();
+				for (int i = 0; i < voters.size(); ++i) {
+					Voter voter = (Voter) voters.get(i);
+					Voter serverVoter = loginUser(voter.getUsername(),
+							voter.getPassword());
+					if (serverVoter != null) {
+						out.write("Login Successful: " + serverVoter.toString());
+						out.newLine();
+						int index = randomGenerator.nextInt(numCandidates);
+						Candidate luckyCandidate = districtCandidates
+								.get(index);
+						if (vote(luckyCandidate, serverVoter)) {
+							out.write("Vote Successful: Voted for "
+									+ luckyCandidate.toString());
+							out.newLine();
+						} else {
+							out.write("Vote Failed");
+							out.newLine();
+						}
+					} else {
+						out.write("Login Failed: " + voter.toString());
+					}
+					out.newLine();
+				}
+				out.newLine();
+			} else {
+				out.write("There are no Candidates in the District Server");
+				out.newLine();
+				out.newLine();
+			}
+
+			out.write("Results after current voting session");
+			out.newLine();
+			HashMap<Candidate, Integer> results = getLocalResults(district);
+			for (Map.Entry<Candidate, Integer> entry : results.entrySet()) {
+				out.write(((Candidate) entry.getKey()).toString() + " - "
+						+ ((Integer) entry.getValue()).toString() + " votes");
+				out.newLine();
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (out != null) {
 				try {
 					out.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-        }
+		}
 	}
 
 	public void startUI() {
-		//Create GUI
+		// Create GUI
 		@SuppressWarnings("unused")
 		ClientGUI gui = new ClientGUI(new District("Ottawa South"));
 
 		System.out.println("Started GUI");
 	}
-	
+
 	public static void main(String[] args) {
 		try {
 			int mode = Integer.parseInt(args[0]);
-  	    	int serverPort = Integer.parseInt(args[1]);
-  	    	final ClientController client = new ClientController(serverPort);
-  	    	try { Thread.sleep(1000); } catch( Exception e ) { } 
-  	    	System.out.println(client.getSocket().port);
+			int serverPort = Integer.parseInt(args[1]);
+			final ClientController client = new ClientController(serverPort);
+			try {
+				Thread.sleep(1000);
+			} catch (Exception e) {
+			}
+			System.out.println(client.getSocket().port);
 
-  	    	if (mode == ClientController.SIMULATION_MODE) {
-  	    		client.simulate(args[2], args[3]);
-  	    	}
-  	    	else if (mode ==  ClientController.USER_MODE) {
-  	    		client.startUI();
-  	    	}
+			if (mode == ClientController.SIMULATION_MODE) {
+				client.simulate(args[2], args[3]);
+			} else if (mode == ClientController.USER_MODE) {
+				client.startUI();
+			}
 
-	    } catch (Exception e) {
-	    	System.err.println(e);
-	    	System.out.println("Usage: ClientController <mode> <serverPort> [<inputFolder> <outputFolder>]");
-	    }
+		} catch (Exception e) {
+			System.err.println(e);
+			System.out
+					.println("Usage: ClientController <mode> <serverPort> [<inputFolder> <outputFolder>]");
+		}
 	}
 
 }

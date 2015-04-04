@@ -8,18 +8,17 @@ public class ResultSet implements Serializable {
 	private static final long serialVersionUID = 458344541008756254L;
 	public static final int DISTRICT = 0;
 	public static final int TOTAL = 1;
-	
+
 	private int type;
 	private HashMap<Candidate, Integer> districtVotes;
 	private HashMap<Party, Integer> totalVotes;
-	
+
 	public ResultSet(int type) {
 		this.setType(type);
-		
+
 		if (type == DISTRICT) {
 			setDistrictVotes(new HashMap<Candidate, Integer>());
-		}
-		else if (type == TOTAL) {
+		} else if (type == TOTAL) {
 			setTotalVotes(new HashMap<Party, Integer>());
 		}
 	}
@@ -47,5 +46,5 @@ public class ResultSet implements Serializable {
 	public void setTotalVotes(HashMap<Party, Integer> totalVotes) {
 		this.totalVotes = totalVotes;
 	}
-	
+
 }

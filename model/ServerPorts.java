@@ -11,5 +11,5 @@ public class ServerPorts {
 	public static final int DISTRICT_SERVER6 = DISTRICT_SERVER5 + 1;
 	public static final int DISTRICT_SERVER7 = DISTRICT_SERVER6 + 1;
 	public static final int DISTRICT_SERVER8 = DISTRICT_SERVER7 + 1;
-	
+
 }

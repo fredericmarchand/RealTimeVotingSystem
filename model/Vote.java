@@ -1,4 +1,5 @@
 package model;
+
 import java.io.Serializable;
 
 public class Vote implements Serializable {
@@ -6,7 +7,7 @@ public class Vote implements Serializable {
 
 	private Voter voter;
 	private Candidate candidate;
-	
+
 	public Vote(Voter voter, Candidate candidate) {
 		this.setVoter(voter);
 		this.setCandidate(candidate);
@@ -27,13 +28,13 @@ public class Vote implements Serializable {
 	public void setCandidate(Candidate candidate) {
 		this.candidate = candidate;
 	}
-	
+
 	@Override
-	public boolean equals ( Object other ) {
-		return this.voter.getSIN() == (((Vote)other).voter.getSIN());
+	public boolean equals(Object other) {
+		return this.voter.getSIN() == (((Vote) other).voter.getSIN());
 	}
-	
-	@Override 
+
+	@Override
 	public int hashCode() {
 		return this.voter.getSIN();
 	}
