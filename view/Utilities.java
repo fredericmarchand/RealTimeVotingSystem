@@ -41,6 +41,7 @@ import controller.ClientController;
 public final class Utilities {
 
 	private static Font UIFont = new Font("Courier New", Font.BOLD, 16);
+	private static Font ButtonFont = new Font("Courier New", Font.BOLD, 24);
 	private static GridBagConstraints constraints = new GridBagConstraints();
 	private static Comparator<Candidate> candidateComparator = new Comparator<Candidate>() {
 		public int compare(Candidate candidate1, Candidate candidate2) {
@@ -74,14 +75,15 @@ public final class Utilities {
 
 		return jScrollPane;
 	}
-	
-	public static ChartPanel newResultsChartPanel(ChartPanel chartPanel, int gridx,
-			int gridy, int gridwidth, int gridheight, GridBagLayout layout) {
-		
+
+	public static ChartPanel newResultsChartPanel(ChartPanel chartPanel,
+			int gridx, int gridy, int gridwidth, int gridheight,
+			GridBagLayout layout) {
+
 		chartPanel.setFillZoomRectangle(true);
 		chartPanel.setMouseWheelEnabled(true);
 		chartPanel.setPreferredSize(new Dimension(500, 270));
-		
+
 		constraints.gridx = gridx;
 		constraints.gridy = gridy;
 		constraints.gridwidth = gridwidth;
@@ -92,33 +94,38 @@ public final class Utilities {
 		constraints.weightx = 1.0;
 		constraints.weighty = 1.0;
 		layout.setConstraints(chartPanel, constraints);
-		
+
 		return chartPanel;
 	}
 
 	public static ChartPanel newLocalResultsChartPanel(String title, int gridx,
 			int gridy, int gridwidth, int gridheight, GridBagLayout layout,
 			District district) {
-		
-		ChartPanel chartPanel = new ChartPanel(newLocalResultsChart(title, district));
 
-		return newResultsChartPanel(chartPanel, gridx, gridy, gridwidth, gridheight, layout);
+		ChartPanel chartPanel = new ChartPanel(newLocalResultsChart(title,
+				district));
+
+		return newResultsChartPanel(chartPanel, gridx, gridy, gridwidth,
+				gridheight, layout);
 	}
-	
-	public static ChartPanel newNationalResultsChartPanel(String title, int gridx,
-			int gridy, int gridwidth, int gridheight, GridBagLayout layout) {
-		
+
+	public static ChartPanel newNationalResultsChartPanel(String title,
+			int gridx, int gridy, int gridwidth, int gridheight,
+			GridBagLayout layout) {
+
 		ChartPanel chartPanel = new ChartPanel(newNationalResultsChart(title));
 
-		return newResultsChartPanel(chartPanel, gridx, gridy, gridwidth, gridheight, layout);
+		return newResultsChartPanel(chartPanel, gridx, gridy, gridwidth,
+				gridheight, layout);
 	}
 
-	public static JFreeChart newLocalResultsChart(String title, District district) {
+	public static JFreeChart newLocalResultsChart(String title,
+			District district) {
 		CategoryDataset dataset = getLocalElectionResults(district);
 		JFreeChart chart = createChart(dataset, title);
 		return chart;
 	}
-	
+
 	public static JFreeChart newNationalResultsChart(String title) {
 		CategoryDataset dataset = getNationalElectionResults();
 		JFreeChart chart = createChart(dataset, title);
@@ -127,7 +134,8 @@ public final class Utilities {
 
 	private static CategoryDataset getLocalElectionResults(District district) {
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		HashMap<Candidate, Integer> results = ClientController.getLocalResults(district);
+		HashMap<Candidate, Integer> results = ClientController
+				.getLocalResults(district);
 
 		// To have results returned in alphabetical order
 		SortedSet<Candidate> keys = new TreeSet<Candidate>(candidateComparator);
@@ -144,11 +152,10 @@ public final class Utilities {
 
 		return dataset;
 	}
-	
+
 	private static CategoryDataset getNationalElectionResults() {
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		HashMap<Party, Integer> results = ClientController
-				.getNationalResults();
+		HashMap<Party, Integer> results = ClientController.getNationalResults();
 
 		// To have results returned in alphabetical order
 		SortedSet<Party> keys = new TreeSet<Party>(partyComparator);
@@ -192,7 +199,8 @@ public final class Utilities {
 	public static JButton newJButton(String label, int gridx, int gridy,
 			int gridwidth, int gridheight, GridBagLayout layout) {
 		JButton jButton = new JButton(label);
-		jButton.setFont(UIFont);
+		jButton.setFont(ButtonFont);
+		jButton.setFocusable(false);
 
 		constraints.gridx = gridx;
 		constraints.gridy = gridy;

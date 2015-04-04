@@ -2,6 +2,7 @@ package view;
 
 import java.awt.GridBagLayout;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
@@ -22,7 +23,7 @@ public class ResultsPanel extends JPanel {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				updateResultsChart();
+				updateResultsCharts();
 			}
 		}
 	}
@@ -36,7 +37,7 @@ public class ResultsPanel extends JPanel {
 	Thread thread;
 
 	private static final String localTitle = "Local Election Results";
-	private static final String nationalTitle = "National Election Results";	
+	private static final String nationalTitle = "National Election Results";
 
 	private ChartPanel localChartPanel;
 	private ChartPanel nationalChartPanel;
@@ -53,26 +54,31 @@ public class ResultsPanel extends JPanel {
 		layout = new GridBagLayout();
 		setLayout(layout);
 
-		localChartPanel = Utilities.newLocalResultsChartPanel(localTitle, 0, 0, 4, 3, layout,
-				this.district);
+		localChartPanel = Utilities.newLocalResultsChartPanel(localTitle, 0, 0,
+				4, 3, layout, this.district);
 		add(localChartPanel);
-		
-		nationalChartPanel = Utilities.newNationalResultsChartPanel(nationalTitle, 4, 0, 4, 3, layout);
+
+		nationalChartPanel = Utilities.newNationalResultsChartPanel(
+				nationalTitle, 4, 0, 4, 3, layout);
 		add(nationalChartPanel);
 
-		loginButton = Utilities.newJButton("  Vote  ", 0, 4, 4, 1, layout);
+		loginButton = Utilities.newJButton("Vote    ", 0, 4, 4, 1, layout);
+		loginButton.setIcon(new ImageIcon("img/vote_icon.png"));
 		add(loginButton);
 
 		registerButton = Utilities.newJButton("Register", 5, 4, 4, 1, layout);
+		registerButton.setIcon(new ImageIcon("img/register_icon.png"));
 		add(registerButton);
 
 		thread = new Thread(new resultsChartThread());
 		thread.start();
 	}
 
-	public void updateResultsChart() {
-		localChartPanel.setChart(Utilities.newLocalResultsChart(localTitle, district));
-		//nationalChartPanel.setChart(Utilities.newNationalResultsChart(nationalTitle));
+	public void updateResultsCharts() {
+		localChartPanel.setChart(Utilities.newLocalResultsChart(localTitle,
+				district));
+		nationalChartPanel.setChart(Utilities
+				.newNationalResultsChart(nationalTitle));
 	}
 
 	public JButton getLoginButton() {

@@ -92,7 +92,7 @@ public class ClientGUI extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				if (votingPanel.vote()) {
-					resultsPanel.updateResultsChart();
+					resultsPanel.updateResultsCharts();
 					setContentPane(resultsPanel);
 					setSize(1000, 500);
 					setVisible(true);
@@ -100,6 +100,7 @@ public class ClientGUI extends JFrame {
 			}
 		});
 
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setDefaultLookAndFeelDecorated(true);
 		setSize(1000, 500);
 		setResizable(false);
