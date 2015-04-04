@@ -22,7 +22,7 @@ public class ResultsPanel extends JPanel {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				updateResultsChart();
+				updateResultsCharts();
 			}
 		}
 	}
@@ -35,9 +35,11 @@ public class ResultsPanel extends JPanel {
 	// Thread responsible for updating the results chart
 	Thread thread;
 
-	private static final String title = "Current Election Results";
+	private static final String localTitle = "Local Election Results";
+	private static final String nationalTitle = "National Election Results";
 
-	private ChartPanel chartPanel;
+	private ChartPanel localChartPanel;
+	private ChartPanel nationalChartPanel;
 	private JButton loginButton;
 	private JButton registerButton;
 
@@ -51,22 +53,31 @@ public class ResultsPanel extends JPanel {
 		layout = new GridBagLayout();
 		setLayout(layout);
 
-		chartPanel = Utilities.newResultsChartPanel(title, 0, 0, 4, 3, layout,
-				this.district);
-		add(chartPanel);
+		localChartPanel = Utilities.newLocalResultsChartPanel(localTitle, 0, 0,
+				4, 3, layout, this.district);
+		add(localChartPanel);
 
-		loginButton = Utilities.newJButton("Vote", 0, 4, 1, 1, layout);
+		nationalChartPanel = Utilities.newNationalResultsChartPanel(
+				nationalTitle, 4, 0, 4, 3, layout);
+		add(nationalChartPanel);
+
+		loginButton = Utilities.newJButton("Vote    ", "vote_icon.png", 0, 4,
+				4, 1, layout);
 		add(loginButton);
 
-		registerButton = Utilities.newJButton("Register", 1, 4, 1, 1, layout);
+		registerButton = Utilities.newJButton("Register", "register_icon.png",
+				5, 4, 4, 1, layout);
 		add(registerButton);
 
 		thread = new Thread(new resultsChartThread());
 		thread.start();
 	}
 
-	public void updateResultsChart() {
-		chartPanel.setChart(Utilities.newResultsChart(title, district));
+	public void updateResultsCharts() {
+		localChartPanel.setChart(Utilities.newLocalResultsChart(localTitle,
+				district));
+		nationalChartPanel.setChart(Utilities
+				.newNationalResultsChart(nationalTitle));
 	}
 
 	public JButton getLoginButton() {

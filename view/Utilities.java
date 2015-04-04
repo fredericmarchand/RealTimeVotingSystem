@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -24,6 +25,7 @@ import javax.swing.ScrollPaneConstants;
 
 import model.Candidate;
 import model.District;
+import model.Party;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -40,10 +42,19 @@ import controller.ClientController;
 public final class Utilities {
 
 	private static Font UIFont = new Font("Courier New", Font.BOLD, 16);
+	private static Font ButtonFont = new Font("Courier New", Font.BOLD, 24);
+	private static final String iconDirectory = "img/";
 	private static GridBagConstraints constraints = new GridBagConstraints();
-	private static Comparator<Candidate> comparator = new Comparator<Candidate>() {
+
+	// Comparators used to sort in alphabetical order
+	private static Comparator<Candidate> candidateComparator = new Comparator<Candidate>() {
 		public int compare(Candidate candidate1, Candidate candidate2) {
 			return candidate1.getName().compareTo(candidate2.getName());
+		}
+	};
+	private static Comparator<Party> partyComparator = new Comparator<Party>() {
+		public int compare(Party party1, Party party2) {
+			return party1.getName().compareTo(party2.getName());
 		}
 	};
 
@@ -69,10 +80,10 @@ public final class Utilities {
 		return jScrollPane;
 	}
 
-	public static ChartPanel newResultsChartPanel(String title, int gridx,
-			int gridy, int gridwidth, int gridheight, GridBagLayout layout,
-			District district) {
-		ChartPanel chartPanel = new ChartPanel(newResultsChart(title, district));
+	public static ChartPanel newResultsChartPanel(ChartPanel chartPanel,
+			int gridx, int gridy, int gridwidth, int gridheight,
+			GridBagLayout layout) {
+
 		chartPanel.setFillZoomRectangle(true);
 		chartPanel.setMouseWheelEnabled(true);
 		chartPanel.setPreferredSize(new Dimension(500, 270));
@@ -91,18 +102,47 @@ public final class Utilities {
 		return chartPanel;
 	}
 
-	public static JFreeChart newResultsChart(String title, District district) {
-		CategoryDataset dataset = getElectionResults(district);
-		JFreeChart chart = createChart(dataset, title);
+	public static ChartPanel newLocalResultsChartPanel(String title, int gridx,
+			int gridy, int gridwidth, int gridheight, GridBagLayout layout,
+			District district) {
+
+		ChartPanel chartPanel = new ChartPanel(newLocalResultsChart(title,
+				district));
+
+		return newResultsChartPanel(chartPanel, gridx, gridy, gridwidth,
+				gridheight, layout);
+	}
+
+	public static ChartPanel newNationalResultsChartPanel(String title,
+			int gridx, int gridy, int gridwidth, int gridheight,
+			GridBagLayout layout) {
+
+		ChartPanel chartPanel = new ChartPanel(newNationalResultsChart(title));
+
+		return newResultsChartPanel(chartPanel, gridx, gridy, gridwidth,
+				gridheight, layout);
+	}
+
+	public static JFreeChart newLocalResultsChart(String title,
+			District district) {
+		CategoryDataset dataset = getLocalElectionResults(district);
+		JFreeChart chart = createChart(dataset, "Candidate", "Votes", title);
 		return chart;
 	}
 
-	private static CategoryDataset getElectionResults(District district) {
+	public static JFreeChart newNationalResultsChart(String title) {
+		CategoryDataset dataset = getNationalElectionResults();
+		JFreeChart chart = createChart(dataset, "Party", "Votes", title);
+		return chart;
+	}
+
+	private static CategoryDataset getLocalElectionResults(District district) {
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		HashMap<Candidate, Integer> results = ClientController.getLocalResults(district);
+		HashMap<Candidate, Integer> results = ClientController
+				.getLocalResults(district);
 
 		// To have results returned in alphabetical order
-		SortedSet<Candidate> keys = new TreeSet<Candidate>(comparator);
+		SortedSet<Candidate> keys = new TreeSet<Candidate>(candidateComparator);
 		keys.addAll(results.keySet());
 
 		Iterator<Candidate> it = keys.iterator();
@@ -117,8 +157,29 @@ public final class Utilities {
 		return dataset;
 	}
 
-	private static JFreeChart createChart(CategoryDataset dataset, String title) {
-		JFreeChart chart = ChartFactory.createBarChart(title, "Party", "Votes",
+	private static CategoryDataset getNationalElectionResults() {
+		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		HashMap<Party, Integer> results = ClientController.getNationalResults();
+
+		// To have results returned in alphabetical order
+		SortedSet<Party> keys = new TreeSet<Party>(partyComparator);
+		keys.addAll(results.keySet());
+
+		Iterator<Party> it = keys.iterator();
+		while (it.hasNext()) {
+			Party party = it.next();
+			dataset.addValue((Number) results.get(party),
+					(Comparable<String>) party.getName(),
+					(Comparable<String>) party.getName());
+			it.remove();
+		}
+
+		return dataset;
+	}
+
+	private static JFreeChart createChart(CategoryDataset dataset,
+			String xLabel, String yLabel, String title) {
+		JFreeChart chart = ChartFactory.createBarChart(title, xLabel, yLabel,
 				dataset);
 		chart.setBackgroundPaint(Color.white);
 		CategoryPlot plot = (CategoryPlot) chart.getPlot();
@@ -140,10 +201,15 @@ public final class Utilities {
 		return jList;
 	}
 
-	public static JButton newJButton(String label, int gridx, int gridy,
-			int gridwidth, int gridheight, GridBagLayout layout) {
+	public static JButton newJButton(String label, String icon, int gridx,
+			int gridy, int gridwidth, int gridheight, GridBagLayout layout) {
 		JButton jButton = new JButton(label);
-		jButton.setFont(UIFont);
+		jButton.setFont(ButtonFont);
+		jButton.setFocusable(false);
+
+		if (icon != null) {
+			jButton.setIcon(new ImageIcon(iconDirectory + icon));
+		}
 
 		constraints.gridx = gridx;
 		constraints.gridy = gridy;

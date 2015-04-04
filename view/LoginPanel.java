@@ -46,8 +46,11 @@ public class LoginPanel extends JPanel {
 			int res = JOptionPane.showConfirmDialog(frame, this, "Login",
 					JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
 					icon);
-			if (res > 0)
+			
+			if (res != JOptionPane.OK_OPTION) {
+				clearFields();
 				return null;
+			}
 
 			SIN = SINField.getText();
 			password = new String(passwordField.getPassword());
@@ -57,17 +60,25 @@ public class LoginPanel extends JPanel {
 					.userHasVoted(voter);
 
 			if (voter != null && !hasVoted) {
+				clearFields();
 				return voter;
 			}
 
 			if (hasVoted) {
 				JOptionPane.showMessageDialog(frame, "You have already voted!",
 						"Error", JOptionPane.OK_OPTION);
+				clearFields();
 				return null;
-			} else
+			} else {
 				JOptionPane.showMessageDialog(frame, "Invalid credentials",
 						"Error", JOptionPane.OK_OPTION);
+			}
 		}
+	}
+
+	private void clearFields() {
+		SINField.setText("");
+		passwordField.setText("");
 	}
 
 }

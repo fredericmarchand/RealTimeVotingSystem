@@ -11,6 +11,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
 import networking.*;
 import model.*;
 import testing.SystemPopulator;
@@ -177,7 +180,7 @@ public class ClientController {
 		HashMap<Party, Integer> results = new HashMap<Party, Integer>();
 
 		try {
-			Message newMsg = new Message(Message.Method.GET, RtvsType.RESULTS, null);
+			Message newMsg = new Message(Message.Method.GET, RtvsType.RESULTS, "National");
 			socket.send(newMsg); // Get port from list of district servers
 			newMsg = socket.receive();
 			results = ((ResultSet) newMsg.getData()).getTotalVotes();
@@ -372,6 +375,15 @@ public class ClientController {
 	}
 
 	public void startUI() {
+		
+		// To make the GUI look nicer
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException
+				| IllegalAccessException | UnsupportedLookAndFeelException e1) {
+			e1.printStackTrace();
+		}
+		
 		// Create GUI
 		@SuppressWarnings("unused")
 		ClientGUI gui = new ClientGUI(new District("Ottawa South"));
