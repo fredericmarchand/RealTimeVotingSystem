@@ -62,6 +62,7 @@ public class ClientGUI extends JFrame {
 						if (registrationPanel.validateFields()) {
 							if (registrationPanel.registerUser()) {
 								setContentPane(resultsPanel);
+								setSize(1000, 500);
 								setVisible(true);
 							}
 						}
@@ -73,7 +74,7 @@ public class ClientGUI extends JFrame {
 					@Override
 					public void actionPerformed(ActionEvent evt) {
 						setContentPane(resultsPanel);
-						setSize(500, 500);
+						setSize(1000, 500);
 						setVisible(true);
 					}
 				});
@@ -82,7 +83,7 @@ public class ClientGUI extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				setContentPane(resultsPanel);
-				setSize(500, 500);
+				setSize(1000, 500);
 				setVisible(true);
 			}
 		});
@@ -93,14 +94,14 @@ public class ClientGUI extends JFrame {
 				if (votingPanel.vote()) {
 					resultsPanel.updateResultsChart();
 					setContentPane(resultsPanel);
-					setSize(500, 500);
+					setSize(1000, 500);
 					setVisible(true);
 				}
 			}
 		});
 
 		setDefaultLookAndFeelDecorated(true);
-		setSize(500, 500);
+		setSize(1000, 500);
 		setResizable(false);
 		setContentPane(resultsPanel);
 		setVisible(true);

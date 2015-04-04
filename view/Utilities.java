@@ -24,6 +24,7 @@ import javax.swing.ScrollPaneConstants;
 
 import model.Candidate;
 import model.District;
+import model.Party;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -41,9 +42,14 @@ public final class Utilities {
 
 	private static Font UIFont = new Font("Courier New", Font.BOLD, 16);
 	private static GridBagConstraints constraints = new GridBagConstraints();
-	private static Comparator<Candidate> comparator = new Comparator<Candidate>() {
+	private static Comparator<Candidate> candidateComparator = new Comparator<Candidate>() {
 		public int compare(Candidate candidate1, Candidate candidate2) {
 			return candidate1.getName().compareTo(candidate2.getName());
+		}
+	};
+	private static Comparator<Party> partyComparator = new Comparator<Party>() {
+		public int compare(Party party1, Party party2) {
+			return party1.getName().compareTo(party2.getName());
 		}
 	};
 
@@ -68,15 +74,14 @@ public final class Utilities {
 
 		return jScrollPane;
 	}
-
-	public static ChartPanel newResultsChartPanel(String title, int gridx,
-			int gridy, int gridwidth, int gridheight, GridBagLayout layout,
-			District district) {
-		ChartPanel chartPanel = new ChartPanel(newResultsChart(title, district));
+	
+	public static ChartPanel newResultsChartPanel(ChartPanel chartPanel, int gridx,
+			int gridy, int gridwidth, int gridheight, GridBagLayout layout) {
+		
 		chartPanel.setFillZoomRectangle(true);
 		chartPanel.setMouseWheelEnabled(true);
 		chartPanel.setPreferredSize(new Dimension(500, 270));
-
+		
 		constraints.gridx = gridx;
 		constraints.gridy = gridy;
 		constraints.gridwidth = gridwidth;
@@ -87,23 +92,46 @@ public final class Utilities {
 		constraints.weightx = 1.0;
 		constraints.weighty = 1.0;
 		layout.setConstraints(chartPanel, constraints);
-
+		
 		return chartPanel;
 	}
 
-	public static JFreeChart newResultsChart(String title, District district) {
-		CategoryDataset dataset = getElectionResults(district);
+	public static ChartPanel newLocalResultsChartPanel(String title, int gridx,
+			int gridy, int gridwidth, int gridheight, GridBagLayout layout,
+			District district) {
+		
+		ChartPanel chartPanel = new ChartPanel(newLocalResultsChart(title, district));
+
+		return newResultsChartPanel(chartPanel, gridx, gridy, gridwidth, gridheight, layout);
+	}
+	
+	public static ChartPanel newNationalResultsChartPanel(String title, int gridx,
+			int gridy, int gridwidth, int gridheight, GridBagLayout layout) {
+		
+		ChartPanel chartPanel = new ChartPanel(newNationalResultsChart(title));
+
+		return newResultsChartPanel(chartPanel, gridx, gridy, gridwidth, gridheight, layout);
+	}
+
+	public static JFreeChart newLocalResultsChart(String title, District district) {
+		CategoryDataset dataset = getLocalElectionResults(district);
+		JFreeChart chart = createChart(dataset, title);
+		return chart;
+	}
+	
+	public static JFreeChart newNationalResultsChart(String title) {
+		CategoryDataset dataset = getNationalElectionResults();
 		JFreeChart chart = createChart(dataset, title);
 		return chart;
 	}
 
-	private static CategoryDataset getElectionResults(District district) {
+	private static CategoryDataset getLocalElectionResults(District district) {
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 		HashMap<Candidate, Integer> results = ClientController
 				.getLocalResults(district);
 
 		// To have results returned in alphabetical order
-		SortedSet<Candidate> keys = new TreeSet<Candidate>(comparator);
+		SortedSet<Candidate> keys = new TreeSet<Candidate>(candidateComparator);
 		keys.addAll(results.keySet());
 
 		Iterator<Candidate> it = keys.iterator();
@@ -112,6 +140,27 @@ public final class Utilities {
 			dataset.addValue((Number) results.get(candidate),
 					(Comparable<String>) candidate.getName(),
 					(Comparable<String>) candidate.getName());
+			it.remove();
+		}
+
+		return dataset;
+	}
+	
+	private static CategoryDataset getNationalElectionResults() {
+		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		HashMap<Party, Integer> results = ClientController
+				.getNationalResults();
+
+		// To have results returned in alphabetical order
+		SortedSet<Party> keys = new TreeSet<Party>(partyComparator);
+		keys.addAll(results.keySet());
+
+		Iterator<Party> it = keys.iterator();
+		while (it.hasNext()) {
+			Party party = it.next();
+			dataset.addValue((Number) results.get(party),
+					(Comparable<String>) party.getName(),
+					(Comparable<String>) party.getName());
 			it.remove();
 		}
 
