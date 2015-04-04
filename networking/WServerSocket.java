@@ -3,11 +3,13 @@ package networking;
 import java.io.IOException;
 
 public class WServerSocket {
-	WSocket socket;
+	private WSocket socket;
+	private int port;
 
 	public WServerSocket(int port, String host) {
 		try {
 			socket = new WSocket(port, host);
+			this.port = port;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -32,5 +34,9 @@ public class WServerSocket {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public int getPort() {
+		return port;
 	}
 }

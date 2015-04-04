@@ -22,6 +22,7 @@ public class ClientLoginTest {
 	public void loginExistingUser() {
 		Voter v1 = new Voter("Hugh", "Jarms", new Address(), 111222333);
 		v1.setPassword("secr3t");
+		@SuppressWarnings("unused")
 		boolean b = ClientController.registerUser(v1);
 		Voter v2 = ClientController.loginUser(v1.getUsername(),
 				v1.getPassword());
