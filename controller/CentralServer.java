@@ -3,27 +3,29 @@ package controller;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.net.SocketException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import model.Candidate;
-import model.Party;
+import model.Connection;
 import model.ResultSet;
-import model.Vote;
-import model.Voter;
+import model.ServerPorts;
 import networking.Message;
 import networking.WSocket;
 
 public class CentralServer {
 
-	public static final int CENTRAL_SERVER_PORT = 60001;
+	public static final int CENTRAL_SERVER_PORT = ServerPorts.CENTRAL_SERVER;
 	public static final int PERIOD = 3000; // milliseconds
-	private HashSet<Vote> votes;
+	private HashSet<Connection> districts;
+	private ResultSet totals;
 
 	private WSocket servSocket;
 
 	public void init() {
 		try {
+			districts = new HashSet<Connection>();
+			totals = new ResultSet(ResultSet.NATIONAL);
 			servSocket = new WSocket(CENTRAL_SERVER_PORT);
 		} catch (UnknownHostException | SocketException e1) {
 			e1.printStackTrace();
@@ -53,12 +55,13 @@ public class CentralServer {
 
 			switch (msg.getType()) {
 
+			case RtvsType.CONNECT:
+				districts.add(new Connection(msg.getSenderHost(), (int)msg.getData()));
+				break;
+			
 			case RtvsType.RESULTS:
-				ResultSet rs = new ResultSet(ResultSet.NATIONAL);
-
-				msg = new Message(Message.Method.POST, RtvsType.RESULTS, rs);
+				msg = new Message(Message.Method.POST, RtvsType.RESULTS, totals);
 				servSocket.sendTo(msg, sender);
-
 				break;
 
 			default:
@@ -67,6 +70,37 @@ public class CentralServer {
 		} catch (Exception e) {
 			System.err.println(e);
 			e.printStackTrace();
+		}
+	}
+	
+	public void getLocalResults() {
+		totals = new ResultSet(ResultSet.NATIONAL);
+		
+		for (Connection c: districts) {
+			HashMap<Candidate, Integer> results = new HashMap<Candidate, Integer>();
+			Message msg;
+			
+			try {
+				msg = new Message(Message.Method.GET, RtvsType.RESULTS, "");
+				servSocket.sendTo(msg, c.getPort());
+				msg = servSocket.receive();
+				results = ((ResultSet) msg.getData()).getDistrictVotes();
+				
+				for (Candidate can: results.keySet()) {
+					synchronized(totals) {
+						if (totals.getTotalVotes().containsKey(can.getParty())) {
+							totals.getTotalVotes().put(can.getParty(), totals.getTotalVotes().get(can.getParty()) + results.get(can));
+						}
+						else {
+							totals.getTotalVotes().put(can.getParty(), results.get(can));
+						}
+					}
+				}
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
 		}
 	}
 
@@ -93,8 +127,7 @@ public class CentralServer {
 				}
 
 				// Query Votes from District Servers
-				// Push back to every district server
-
+				server.getLocalResults();
 			}
 
 		});
