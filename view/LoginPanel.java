@@ -46,7 +46,8 @@ public class LoginPanel extends JPanel {
 			int res = JOptionPane.showConfirmDialog(frame, this, "Login",
 					JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
 					icon);
-			if (res > 0) {
+			
+			if (res != JOptionPane.OK_OPTION) {
 				clearFields();
 				return null;
 			}
