@@ -7,7 +7,7 @@ public class ResultSet implements Serializable {
 
 	private static final long serialVersionUID = 458344541008756254L;
 	public static final int DISTRICT = 0;
-	public static final int TOTAL = 1;
+	public static final int NATIONAL = 1;
 
 	private int type;
 	private HashMap<Candidate, Integer> districtVotes;
@@ -18,7 +18,7 @@ public class ResultSet implements Serializable {
 
 		if (type == DISTRICT) {
 			setDistrictVotes(new HashMap<Candidate, Integer>());
-		} else if (type == TOTAL) {
+		} else if (type == NATIONAL) {
 			setTotalVotes(new HashMap<Party, Integer>());
 		}
 	}
