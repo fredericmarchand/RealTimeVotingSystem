@@ -14,15 +14,19 @@ public class DistrictServer {
 
 	private District district;
 	private WServerSocket servSocket;
+	private WSocket sendSocket;
 	private HashMap<String, Party> parties;
 	private HashMap<String, Candidate> candidates;
 	private HashMap<String, Voter> registeredVoters;
 	private HashSet<Vote> votes;
+	private ResultSet totals;
 
 	public DistrictServer(String name, Province province, int port) {
 		district = new District(name, province);
+		totals = new ResultSet(ResultSet.NATIONAL);
 		try {
 			servSocket = new WServerSocket(port);
+			sendSocket = new WSocket().connect(CentralServer.CENTRAL_SERVER_PORT);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
@@ -174,17 +178,26 @@ public class DistrictServer {
 					socket.sendTo(msg, sender);
 					break;
 				case RtvsType.RESULTS:
-					ResultSet rs = new ResultSet(ResultSet.DISTRICT);
-					for (Candidate c : this.getCandidates().values()) {
-						int totalVotes = 0;
-						for (Vote v : votes) {
-							if (v.getCandidate().getName().equals(c.getName()))
-								totalVotes++;
+					if (((String)msg.getData()).equals("district")) {
+						System.out.println("Local");
+						ResultSet rs = new ResultSet(ResultSet.DISTRICT);
+						for (Candidate c : this.getCandidates().values()) {
+							int totalVotes = 0;
+							for (Vote v : votes) {
+								if (v.getCandidate().getName().equals(c.getName()))
+									totalVotes++;
+							}
+							rs.getDistrictVotes().put(c, totalVotes);
 						}
-						rs.getDistrictVotes().put(c, totalVotes);
+	
+						msg = new Message(Message.Method.GET, RtvsType.RESULTS, rs);
 					}
-
-					msg = new Message(Message.Method.GET, RtvsType.RESULTS, rs);
+					else {
+						synchronized (totals) {
+							System.out.println("National");
+							msg = new Message(Message.Method.GET, RtvsType.RESULTS, totals);
+						}
+					}
 					socket.sendTo(msg, sender);
 
 					break;
@@ -240,11 +253,40 @@ public class DistrictServer {
 		}
 	}
 	
+	public void getNationalResults() {
+		Thread thread = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				while (true) {
+					try {
+						Thread.sleep(CentralServer.PERIOD);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+	
+					try {
+						Message msg = new Message(Message.Method.GET, RtvsType.RESULTS, null);
+						sendSocket.send(msg);
+						msg = sendSocket.receive();
+						synchronized (totals) {
+							totals = (ResultSet)msg.getData();
+						}
+						System.out.println("National: " + totals.getTotalVotes().size());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+
+		thread.start();
+	}
+	
 	public void connectToCentralServer() {
 		try {
 			Message msg = new Message(Message.Method.POST, RtvsType.CONNECT, servSocket.getPort());
-			WSocket socket = new WSocket().connect(CentralServer.CENTRAL_SERVER_PORT);
-			socket.send(msg);
+			sendSocket.send(msg);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -286,6 +328,7 @@ public class DistrictServer {
 
 			System.out.println(districtName + " Server running on port " + port);
 
+			System.out.println("Connecting to Central Server");
 			server.connectToCentralServer();
 			
 			Thread t = new Thread(new Runnable() {
@@ -294,6 +337,8 @@ public class DistrictServer {
 				}
 			});
 			t.start();
+			
+			server.getNationalResults();
 
 		} catch (Exception e) {
 			System.out.println("Usage: DistrictServer <districtName> <provinceName> <port> [<inputFile>]");

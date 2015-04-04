@@ -44,8 +44,7 @@ public class ClientController {
 	public static synchronized boolean registerUser(Voter v) {
 		boolean result = false;
 		try {
-			Message newMsg = new Message(Message.Method.POST,
-					RtvsType.REGISTER, v);
+			Message newMsg = new Message(Message.Method.POST, RtvsType.REGISTER, v);
 			System.out.println(newMsg.toString() + " " + districtServerPort);
 			socket.send(newMsg);
 			newMsg = socket.receive();
@@ -62,8 +61,7 @@ public class ClientController {
 	public static synchronized ArrayList<Party> getParties() {
 		ArrayList<Party> parties = new ArrayList<Party>();
 		try {
-			Message newMsg = new Message(Message.Method.GET, RtvsType.PARTIES,
-					"");
+			Message newMsg = new Message(Message.Method.GET, RtvsType.PARTIES, "");
 			socket.send(newMsg);
 			newMsg = socket.receive();
 			parties = (ArrayList<Party>) newMsg.getData();
@@ -98,8 +96,7 @@ public class ClientController {
 	public static synchronized Voter loginUser(String username, String password) {
 		Voter result = null;
 		try {
-			Message newMsg = new Message(Message.Method.POST, RtvsType.LOGIN,
-					username + "\n" + password);
+			Message newMsg = new Message(Message.Method.POST, RtvsType.LOGIN, username + "\n" + password);
 			socket.send(newMsg);
 			newMsg = socket.receive();
 			result = (Voter) newMsg.getData();
@@ -114,8 +111,7 @@ public class ClientController {
 	public static synchronized boolean userHasVoted(Voter v) {
 		boolean result = false;
 		try {
-			Message newMsg = new Message(Message.Method.GET,
-					RtvsType.HAS_VOTED, v);
+			Message newMsg = new Message(Message.Method.GET, RtvsType.HAS_VOTED, v);
 			socket.send(newMsg);
 			newMsg = socket.receive();
 			result = (boolean) newMsg.getData();
@@ -131,8 +127,7 @@ public class ClientController {
 		Vote vote = new Vote(v, c);
 		boolean result = false;
 		try {
-			Message newMsg = new Message(Message.Method.POST, RtvsType.VOTE,
-					vote);
+			Message newMsg = new Message(Message.Method.POST, RtvsType.VOTE, vote);
 			socket.send(newMsg);
 			newMsg = socket.receive();
 			result = (boolean) newMsg.getData();
@@ -143,8 +138,7 @@ public class ClientController {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static synchronized ArrayList<Candidate> getDistrictCandidates(
-			District d) {
+	public static synchronized ArrayList<Candidate> getDistrictCandidates(District d) {
 		ArrayList<Candidate> candidates = new ArrayList<Candidate>();
 
 		// fetch from district server;
@@ -162,13 +156,11 @@ public class ClientController {
 		return candidates;
 	}
 
-	public static synchronized HashMap<Candidate, Integer> getLocalResults(
-			District d) {
+	public static synchronized HashMap<Candidate, Integer> getLocalResults(District d) {
 		HashMap<Candidate, Integer> results = new HashMap<Candidate, Integer>();
 
 		try {
-			Message newMsg = new Message(Message.Method.GET, RtvsType.RESULTS,
-					d);
+			Message newMsg = new Message(Message.Method.GET, RtvsType.RESULTS, "district");
 			socket.send(newMsg); // Get port from list of district servers
 			newMsg = socket.receive();
 			results = ((ResultSet) newMsg.getData()).getDistrictVotes();
@@ -184,8 +176,7 @@ public class ClientController {
 		HashMap<Party, Integer> results = new HashMap<Party, Integer>();
 
 		try {
-			Message newMsg = new Message(Message.Method.GET, RtvsType.RESULTS,
-					null);
+			Message newMsg = new Message(Message.Method.GET, RtvsType.RESULTS, null);
 			socket.send(newMsg); // Get port from list of district servers
 			newMsg = socket.receive();
 			results = ((ResultSet) newMsg.getData()).getTotalVotes();
@@ -374,7 +365,14 @@ public class ClientController {
 		// Create GUI
 		@SuppressWarnings("unused")
 		ClientGUI gui = new ClientGUI(new District("Ottawa South"));
-
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		for (Party p: getNationalResults().keySet()) {
+			System.out.println(p + " ");
+		}
 		System.out.println("Started GUI");
 	}
 
@@ -386,6 +384,7 @@ public class ClientController {
 			try {
 				Thread.sleep(1000);
 			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			System.out.println(client.getSocket().port);
 
@@ -397,8 +396,7 @@ public class ClientController {
 
 		} catch (Exception e) {
 			System.err.println(e);
-			System.out
-					.println("Usage: ClientController <mode> <serverPort> [<inputFolder> <outputFolder>]");
+			System.out.println("Usage: ClientController <mode> <serverPort> [<inputFolder> <outputFolder>]");
 		}
 	}
 
