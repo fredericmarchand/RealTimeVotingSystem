@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.io.IOException;
 import java.lang.Thread;
+import java.net.SocketTimeoutException;
 
 import networking.*;
 import model.*;
@@ -243,9 +244,17 @@ public class DistrictServer {
 					msg = new Message(Message.Method.GET, RtvsType.VOTE, ret);
 					socket.sendTo(msg, sender);
 					break;
+					
+				case RtvsType.DISCONNECT: 
+					socket.close();
+					return;
+					
 				default:
 					break;
 				}
+			} catch ( SocketTimeoutException e ) {
+				socket.close();
+				return;
 			} catch (Exception e) {
 				System.err.println(e);
 				e.printStackTrace();

@@ -13,6 +13,7 @@ import java.io.*;
 public class WSocket {
 	public static final int PACKET_LEN = 500;
 	public static final int FRAG_LEN = 200;
+	public static final int SEND_ATTEMPTS = 3;
 
 	private int TIMEOUT = 10000;
 
@@ -82,12 +83,13 @@ public class WSocket {
 		socket.send(packet);
 	}
 
-	public synchronized Message receive() throws IOException {
+	public synchronized Message receive() 
+	throws IOException, SocketTimeoutException {
 		byte[] buffer = new byte[576];
 		Message msg = null;
 		while (msg == null) {
 			try {
-				socket.setSoTimeout(1000000000);
+				socket.setSoTimeout(TIMEOUT);
 				DatagramPacket response = new DatagramPacket(buffer,
 						buffer.length, this.socket.getInetAddress(),
 						this.socket.getLocalPort());
@@ -117,7 +119,7 @@ public class WSocket {
 	}
 
 	public synchronized void sendTo(Message msg, int port, InetAddress host)
-			throws IOException {
+			throws IOException, SocketTimeoutException {
 
 		msg.setSender(this.socket.getLocalPort(), this.socket.getInetAddress());
 		final byte[] data = msg.getBytes();
@@ -130,6 +132,8 @@ public class WSocket {
 
 		boolean msg_rcvd = false;
 
+		int timeoutCount = 0;
+		
 		while (!msg_rcvd) {
 			try {
 				socket.setSoTimeout(TIMEOUT);
@@ -150,11 +154,15 @@ public class WSocket {
 					System.out.println("huh? " + msg);
 				msg_rcvd = true;
 			} catch (SocketTimeoutException e) {
+				timeoutCount++;
 				e.printStackTrace();
+				if ( timeoutCount >  SEND_ATTEMPTS-1 ) { 
+					throw e;
+				}
 			} catch (MessageCorruptException e) {
 				e.printStackTrace();
 			}
-			socket.setSoTimeout(1000000);
+			//socket.setSoTimeout(1000000);
 		}
 	}
 

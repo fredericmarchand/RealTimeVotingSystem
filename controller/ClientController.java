@@ -38,6 +38,7 @@ public class ClientController {
 	}
 
 	public void closeSocket() {
+		sendDisconnect();
 		socket.close();
 	}
 
@@ -186,6 +187,15 @@ public class ClientController {
 		}
 
 		return results;
+	}
+	
+	public static void sendDisconnect() { 
+		try { 
+			Message msg = new Message(Message.Method.POST, RtvsType.DISCONNECT, null);
+			socket.send(msg);
+		} catch(IOException e) { 
+			e.printStackTrace();
+		} 
 	}
 
 	public void simulate(String inputFolder, final String outputFolder) {
@@ -381,7 +391,17 @@ public class ClientController {
 			int mode = Integer.parseInt(args[0]);
 			int serverPort = Integer.parseInt(args[1]);
 			final ClientController client = new ClientController(serverPort);
+			
+			Runtime.getRuntime().addShutdownHook(
+				new Thread(new Runnable() { 
+					@Override public void run() { 
+						client.closeSocket();
+					}
+				})
+			);
+			
 			try {
+				// TODO test without this, probably not necessary anymore
 				Thread.sleep(1000);
 			} catch (Exception e) {
 				e.printStackTrace();

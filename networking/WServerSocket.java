@@ -9,6 +9,7 @@ public class WServerSocket {
 	public WServerSocket(int port, String host) {
 		try {
 			socket = new WSocket(port, host);
+			socket.setTimeout(10000000);
 			this.port = port;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -28,7 +29,7 @@ public class WServerSocket {
 			Message note = new Message(Message.Method.POST,
 					"%%%new-connection%%%", new Integer(conn.port));
 			socket.sendTo(note, msg.getSenderPort());
-			System.out.println("connection accepted on " + conn.port);
+			//System.out.println("connection accepted on " + conn.port);
 			return conn;
 		} catch (IOException e) {
 			e.printStackTrace();

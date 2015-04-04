@@ -13,4 +13,5 @@ public interface RtvsType {
 	public static final String PARTIES = "PARTIES";
 	public static final String RUN = "RUN";
 	public static final String CONNECT = "CONNECT";
+	public static final String DISCONNECT = "DISCONNECT";
 }
