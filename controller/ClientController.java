@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -27,13 +28,13 @@ public class ClientController {
 	private static WSocket socket;
 	private static int districtServerPort;
 
-	public ClientController(int serverPort) {
+	public ClientController(int serverPort) throws SocketTimeoutException {
 		districtServerPort = serverPort;
 		try {
 			socket = new WSocket().connect(districtServerPort);
 		} catch (UnknownHostException | SocketException e1) {
 			e1.printStackTrace();
-		}
+		} 
 	}
 
 	public WSocket getSocket() {
@@ -187,6 +188,7 @@ public class ClientController {
 
 		} catch (IOException e) {
 			e.printStackTrace();
+			reconnect();
 		}
 
 		return results;
@@ -199,6 +201,19 @@ public class ClientController {
 		} catch(IOException e) { 
 			e.printStackTrace();
 		} 
+	}
+	
+	public static void reconnect() { 
+		sendDisconnect();
+		socket.close();
+		try {
+			socket = new WSocket().connect(districtServerPort);
+		} catch ( SocketTimeoutException e ) { 
+			// TODO should probably notify client in GUI then close down
+			e.printStackTrace();
+		} catch (UnknownHostException | SocketException e1) {
+			e1.printStackTrace();
+		}
 	}
 
 	public void simulate(String inputFolder, final String outputFolder) {
@@ -412,12 +427,6 @@ public class ClientController {
 				})
 			);
 			
-			try {
-				// TODO test without this, probably not necessary anymore
-				Thread.sleep(1000);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 			System.out.println(client.getSocket().port);
 
 			if (mode == ClientController.SIMULATION_MODE) {

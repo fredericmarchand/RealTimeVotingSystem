@@ -2,6 +2,9 @@ package testing;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+
+import java.net.SocketTimeoutException;
+
 import model.Address;
 import model.Candidate;
 import model.Party;
@@ -17,7 +20,7 @@ public class ClientVoteTest {
 	ClientController controller;
 
 	@Before
-	public void setup() {
+	public void setup() throws SocketTimeoutException {
 		controller = new ClientController(60002);
 	}
 

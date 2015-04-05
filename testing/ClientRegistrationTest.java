@@ -1,6 +1,9 @@
 package testing;
 
 import static org.junit.Assert.*;
+
+import java.net.SocketTimeoutException;
+
 import model.Address;
 import model.Voter;
 
@@ -14,7 +17,7 @@ public class ClientRegistrationTest {
 	ClientController controller;
 
 	@Before
-	public void setup() {
+	public void setup() throws SocketTimeoutException {
 		controller = new ClientController(60002);
 	}
 

@@ -5,6 +5,7 @@ package testing;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
@@ -123,6 +124,9 @@ public class WSocketTest {
 		} catch (UnknownHostException | SocketException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+		} catch (SocketTimeoutException e) {
+			e.printStackTrace();
+			System.exit(-2);
 		}
 
 		// ...

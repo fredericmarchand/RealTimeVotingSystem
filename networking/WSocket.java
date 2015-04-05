@@ -39,7 +39,7 @@ public class WSocket {
 	}
 
 	public synchronized WSocket connect(int port, String host)
-			throws UnknownHostException, SocketException {
+	throws UnknownHostException, SocketException, SocketTimeoutException {
 		this.socket = new DatagramSocket();
 		try {
 			System.out.println("connecting");
@@ -58,8 +58,8 @@ public class WSocket {
 		return this;
 	}
 
-	public WSocket connect(int port) throws UnknownHostException,
-			SocketException {
+	public WSocket connect(int port) 
+	throws UnknownHostException, SocketException, SocketTimeoutException {
 		return this.connect(port, "localhost");
 	}
 
@@ -255,7 +255,19 @@ public class WSocket {
 						"%%done%%");
 				this.sendTo(done, port, host);
 			}
-
 		}
+	}
+	
+	public int getPort() { 
+		return this.port; 
+	}
+	
+	public InetAddress getHost() { 
+		return this.addr; 
+	}
+	
+	@Override
+	public String toString() { 
+		return addr+" : "+port;
 	}
 }

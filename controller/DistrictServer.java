@@ -246,6 +246,7 @@ public class DistrictServer {
 					break;
 					
 				case RtvsType.DISCONNECT: 
+					System.out.println("Client disconnected from port "+socket);
 					socket.close();
 					return;
 					
@@ -253,6 +254,7 @@ public class DistrictServer {
 					break;
 				}
 			} catch ( SocketTimeoutException e ) {
+				System.out.println("Client disconnected (timeout) from port "+socket);
 				socket.close();
 				return;
 			} catch (Exception e) {
