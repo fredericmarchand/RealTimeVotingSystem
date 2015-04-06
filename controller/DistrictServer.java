@@ -180,7 +180,6 @@ public class DistrictServer {
 					break;
 				case RtvsType.RESULTS:
 					if (((String)msg.getData()).equals("district")) {
-						System.out.println("Local");
 						ResultSet rs = new ResultSet(ResultSet.DISTRICT);
 						for (Candidate c : this.getCandidates().values()) {
 							int totalVotes = 0;
@@ -195,7 +194,6 @@ public class DistrictServer {
 					}
 					else {
 						synchronized (totals) {
-							System.out.println("National");
 							msg = new Message(Message.Method.GET, RtvsType.RESULTS, totals);
 						}
 					}
@@ -283,7 +281,9 @@ public class DistrictServer {
 						synchronized (totals) {
 							totals = (ResultSet)msg.getData();
 						}
-						System.out.println("National: " + totals.getTotalVotes().size());
+						for (String p: totals.getTotalVotes().keySet()) {
+							System.out.println(p + ": " + totals.getTotalVotes().get(p));
+						}
 					} catch (IOException e) {
 						e.printStackTrace();
 					}

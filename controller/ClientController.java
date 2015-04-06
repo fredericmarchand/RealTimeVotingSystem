@@ -177,8 +177,8 @@ public class ClientController {
 		return results;
 	}
 
-	public static synchronized HashMap<Party, Integer> getNationalResults() {
-		HashMap<Party, Integer> results = new HashMap<Party, Integer>();
+	public static synchronized HashMap<String, Integer> getNationalResults() {
+		HashMap<String, Integer> results = new HashMap<String, Integer>();
 
 		try {
 			Message newMsg = new Message(Message.Method.GET, RtvsType.RESULTS, "National");
@@ -402,14 +402,7 @@ public class ClientController {
 		// Create GUI
 		@SuppressWarnings("unused")
 		ClientGUI gui = new ClientGUI(new District("Ottawa South"));
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		for (Party p: getNationalResults().keySet()) {
-			System.out.println(p + " ");
-		}
+		
 		System.out.println("Started GUI");
 	}
 

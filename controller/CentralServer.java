@@ -1,9 +1,6 @@
 package controller;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
-import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -80,37 +77,55 @@ public class CentralServer {
 	}
 	
 	public void getLocalResults() {
-		totals = new ResultSet(ResultSet.NATIONAL);
-		
-		for (Connection c: districts) {
-			HashMap<Candidate, Integer> results = new HashMap<Candidate, Integer>();
-			Message msg;
+		synchronized(totals) {
+			totals = new ResultSet(ResultSet.NATIONAL);
 			
-			try {
-				msg = new Message(Message.Method.GET, RtvsType.RESULTS, "district");
-				districtServerSockets.get(c.getPort()).send(msg);
-				msg = districtServerSockets.get(c.getPort()).receive();
-				results = ((ResultSet) msg.getData()).getDistrictVotes();
+			for (Connection c: districts) {
+				HashMap<Candidate, Integer> results = new HashMap<Candidate, Integer>();
+				Message msg;
 				
-				for (Candidate can: results.keySet()) {
-					synchronized(totals) {
-						if (totals.getTotalVotes().containsKey(can.getParty())) {
-							totals.getTotalVotes().put(can.getParty(), totals.getTotalVotes().get(can.getParty()) + results.get(can));
-						}
-						else {
-							totals.getTotalVotes().put(can.getParty(), results.get(can));
+				try {
+					msg = new Message(Message.Method.GET, RtvsType.RESULTS, "district");
+					districtServerSockets.get(c.getPort()).send(msg);
+					msg = districtServerSockets.get(c.getPort()).receive();
+					results = ((ResultSet) msg.getData()).getDistrictVotes();
+					
+					for (Candidate can: results.keySet()) {
+						if (!totals.getTotalVotes().containsKey(can.getParty().getName())) {
+							totals.getTotalVotes().put(can.getParty().getName(), 0);
 						}
 					}
+					
+					String party = ((ResultSet) msg.getData()).getPartyWithMostVotes();
+					if (party != null) {
+						if (totals.getTotalVotes().containsKey(party)) {
+							totals.getTotalVotes().put(party, totals.getTotalVotes().get(party) + 1);
+						}
+						else {
+							totals.getTotalVotes().put(party, 1);
+						}
+					}
+					
+					/*for (Candidate can: results.keySet()) {
+						
+						if (totals.getTotalVotes().containsKey(can.getParty().getName())) {
+							totals.getTotalVotes().put(can.getParty().getName(), totals.getTotalVotes().get(can.getParty().getName()) + results.get(can));
+						}
+						else {
+							totals.getTotalVotes().put(can.getParty().getName(), results.get(can));
+						}
+						
+					}*/
+					
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-				
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
-		
-		for (Party p: totals.getTotalVotes().keySet()) {
-			System.out.println(p.getName() + ": " + totals.getTotalVotes().get(p));
+		for (String p: totals.getTotalVotes().keySet()) {
+			System.out.println(p + ": " + totals.getTotalVotes().get(p));
 		}
+		System.out.println();
 	}
 
 	public static void main(String args[]) {

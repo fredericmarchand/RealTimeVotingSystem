@@ -11,7 +11,7 @@ public class ResultSet implements Serializable {
 
 	private int type;
 	private HashMap<Candidate, Integer> districtVotes;
-	private HashMap<Party, Integer> totalVotes;
+	private HashMap<String, Integer> totalVotes;
 
 	public ResultSet(int type) {
 		this.setType(type);
@@ -19,7 +19,7 @@ public class ResultSet implements Serializable {
 		if (type == DISTRICT) {
 			setDistrictVotes(new HashMap<Candidate, Integer>());
 		} else if (type == NATIONAL) {
-			setTotalVotes(new HashMap<Party, Integer>());
+			setTotalVotes(new HashMap<String, Integer>());
 		}
 	}
 
@@ -39,12 +39,24 @@ public class ResultSet implements Serializable {
 		this.districtVotes = districtVotes;
 	}
 
-	public HashMap<Party, Integer> getTotalVotes() {
+	public HashMap<String, Integer> getTotalVotes() {
 		return totalVotes;
 	}
 
-	public void setTotalVotes(HashMap<Party, Integer> totalVotes) {
+	public void setTotalVotes(HashMap<String, Integer> totalVotes) {
 		this.totalVotes = totalVotes;
 	}
 
+	public String getPartyWithMostVotes() {
+		String party = null;
+		int maxVotes = 0;
+		for (Candidate can: districtVotes.keySet()) {
+			if (districtVotes.get(can) > maxVotes) {
+				maxVotes = districtVotes.get(can);
+				party = can.getParty().getName();
+			}
+		}
+		return party;
+	}
+	
 }

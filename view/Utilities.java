@@ -52,9 +52,9 @@ public final class Utilities {
 			return candidate1.getName().compareTo(candidate2.getName());
 		}
 	};
-	private static Comparator<Party> partyComparator = new Comparator<Party>() {
-		public int compare(Party party1, Party party2) {
-			return party1.getName().compareTo(party2.getName());
+	private static Comparator<String> partyComparator = new Comparator<String>() {
+		public int compare(String party1, String party2) {
+			return party1.compareTo(party2);
 		}
 	};
 
@@ -159,18 +159,18 @@ public final class Utilities {
 
 	private static CategoryDataset getNationalElectionResults() {
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		HashMap<Party, Integer> results = ClientController.getNationalResults();
+		HashMap<String, Integer> results = ClientController.getNationalResults();
 
 		// To have results returned in alphabetical order
-		SortedSet<Party> keys = new TreeSet<Party>(partyComparator);
+		SortedSet<String> keys = new TreeSet<String>(partyComparator);
 		keys.addAll(results.keySet());
 
-		Iterator<Party> it = keys.iterator();
+		Iterator<String> it = keys.iterator();
 		while (it.hasNext()) {
-			Party party = it.next();
+			String party = it.next();
 			dataset.addValue((Number) results.get(party),
-					(Comparable<String>) party.getName(),
-					(Comparable<String>) party.getName());
+					(Comparable<String>) party,
+					(Comparable<String>) party);
 			it.remove();
 		}
 
