@@ -25,7 +25,6 @@ import javax.swing.ScrollPaneConstants;
 
 import model.Candidate;
 import model.District;
-import model.Party;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;

@@ -6,7 +6,6 @@ import java.util.HashSet;
 
 import model.Candidate;
 import model.Connection;
-import model.Party;
 import model.ResultSet;
 import model.ServerPorts;
 import networking.Message;
