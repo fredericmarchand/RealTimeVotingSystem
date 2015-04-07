@@ -216,14 +216,16 @@ public class ClientController {
 		}
 	}
 
-	public void simulate(String inputFolder, final String outputFolder) {
+	public void simulate(String inputFolder, final String outputFolder, final String district) {
 		BufferedWriter out = null;
 
 		try {
 			ArrayList<Thread> threads = new ArrayList<Thread>();
 			File folder = new File(inputFolder);
 			File[] listOfFiles = folder.listFiles();
-
+			File folder1 = new File(outputFolder);
+			folder1.mkdir();
+			
 			for (int i = 0; i < listOfFiles.length; i++) {
 				final File file = listOfFiles[i];
 				final int fileCount = i + 1;
@@ -233,7 +235,7 @@ public class ClientController {
 							ClientController.simulateFromFile(
 									file.getAbsolutePath(), outputFolder
 											+ File.separator + "client_output"
-											+ fileCount + ".txt");
+											+ fileCount + ".txt", district);
 						}
 					}));
 				}
@@ -279,10 +281,10 @@ public class ClientController {
 		}
 	}
 
-	public static void simulateFromFile(String inputFile, String outputFile) {
+	public static void simulateFromFile(String inputFile, String outputFile, String districtName) {
 
 		BufferedWriter out = null;
-		District district = new District("Ottawa South");
+		District district = new District(districtName);
 
 		try {
 			out = new BufferedWriter(new FileWriter(outputFile));
@@ -450,7 +452,7 @@ public class ClientController {
 			System.out.println(client.getSocket().port);
 
 			if (mode == ClientController.SIMULATION_MODE) {
-				client.simulate(args[2], args[3]);
+				client.simulate(args[2], args[3], "Ottawa");
 			} else if (mode == ClientController.USER_MODE) {
 				client.startUI();
 			}
