@@ -65,7 +65,7 @@ public class ClientVoteTest {
 	}
 
 	@After
-	public void teardown() {
+	public void teardown() throws SocketTimeoutException {
 		if (controller != null) {
 			controller.closeSocket();
 		}

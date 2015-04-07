@@ -85,7 +85,7 @@ public class RegistrationPanel extends JPanel {
 		submitButton = Utilities.newJButton("Submit", "submit_icon.png", 1, 9,
 				1, 1, layout);
 		add(submitButton);
-
+		
 		cancelButton = Utilities.newJButton("Cancel", "cancel_icon.png", 0, 9,
 				1, 1, layout);
 		add(cancelButton);

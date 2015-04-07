@@ -28,22 +28,29 @@ public class ClientController {
 	private static WSocket socket;
 	private static int districtServerPort;
 
-	public ClientController(int serverPort) throws SocketTimeoutException {
+	public ClientController(int serverPort) {
 		districtServerPort = serverPort;
 		try {
 			socket = new WSocket().connect(districtServerPort);
-		} catch (UnknownHostException | SocketException e1) {
+		} catch ( SocketTimeoutException | SocketException e ) { 
+			e.printStackTrace();
+			System.err.println("Error, shutting down: could not connect to servers");
+			socket = null;
+			System.exit(-3);
+		} catch (UnknownHostException e1) {
 			e1.printStackTrace();
-		} 
+		}
 	}
 
 	public WSocket getSocket() {
 		return socket;
 	}
 
-	public void closeSocket() {
-		sendDisconnect();
-		socket.close();
+	public void closeSocket() throws SocketTimeoutException {
+		if ( socket != null ) {
+			sendDisconnect();
+			socket.close();
+		}
 	}
 
 	public static synchronized boolean registerUser(Voter v) {
@@ -194,7 +201,7 @@ public class ClientController {
 		return results;
 	}
 	
-	public static void sendDisconnect() { 
+	public static void sendDisconnect() throws SocketTimeoutException { 
 		try { 
 			Message msg = new Message(Message.Method.POST, RtvsType.DISCONNECT, null);
 			socket.send(msg);
@@ -204,7 +211,13 @@ public class ClientController {
 	}
 	
 	public static void reconnect() { 
-		sendDisconnect();
+		try { 
+			sendDisconnect();
+		} catch ( Exception e ) {
+			System.err.println("Could not connect to servers");
+			socket = null;
+			System.exit(-2);
+		}
 		socket.close();
 		try {
 			socket = new WSocket().connect(districtServerPort);
@@ -442,7 +455,12 @@ public class ClientController {
 			Runtime.getRuntime().addShutdownHook(
 				new Thread(new Runnable() { 
 					@Override public void run() { 
-						client.closeSocket();
+						try { 
+							client.closeSocket();
+						} catch ( Exception e ) {
+							System.err.println("Connection to servers lost");
+							System.exit(-1);
+						}
 					}
 				})
 			);

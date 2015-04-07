@@ -3,6 +3,9 @@ package controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 import java.io.IOException;
 import java.lang.Thread;
 import java.net.SocketTimeoutException;
@@ -13,6 +16,13 @@ import testing.SystemPopulator;
 
 public class DistrictServer {
 
+	// limit the max number of connected clients
+	// note that the central server counts as one of these connections
+	public final static int CONN_LIMIT = 10000; 
+			
+	private final Semaphore semConnection = new Semaphore(CONN_LIMIT, false);
+	private final ExecutorService threadPool = Executors.newCachedThreadPool();
+	
 	private District district;
 	private WServerSocket servSocket;
 	private WSocket sendSocket;
@@ -65,12 +75,21 @@ public class DistrictServer {
 		try {
 			while (true) {
 				final WSocket client = servSocket.accept();
-				Thread t = new Thread(new Runnable() {
+				Runnable task = new Runnable() {
 					public void run() {
-						handleClient(client);
+						try { 
+							semConnection.acquire();
+							System.out.println("Numbre of available connections: "
+									+ semConnection.availablePermits());
+							handleClient(client);
+						} catch ( InterruptedException e ) { 
+							e.printStackTrace();
+						} finally {
+							semConnection.release();
+						}
 					}
-				});
-				t.start();
+				};
+				threadPool.submit(task);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

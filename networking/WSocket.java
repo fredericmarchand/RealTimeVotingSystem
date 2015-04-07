@@ -15,7 +15,7 @@ public class WSocket {
 	public static final int FRAG_LEN = 200;
 	public static final int SEND_ATTEMPTS = 3;
 
-	private int TIMEOUT = 10000;
+	private int TIMEOUT = 1000;
 
 	private DatagramSocket socket;
 	private InetAddress addr;
@@ -73,7 +73,7 @@ public class WSocket {
 	}
 
 	private void sendConfirmation(int port, InetAddress host)
-			throws IOException {
+	throws IOException, SocketTimeoutException {
 		Message confirm = new Message(Message.Method.POST, "%%received%%",
 				"%%received%%");
 		confirm.setSender(this.port, this.addr);
@@ -109,11 +109,11 @@ public class WSocket {
 		return msg;
 	}
 
-	public void send(Message msg) throws IOException {
+	public void send(Message msg) throws IOException, SocketTimeoutException {
 		this.sendTo(msg, this.port, this.addr);
 	}
 
-	public void sendTo(Message msg, int port) throws IOException {
+	public void sendTo(Message msg, int port) throws IOException, SocketTimeoutException {
 		// System.out.println(port + " " + this.addr.toString());
 		this.sendTo(msg, port, this.addr);
 	}
