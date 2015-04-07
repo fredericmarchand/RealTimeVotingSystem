@@ -15,7 +15,7 @@ public class WSocket {
 	public static final int FRAG_LEN = 200;
 	public static final int SEND_ATTEMPTS = 3;
 
-	private int TIMEOUT = 1000;
+	private int TIMEOUT = 10000;
 
 	private DatagramSocket socket;
 	private InetAddress addr;
