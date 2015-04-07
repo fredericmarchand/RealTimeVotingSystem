@@ -1,13 +1,8 @@
 #!/bin/bash
 
-if [ "$#" -ne 1 ]; then
-    echo "Illegal number of parameters"
-    exit
-fi
-
-JAR_PATH=$1
-
-for i in `seq 60002 60310`;
+for i in `seq 60002 60005`;
 do
-	java -jar $JAR_PATH $i $i
+	echo "../controller/ClientController 0 $i test_files test_results$i"
+	java ../controller/ClientController 0 i test_files test_results"$i"
+	sleep 5
 done  
