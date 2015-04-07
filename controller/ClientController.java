@@ -246,7 +246,7 @@ public class ClientController {
 
 			out = new BufferedWriter(new FileWriter(outputFolder
 					+ File.separator + "final_output.txt"));
-			out.write("Results after all voting session");
+			out.write("Results after all voting sessions");
 			out.newLine();
 			HashMap<Candidate, Integer> results = getLocalResults(new District(
 					"Ottawa South"));
@@ -255,6 +255,17 @@ public class ClientController {
 						+ ((Integer) entry.getValue()).toString() + " votes");
 				out.newLine();
 			}
+			
+			out.newLine();
+			out.write("National Results after all voting sessions");
+			out.newLine();
+			HashMap<String, Integer> natResults = getNationalResults();
+			for (Map.Entry<String, Integer> entry : natResults.entrySet()) {
+				out.write(((String) entry.getKey()) + " - "
+						+ ((Integer) entry.getValue()) + " seats");
+				out.newLine();
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -373,6 +384,22 @@ public class ClientController {
 			for (Map.Entry<Candidate, Integer> entry : results.entrySet()) {
 				out.write(((Candidate) entry.getKey()).toString() + " - "
 						+ ((Integer) entry.getValue()).toString() + " votes");
+				out.newLine();
+			}
+			
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+			out.newLine();
+			out.write("National Results after current voting session");
+			out.newLine();
+			HashMap<String, Integer> natResults = getNationalResults();
+			for (Map.Entry<String, Integer> entry : natResults.entrySet()) {
+				out.write(((String) entry.getKey()) + " - "
+						+ ((Integer) entry.getValue()) + " seats");
 				out.newLine();
 			}
 
