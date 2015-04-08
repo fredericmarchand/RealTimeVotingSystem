@@ -61,6 +61,7 @@ public class DistrictServer {
 		System.out.println("Done Populating.");
 	}
 
+	//Accept connections from clients and start receiving messages
 	public void receiveMessages() {
 		try {
 			while (true) {
@@ -77,6 +78,7 @@ public class DistrictServer {
 		}
 	}
 
+	//handle client requests
 	private void handleClient(WSocket socket) {
 		while (true) {
 			try {
@@ -262,6 +264,7 @@ public class DistrictServer {
 		}
 	}
 	
+	//Periodic thread that gets the national results from the central server
 	public void getNationalResults() {
 		Thread thread = new Thread(new Runnable() {
 
@@ -294,6 +297,7 @@ public class DistrictServer {
 		thread.start();
 	}
 	
+	//Connect to the central server
 	public void connectToCentralServer() {
 		try {
 			Message msg = new Message(Message.Method.POST, RtvsType.CONNECT, servSocket.getPort());
@@ -309,9 +313,11 @@ public class DistrictServer {
 			String provinceName = args[1];
 			int port = Integer.parseInt(args[2]);
 
+			//Create district server instance
 			final DistrictServer server = new DistrictServer(districtName,
 					Province.getProvinceFromName(provinceName), port);
 
+			//populate candidates/parties
 			server.getParties().put(Party.CONSERVATIVES,
 					new Party(Party.CONSERVATIVES));
 			server.getParties().put(Party.LIBERALS, new Party(Party.LIBERALS));

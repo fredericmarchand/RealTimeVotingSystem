@@ -46,6 +46,7 @@ public class ClientController {
 		socket.close();
 	}
 
+	//Register a user with the district server
 	public static synchronized boolean registerUser(Voter v) {
 		boolean result = false;
 		try {
@@ -62,6 +63,7 @@ public class ClientController {
 		return result;
 	}
 
+	//Get the parties from the district server
 	@SuppressWarnings("unchecked")
 	public static synchronized ArrayList<Party> getParties() {
 		ArrayList<Party> parties = new ArrayList<Party>();
@@ -77,6 +79,7 @@ public class ClientController {
 		return parties;
 	}
 
+	//Update the candidates information on the district server (used for testing framework)
 	public static synchronized boolean updateCandidate(Candidate c, Party party) {
 		c.runFor(party);
 		boolean result = false;
@@ -98,6 +101,7 @@ public class ClientController {
 		return result;
 	}
 
+	//Login a user to the district server in order to vote
 	public static synchronized Voter loginUser(String username, String password) {
 		Voter result = null;
 		try {
@@ -113,6 +117,7 @@ public class ClientController {
 		return result;
 	}
 
+	//Verify with the district server whether the user has already voted
 	public static synchronized boolean userHasVoted(Voter v) {
 		boolean result = false;
 		try {
@@ -128,6 +133,7 @@ public class ClientController {
 		return result;
 	}
 
+	//Submit vote to the district server
 	public static synchronized boolean vote(Candidate c, Voter v) {
 		Vote vote = new Vote(v, c);
 		boolean result = false;
@@ -142,6 +148,7 @@ public class ClientController {
 		return result;
 	}
 
+	//Get the candidates for the district from the district server
 	@SuppressWarnings("unchecked")
 	public static synchronized ArrayList<Candidate> getDistrictCandidates(District d) {
 		ArrayList<Candidate> candidates = new ArrayList<Candidate>();
@@ -161,6 +168,7 @@ public class ClientController {
 		return candidates;
 	}
 
+	//Get the district election results from the district server
 	public static synchronized HashMap<Candidate, Integer> getLocalResults(District d) {
 		HashMap<Candidate, Integer> results = new HashMap<Candidate, Integer>();
 
@@ -177,6 +185,7 @@ public class ClientController {
 		return results;
 	}
 
+	//Get the national election results (in terms of seats) from the district server
 	public static synchronized HashMap<String, Integer> getNationalResults() {
 		HashMap<String, Integer> results = new HashMap<String, Integer>();
 
@@ -216,6 +225,7 @@ public class ClientController {
 		}
 	}
 
+	//Simulate registration, login and voting using files for testing framework
 	public void simulate(String inputFolder, final String outputFolder, final String district) {
 		BufferedWriter out = null;
 
@@ -281,6 +291,7 @@ public class ClientController {
 		}
 	}
 
+	//Used by testing framework to simulate actions by users
 	public static void simulateFromFile(String inputFile, String outputFile, String districtName) {
 
 		BufferedWriter out = null;
@@ -418,6 +429,7 @@ public class ClientController {
 		}
 	}
 
+	//Start the user interface
 	public void startUI() {
 		
 		// To make the GUI look nicer
