@@ -21,6 +21,7 @@ public class CentralServer {
 	private HashMap<Integer, WSocket> districtServerSockets;
 	private WServerSocket servSocket;
 
+	//Initialize the central server
 	public void init() {
 		districts = new HashSet<Connection>();
 		totals = new ResultSet(ResultSet.NATIONAL);
@@ -28,6 +29,7 @@ public class CentralServer {
 		districtServerSockets = new HashMap<Integer, WSocket>();
 	}
 
+	//Accept new connections from district servers and start new threads to process the received messages
 	public void receiveMessages() {
 		try {
 			while (true) {
@@ -44,6 +46,7 @@ public class CentralServer {
 		}
 	}
 
+	//Continually process the received messages from the given socket
 	private void processMessages(WSocket socket) {
 		while (true) {
 			try {
@@ -75,6 +78,7 @@ public class CentralServer {
 		}
 	}
 	
+	//Fetch the district server results and calculate the seat count
 	public void getLocalResults() {
 		synchronized(totals) {
 			totals = new ResultSet(ResultSet.NATIONAL);
@@ -104,18 +108,7 @@ public class CentralServer {
 							totals.getTotalVotes().put(party, 1);
 						}
 					}
-					
-					/*for (Candidate can: results.keySet()) {
-						
-						if (totals.getTotalVotes().containsKey(can.getParty().getName())) {
-							totals.getTotalVotes().put(can.getParty().getName(), totals.getTotalVotes().get(can.getParty().getName()) + results.get(can));
-						}
-						else {
-							totals.getTotalVotes().put(can.getParty().getName(), results.get(can));
-						}
-						
-					}*/
-					
+										
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -129,10 +122,12 @@ public class CentralServer {
 
 	public static void main(String args[]) {
 
+		//Create new central server and initialize
 		final CentralServer server = new CentralServer();
 		server.init();
 		System.out.println("Starting Central Server");
 		
+		//Start receive messages thread
 		Thread t = new Thread(new Runnable() {
 			public void run() {
 				server.receiveMessages();
@@ -151,7 +146,7 @@ public class CentralServer {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					// Query Votes from District Servers
+					// Query Votes from District Servers periodically
 					server.getLocalResults();
 				}
 			}
