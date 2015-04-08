@@ -26,5 +26,6 @@ From eclipse:
 5. edit run configurations > arguments > add the values: `Ottawa Ontario 60002`
 6. open ClientController, and add the command line arguments: `0 60002 test_files test_results`
 7. edit the ClientController command line arguments to `1 60002` and re run to launch the GUI
+8. Re-iterate steps 4 - 7 with different ports to run multiple District Servers and Clients
 
 See documentation/RealTimeVotingSystem.pdf for documentation and UML diagrams.
