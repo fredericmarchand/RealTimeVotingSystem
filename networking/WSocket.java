@@ -11,22 +11,28 @@ import java.io.*;
  * A Wrapper-Socket to simulate a TCP socket using UDP
  */
 public class WSocket {
-	public static final int PACKET_LEN = 500;
-	public static final int FRAG_LEN = 200;
-	public static final int SEND_ATTEMPTS = 3;
+	public static final int PACKET_LEN = 500;   // length of one datagram packet
+	public static final int FRAG_LEN = 200;     // length to break data by fragments
+	public static final int SEND_ATTEMPTS = 3;  // #times to try resending a message 
 
-	private int TIMEOUT = 10000;
+	private int TIMEOUT = 10000; // timeout if no response is received
 
 	private DatagramSocket socket;
 	private InetAddress addr;
 	public int port;
 
+    /**
+     * init on any available port with default host "localhost"
+     */
 	public WSocket() throws SocketException, UnknownHostException {
 		this.socket = new DatagramSocket();
 		this.port = socket.getLocalPort();
 		this.addr = InetAddress.getByName("localhost");
 	}
-
+    
+    /**
+     * init on specified port and host
+     */
 	public WSocket(int port, String host) throws UnknownHostException,
 			SocketException {
 		this.socket = new DatagramSocket(port, addr);
@@ -34,10 +40,18 @@ public class WSocket {
 		this.addr = InetAddress.getByName(host);
 	}
 
+    /**
+     * init on the specified port, with default "localhost"
+     */
 	public WSocket(int port) throws UnknownHostException, SocketException {
 		this(port, "localhost");
 	}
 
+    /**
+     * Establish a connection with a WServerSocket
+     * this method changes the internal port number
+     * after a new socket is created by WServerSocket
+     */
 	public synchronized WSocket connect(int port, String host)
 	throws UnknownHostException, SocketException, SocketTimeoutException {
 		this.socket = new DatagramSocket();
@@ -58,15 +72,26 @@ public class WSocket {
 		return this;
 	}
 
+    /**
+     * Establish a connection with a WServerSocket
+     * this method changes the internal port number
+     * after a new socket is created by WServerSocket
+     */
 	public WSocket connect(int port) 
 	throws UnknownHostException, SocketException, SocketTimeoutException {
 		return this.connect(port, "localhost");
 	}
 
+    /**
+     * change the timeout limit
+     */
 	public void setTimeout(int timeout) {
 		this.TIMEOUT = timeout;
 	}
 
+    /**
+     * close the socket and free the port
+     */
 	public void close() {
 		if (socket != null)
 			socket.close();
@@ -83,6 +108,10 @@ public class WSocket {
 		socket.send(packet);
 	}
 
+    /**
+     * Wait for a message on the port
+     * @return a deserialized Message
+     */
 	public synchronized Message receive() 
 	throws IOException, SocketTimeoutException {
 		byte[] buffer = new byte[576];
@@ -109,15 +138,24 @@ public class WSocket {
 		return msg;
 	}
 
+    /**
+     * Send the message to the initialized port and host
+     */
 	public void send(Message msg) throws IOException, SocketTimeoutException {
 		this.sendTo(msg, this.port, this.addr);
 	}
 
+    /**
+     * Send the message to the specified port on the initialized host
+     */
 	public void sendTo(Message msg, int port) throws IOException, SocketTimeoutException {
 		// System.out.println(port + " " + this.addr.toString());
 		this.sendTo(msg, port, this.addr);
 	}
 
+    /**
+     * Send the message to the specified port and host address
+     */
 	public synchronized void sendTo(Message msg, int port, InetAddress host)
 			throws IOException, SocketTimeoutException {
 
@@ -166,6 +204,9 @@ public class WSocket {
 		}
 	}
 
+    /**
+     * send the message, then wait for a reply
+     */
 	public synchronized Message sendReceive(Message msg, int port,
 			InetAddress host) throws IOException {
 
@@ -175,6 +216,9 @@ public class WSocket {
 		return res;
 	}
 
+    /**
+     * send the message, then wait for a reply
+     */
 	public Message sendReceive(Message msg) throws IOException {
 		return this.sendReceive(msg, port, addr);
 	}

@@ -2,10 +2,18 @@ package networking;
 
 import java.io.IOException;
 
+/**
+ * (Wrapper-ServerSocket)
+ * This is analogus to the ServerSocket class 
+ * contained in the java.net API
+ */
 public class WServerSocket {
 	private WSocket socket;
 	private int port;
 
+    /**
+     * init with a specified port and host address
+     */
 	public WServerSocket(int port, String host) {
 		try {
 			socket = new WSocket(port, host);
@@ -16,10 +24,18 @@ public class WServerSocket {
 		}
 	}
 
+    /**
+     * init with a specified port
+     * and default "localhost"
+     */
 	public WServerSocket(int port) {
 		this(port, "127.0.0.1");
 	}
 
+    /**
+     * listens and accepts a new connection
+     * @return a new WSocket on any available port
+     */
 	public synchronized WSocket accept() {
 		try {
 			Message msg = socket.receive();

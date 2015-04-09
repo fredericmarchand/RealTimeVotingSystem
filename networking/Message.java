@@ -12,6 +12,10 @@ import java.io.IOException;
 import java.util.zip.CRC32;
 import java.net.InetAddress;
 
+/** 
+ * The Message class can be serialized to
+ * a byte array to be sent of a network socket
+ */ 
 public class Message implements Serializable {
 	// HTTP request Method
 	public static enum Method {
@@ -28,6 +32,11 @@ public class Message implements Serializable {
 	private String type;
 	private InetAddress senderAddr;
 
+    /**
+     * Initialize with an HTTP request method, 
+     * message type and any Object as data.
+     * The data must implement the serializable interface
+     */
 	public Message(Method method, String type, Object data) throws IOException {
 		this.senderPort = -1;
 		this.method = method;
